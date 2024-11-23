@@ -10,6 +10,15 @@
         .tab-pane {
             margin-top: 20px
         }
+        .custom-carousel {
+            position: relative;
+            cursor: pointer;
+        }
+        .carousel-image {
+            width: auto;
+            min-height: 55px;
+            object-fit: cover;
+        }
     </style>
 @endpush
 @section('contents')

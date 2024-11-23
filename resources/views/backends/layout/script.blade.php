@@ -57,6 +57,7 @@
 
 {{ Session::has('message') }}
 
+
 <script>
     $(function() {
 

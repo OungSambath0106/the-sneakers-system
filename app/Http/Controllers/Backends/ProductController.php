@@ -95,8 +95,20 @@ class ProductController extends Controller
                 $pro->product_info =$products_info;
             }
 
-            if ($request->hasFile('image')) {
-                $pro->image = ImageManager::upload('uploads/products/', $request->image);
+            // if ($request->hasFile('image')) {
+            //     $pro->image = ImageManager::upload('uploads/products/', $request->image);
+            // }
+
+            if ($request->hasFile('images')) {
+                $images = [];
+
+                foreach ($request->file('images') as $image) {
+                    if ($image->isValid()) {
+                        $images[] = ImageManager::upload('uploads/products/', $image);
+                    }
+                }
+
+                $pro->images = $images;
             }
 
             $pro->save();

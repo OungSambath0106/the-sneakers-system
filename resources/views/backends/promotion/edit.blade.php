@@ -113,8 +113,8 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="form-group col-md-6">
-                                        <label class="required_label" for="promotion_type">{{ __('Discount Type') }}</label>
-                                        <select name="promotion_type" id="promotion_type" class="form-control select2 @error('promotion_type') is-invalid @enderror" onchange="toggleDiscountFields()">
+                                        <label class="required_label" for="promotion_type">{{ __('Promotion Type') }}</label>
+                                        <select name="promotion_type" id="promotion_type" class="form-control select2 @error('promotion_type') is-invalid @enderror" onchange="togglePromotionFields()">
                                             <option value="brand" {{ old('promotion_type', $promotion->promotion_type) == 'brand' ? 'selected' : '' }}>
                                                 {{ __('Brand') }}
                                             </option>
@@ -130,7 +130,7 @@
                                     </div>
                                     <div class="form-group col-md-6" id="product_field">
                                         <label class="required_label" for="product">{{ __('Promotion by Product') }}</label>
-                                        <select name="products[]" id="product" multiple class="form-control select2 @error('products') is-invalid @enderror">
+                                        <select name="products[]" id="product_input" multiple class="form-control select2 @error('products') is-invalid @enderror">
                                             @foreach ($products as $product)
                                                 <option value="{{ $product->id }}"
                                                     {{ in_array($product->id, old('products', $product_promotionId)) ? 'selected' : '' }}>
@@ -146,9 +146,12 @@
                                     </div>
                                     <div class="form-group col-md-6" id="brand_field" style="display: none;">
                                         <label class="required_label" for="brand">{{ __('Promotion by Brand') }}</label>
-                                        <select name="brands[]" id="brand" multiple class="form-control select2 @error('brand') is-invalid @enderror">
+                                        <select name="brands[]" id="brand_input" multiple class="form-control select2 @error('brand') is-invalid @enderror">
                                             @foreach ($brands as $brand)
-                                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                <option value="{{ $brand->id }}"
+                                                    {{ in_array($brand->id, old('brands', $brand_promotionId)) ? 'selected' : '' }}>
+                                                    {{ $brand->name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                         @error('brand')
@@ -174,6 +177,24 @@
                                         @enderror
                                     </div>
 
+                                    <div class="form-group col-md-6" id="percent_field">
+                                        <label class="required_label" for="percent_input">{{ __('Discount Percent') }}</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <input type="number" name="percent" id="percent_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
+                                                class="form-control @error('percent') is-invalid @enderror" step="any"
+                                                value="{{ old('percent', $promotion->percent) }}">
+                                        </div>
+
+                                        @error('percent')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+
                                     <div class="form-group col-md-6" id="amount_field" style="display: none;">
                                         <label class="required_label" for="amount_input">{{ __('Discount Amount') }}</label>
                                         <div class="input-group">
@@ -192,23 +213,6 @@
                                         @enderror
                                     </div>
 
-                                    <div class="form-group col-md-6" id="percent_field">
-                                        <label class="required_label" for="percent_input">{{ __('Discount Percent') }}</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">%</span>
-                                            </div>
-                                            <input type="number" name="percent" id="percent_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
-                                                class="form-control @error('percent') is-invalid @enderror" step="any"
-                                                value="{{ old('percent', $promotion->percent) }}">
-                                        </div>
-
-                                        @error('percent')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
                                     <div class="form-group col-md-6">
                                         <label class="required_lable">{{ __('Start Date') }}</label>
                                         <input type="date" class="form-control @error('start_date') is-invalid @enderror"
@@ -308,31 +312,60 @@
             var discountType = document.getElementById('discount_type').value;
             var amountField = document.getElementById('amount_field');
             var percentField = document.getElementById('percent_field');
+            var amountInput = document.getElementById('amount_input');
+            var percentInput = document.getElementById('percent_input');
 
             if (discountType === 'percent') {
                 percentField.style.display = 'block';
                 amountField.style.display = 'none';
+
+                amountInput.value = '';
             } else {
                 percentField.style.display = 'none';
                 amountField.style.display = 'block';
+
+                percentInput.value = '';
             }
         }
-        window.onload = toggleDiscountFields;
+
+        window.onload = function() {
+            toggleDiscountFields();
+            document.getElementById('discount_type').addEventListener('change', toggleDiscountFields);
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleDiscountFields();
+        });
     </script>
+
     <script>
         function togglePromotionFields() {
             var promotionType = document.getElementById('promotion_type').value;
             var brandField = document.getElementById('brand_field');
             var productField = document.getElementById('product_field');
+            var brandInput = document.getElementById('brand_input');
+            var productInput = document.getElementById('product_input');
 
             if (promotionType === 'brand') {
                 brandField.style.display = 'block';
                 productField.style.display = 'none';
+
+                productInput.value = '';
             } else {
-                brandField.style.display = 'none';
                 productField.style.display = 'block';
+                brandField.style.display = 'none';
+
+                brandInput.value = '';
             }
         }
-        window.onload = togglePromotionFields;
+
+        window.onload = function() {
+            togglePromotionFields();
+            document.getElementById('promotion_type').addEventListener('change', togglePromotionFields);
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            togglePromotionFields();
+        });
     </script>
 @endpush

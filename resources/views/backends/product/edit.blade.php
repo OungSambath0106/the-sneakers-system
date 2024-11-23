@@ -1,5 +1,20 @@
 @extends('backends.master')
 @section('contents')
+    <style>
+        .file-container {
+            & > table {
+                & > tbody {
+                    & > tr {
+                        & > td {
+                            &:nth-child(3) {
+                                text-align: start;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </style>
     <!-- Content Wrapper. Contains page content -->
     <section class="content-header">
         <div class="container-fluid">
@@ -125,7 +140,7 @@
                                             </span>
                                         @enderror
                                     </div>
-                                    <div class="form-group col-md-6">
+                                    {{-- <div class="form-group col-md-6">
                                         <div class="form-group">
                                             <label for="image">{{ __('Image') }}</label>
                                             <div class="input-group">
@@ -143,65 +158,74 @@
                                                     alt="" height="100%">
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group col-md-12">
-                                        <table class="table table-bordered table-striped table-hover rowfy mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th class="col-4">Size</th>
-                                                    <th class="col-4">Price</th>
-                                                    <th class="col-4">Quantity</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if ($product->product_info && is_array($product->product_info))
-                                                    @foreach ($product->product_info as $key => $product)
+                                        <div class="form-group mb-0">
+                                            <label for="exampleInputFile">{{ __('Product Info') }}</label>
+                                            <table class="table table-bordered table-striped table-hover rowfy mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-4">Size</th>
+                                                        <th class="col-4">Price</th>
+                                                        <th class="col-4">Quantity</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if ($product->product_info && is_array($product->product_info))
+                                                        @foreach ($product->product_info as $key => $product)
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="number" class="form-control"
+                                                                        name="products_info[product_size][]" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
+                                                                        value="{{ $product['product_size'] ?? '' }}">
+                                                                </td>
+                                                                <td>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <span class="input-group-text">$</span>
+                                                                        </div>
+                                                                        <input type="number" class="form-control"
+                                                                            name="products_info[product_price][]" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
+                                                                            value="{{ $product['product_price'] ?? '' }}">
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="number" class="form-control"
+                                                                        name="products_info[product_qty][]" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
+                                                                        value="{{ $product['product_qty'] ?? '' }}">
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @else
                                                         <tr>
                                                             <td>
-                                                                <input type="number" class="form-control"
-                                                                    name="products_info[product_size][]" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
-                                                                    value="{{ $product['product_size'] ?? '' }}">
+                                                                <input type="number" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
+                                                                    name="products_info[product_size][]">
                                                             </td>
                                                             <td>
                                                                 <div class="input-group">
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text">$</span>
                                                                     </div>
-                                                                    <input type="number" class="form-control"
-                                                                        name="products_info[product_price][]" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
-                                                                        value="{{ $product['product_price'] ?? '' }}">
+                                                                    <input type="number" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
+                                                                        name="products_info[product_price][]">
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control"
-                                                                    name="products_info[product_qty][]" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
-                                                                    value="{{ $product['product_qty'] ?? '' }}">
+                                                                <input type="number" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
+                                                                    name="products_info[product_qty][]">
                                                             </td>
                                                         </tr>
-                                                    @endforeach
-                                                @else
-                                                    <tr>
-                                                        <td>
-                                                            <input type="number" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
-                                                                name="products_info[product_size][]">
-                                                        </td>
-                                                        <td>
-                                                            <div class="input-group">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text">$</span>
-                                                                </div>
-                                                                <input type="number" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
-                                                                    name="products_info[product_price][]">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <input type="number" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
-                                                                name="products_info[product_qty][]">
-                                                        </td>
-                                                    </tr>
-                                                @endif
-                                            </tbody>
-                                        </table>
+                                                    @endif
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <div class="form-group">
+                                            <label for="exampleInputFile">{{ __('Image') }}</label>
+                                            <div id="fileUpload"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -224,6 +248,118 @@
 @endsection
 
 @push('js')
+    <script>
+        $(document).ready(function () {
+            var fileUploadCount = 0;
+
+            $.fn.fileUpload = function () {
+                return this.each(function () {
+                    var fileUploadDiv = $(this);
+                    var fileUploadId = `fileUpload-${++fileUploadCount}`;
+
+                    // Creates HTML content for the file upload area.
+                    var fileDivContent = `
+                        <label for="${fileUploadId}" class="file-upload">
+                            <div>
+                                <i class="material-icons-outlined">cloud_upload</i>
+                                <p>Upload Multi Image</p>
+                                <span>OR</span>
+                                <div>Browse Files</div>
+                            </div>
+                            <input type="file" id="${fileUploadId}" name="images[]" multiple hidden />
+                        </label>
+                    `;
+
+                    fileUploadDiv.html(fileDivContent).addClass("file-container");
+
+                    var table = null;
+                    var tableBody = null;
+
+                    // Creates a table containing file information.
+                    function createTable() {
+                        table = $(`
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>File Name</th>
+                                        <th>Preview</th>
+                                        <th>Size</th>
+                                        <th>Type</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        `);
+
+                        tableBody = table.find("tbody");
+                        fileUploadDiv.append(table);
+                    }
+
+                    // Adds the information of uploaded files to table.
+                    function handleFiles(files) {
+                        if (!table) {
+                            createTable();
+                        }
+
+                        tableBody.empty();
+                        if (files.length > 0) {
+                            $.each(files, function (index, file) {
+                                var fileName = product.images;
+                                var fileSize = (file.size / 1024).toFixed(2) + " KB";
+                                var fileType = file.type;
+                                var preview = fileType.startsWith("image")
+                                    ? `<img src="${URL.createObjectURL(file)}" alt="${fileName}" height="30">`
+                                    : `<i class ="material-icons-outlined">visibility_off</i>`;
+
+                                tableBody.append(`
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${fileName}</td>
+                                        <td>${preview}</td>
+                                        <td>${fileSize}</td>
+                                        <td>${fileType}</td>
+                                        <td><button type="button" class="deleteBtn"><i class="material-icons-outlined">delete</i></button></td>
+                                    </tr>
+                                `);
+                            });
+
+                            tableBody.find(".deleteBtn").click(function () {
+                                $(this).closest("tr").remove();
+
+                                if (tableBody.find("tr").length === 0) {
+                                    tableBody.append('<tr><td colspan="6" class="no-file">No files selected!</td></tr>');
+                                }
+                            });
+                        }
+                    }
+
+                    // Events triggered after dragging files.
+                    fileUploadDiv.on({
+                        dragover: function (e) {
+                            e.preventDefault();
+                            fileUploadDiv.toggleClass("dragover", e.type === "dragover");
+                        },
+                        drop: function (e) {
+                            e.preventDefault();
+                            fileUploadDiv.removeClass("dragover");
+                            handleFiles(e.originalEvent.dataTransfer.files);
+                        },
+                    });
+
+                    // Event triggered when file is selected.
+                    fileUploadDiv.find(`#${fileUploadId}`).change(function () {
+                        handleFiles(this.files);
+                    });
+                });
+            };
+
+            // Initialize file upload
+            $("#fileUpload").fileUpload();
+        });
+    </script>
     <script>
         $('.custom-file-input').change(function(e) {
             var reader = new FileReader();

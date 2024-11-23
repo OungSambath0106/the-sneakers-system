@@ -15,12 +15,13 @@ class Product extends Model
 
     use SoftDeletes;
 
-    protected $appends = ['image_url'];
+    protected $appends = ['images_url'];
 
     protected $guarded = ['id'];
 
     protected $casts = [
-        'product_info' => 'array'
+        'product_info' => 'array',
+        'images' => 'array'
     ];
 
     public function getNameAttribute($name)
@@ -38,14 +39,14 @@ class Product extends Model
         return $this->translations[1]->value ?? $description;
     }
 
-    public function getImageUrlAttribute()
+    public function getImagesUrlAttribute()
     {
-        if (!empty($this->image_url)) {
-            $image_url = asset('uploads/products/' . rawurlencode($this->image_url));
+        if (!empty($this->images_url)) {
+            $images_url = asset('uploads/products/' . rawurlencode($this->images_url));
         } else {
-            $image_url = null;
+            $images_url = null;
         }
-        return $image_url;
+        return $images_url;
     }
 
     public function createdBy()

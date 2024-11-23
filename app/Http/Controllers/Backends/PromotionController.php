@@ -181,20 +181,23 @@ class PromotionController extends Controller
      */
     public function edit($id)
     {
-        $promotion = Promotion::withoutGlobalScopes()->with('translations')->findOrFail($id);
+        // $promotion = Promotion::withoutGlobalScopes()->with('translations')->findOrFail($id);
+        $promotion = Promotion::withoutGlobalScopes()->with('translations', 'products', 'brands')->findOrFail($id);
 
         $brands = Brand::with('products')->get();
         $brand_promotionId = [];
-        if ($promotion->brands && $promotion->brands->count() > 0) {
-            $brand_promotionId = $promotion->brands->pluck('id')->toArray();
+        if ($promotion->brands()->get() && $promotion->brands()->get()->count() > 0) {
+            $brand_promotionId = $promotion->brands()->get()->pluck('id')->toArray();
         }
+        // dd($brand_promotionId);
 
         $products = Product::where('status', 1)->orderBy('name')->get();
         $product_promotionId = [];
-        if ($promotion->products && $promotion->products->count() > 0) {
-            $product_promotionId = $promotion->products->pluck('id')->toArray();
+        if ($promotion->products()->get() && $promotion->products()->get()->count() > 0) {
+            $product_promotionId = $promotion->products()->get()->pluck('id')->toArray();
         }
-        
+        // dd($product_promotionId);
+
         $language = BusinessSetting::where('type', 'language')->first();
         $language = $language->value ?? null;
         $default_lang = 'en';
@@ -256,14 +259,27 @@ class PromotionController extends Controller
 
             $promotion->save();
 
-            if ($request->filled('products')) {
-                $productIds = $request->products;
-                $promotion->products()->sync($productIds);
-            }
+            if ($request->promotion_type === 'brand') {
+                // Sync brands and clear products
+                if ($request->filled('brands')) {
+                    $brandIds = $request->brands;
+                    $promotion->brands()->sync($brandIds);
+                } else {
+                    $promotion->brands()->sync([]);
+                }
+                // Clear products
+                $promotion->products()->sync([]);
 
-            if ($request->filled('brands')) {
-                $brandIds = $request->brands;
-                $promotion->brands()->sync($brandIds);
+            } elseif ($request->promotion_type === 'product') {
+                // Sync products and clear brands
+                if ($request->filled('products')) {
+                    $productIds = $request->products;
+                    $promotion->products()->sync($productIds);
+                } else {
+                    $promotion->products()->sync([]);
+                }
+                // Clear brands
+                $promotion->brands()->sync([]);
             }
 
             foreach ($request->lang as $index => $key) {

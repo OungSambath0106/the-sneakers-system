@@ -3,9 +3,8 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>{{ __('Image') }}</th>
+                <th>{{ __('Images') }}</th>
                 <th class="">{{ __('Name') }}</th>
-                <th>{{ __('Quantity') }}</th>
                 <th>{{ __('Category') }}</th>
                 <th>{{ __('Created By') }}</th>
                 <th>{{ __('Status') }}</th>
@@ -17,19 +16,24 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>
-                        <img src="
-                        @if ($product->image && file_exists(public_path('uploads/products/' . $product->image))) {{ asset('uploads/products/' . $product->image) }}
+                        @if ($product->images && count($product->images) > 1)
+                            <div id="carousel-{{ $product->id }}" class="custom-carousel" data-current-index="0">
+                                @foreach ($product->images as $index => $image)
+                                    <img src="{{ file_exists(public_path('uploads/products/' . $image)) ? asset('uploads/products/' . $image) : asset('uploads/default.png') }}"
+                                        alt="Product Image" class="carousel-image profile_img_table"
+                                        style="display: {{ $index == 0 ? 'block' : 'none' }};">
+                                @endforeach
+                            </div>
                         @else
-                            {{ asset('uploads/defualt.png') }} @endif
-                        "
-                            alt="" class="profile_img_table">
+                            <img src="{{ !empty($product->images[0]) && file_exists(public_path('uploads/products/' . $product->images[0])) ? asset('uploads/products/' . $product->images[0]) : asset('uploads/default.png') }}"
+                                alt="Product Image" class="profile_img_table">
+                        @endif
                     </td>
                     <td>
                         <span class="ml-2">
                             {{ $product->name ?? 'Null' }}
                         </span>
                     </td>
-                    <td>{{ $product->qty ?? 'Null' }}</td>
                     <td>{{ $product->brand->name ?? 'Null' }}</td>
                     <td>{{ $product->createdBy->name ?? 'Null' }}</td>
                     <td>
@@ -82,3 +86,20 @@
 
 
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const carousel = document.getElementById("carousel-{{ $product->id }}");
+        if (carousel) {
+            const images = carousel.querySelectorAll(".carousel-image");
+            let currentIndex = 0;
+
+            carousel.addEventListener("click", function() {
+                images[currentIndex].style.display = "none";
+
+                currentIndex = (currentIndex + 1) % images.length;
+
+                images[currentIndex].style.display = "block";
+            });
+        }
+    });
+</script>

@@ -36,7 +36,7 @@ class Promotion extends Model
 
     public function brands()
     {
-        return $this->belongsToMany(Product::class, 'promotion_brand', 'promotion_id', 'brand_id');
+        return $this->belongsToMany(Brand::class, 'promotion_brand', 'promotion_id', 'brand_id');
     }
 
     public function getBannerUrlAttribute()
