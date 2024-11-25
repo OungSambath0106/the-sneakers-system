@@ -178,7 +178,8 @@
                                     <div class="form-group col-md-12">
                                         <div class="form-group">
                                             <label for="exampleInputFile">{{ __('Image') }}</label>
-                                            <div id="fileUpload"></div>
+                                            {{-- <div id="fileUpload"></div> --}}
+                                            @include('backends.product.partial.product_galleries')
                                         </div>
                                     </div>
                                 </div>
@@ -202,118 +203,61 @@
 
 @push('js')
     <script>
-        $(document).ready(function () {
-            var fileUploadCount = 0;
+        const compressor = new window.Compress();
+        $('.custom-file-input').change(function(e) {
+            const files = [...e.target.files];
+            const formData = new FormData();
+            const image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
+            const container = $(this).closest('.form-group').find('.preview');
 
-            $.fn.fileUpload = function () {
-                return this.each(function () {
-                    var fileUploadDiv = $(this);
-                    var fileUploadId = `fileUpload-${++fileUploadCount}`;
+            if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
+                container.empty();
+            }
 
-                    // Creates HTML content for the file upload area.
-                    var fileDivContent = `
-                        <label for="${fileUploadId}" class="file-upload">
-                            <div>
-                                <i class="material-icons-outlined">cloud_upload</i>
-                                <p>Upload Multi Image</p>
-                                <span>OR</span>
-                                <div>Browse Files</div>
-                            </div>
-                            <input type="file" id="${fileUploadId}" name="images[]" multiple hidden />
-                        </label>
-                    `;
-
-                    fileUploadDiv.html(fileDivContent).addClass("file-container");
-
-                    var table = null;
-                    var tableBody = null;
-
-                    // Creates a table containing file information.
-                    function createTable() {
-                        table = $(`
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th style="width: 30%;">File Name</th>
-                                        <th>Preview</th>
-                                        <th>Size</th>
-                                        <th>Type</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        `);
-
-                        tableBody = table.find("tbody");
-                        fileUploadDiv.append(table);
-                    }
-
-                    // Adds the information of uploaded files to table.
-                    function handleFiles(files) {
-                        if (!table) {
-                            createTable();
-                        }
-
-                        tableBody.empty();
-                        if (files.length > 0) {
-                            $.each(files, function (index, file) {
-                                var fileName = file.name;
-                                var fileSize = (file.size / 1024).toFixed(2) + " KB";
-                                var fileType = file.type;
-                                var preview = fileType.startsWith("image")
-                                    ? `<img src="${URL.createObjectURL(file)}" alt="${fileName}" height="30">`
-                                    : `<i class ="material-icons-outlined">visibility_off</i>`;
-
-                                tableBody.append(`
-                                    <tr>
-                                        <td>${index + 1}</td>
-                                        <td>${fileName}</td>
-                                        <td>${preview}</td>
-                                        <td>${fileSize}</td>
-                                        <td>${fileType}</td>
-                                        <td><button type="button" class="deleteBtn"><i class="material-icons-outlined">delete</i></button></td>
-                                    </tr>
-                                `);
-                            });
-
-                            tableBody.find(".deleteBtn").click(function () {
-                                $(this).closest("tr").remove();
-
-                                if (tableBody.find("tr").length === 0) {
-                                    tableBody.append('<tr><td colspan="6" class="no-file">No files selected!</td></tr>');
-                                }
-                            });
-                        }
-                    }
-
-                    // Events triggered after dragging files.
-                    fileUploadDiv.on({
-                        dragover: function (e) {
-                            e.preventDefault();
-                            fileUploadDiv.toggleClass("dragover", e.type === "dragover");
-                        },
-                        drop: function (e) {
-                            e.preventDefault();
-                            fileUploadDiv.removeClass("dragover");
-                            handleFiles(e.originalEvent.dataTransfer.files);
-                        },
+            files.forEach(file => {
+                if (file.type === 'image/png') {
+                    // Skip compression for PNGs
+                    formData.append('images[]', file);
+                } else {
+                    // Compress non-PNG files
+                    compressor.compress([file], {
+                        size: 4,
+                        quality: 0.75,
+                    }).then(output => {
+                        const compressedFile = Compress.convertBase64ToFile(output[0].data, output[0].ext);
+                        formData.append('images[]', compressedFile);
                     });
+                }
+            });
 
-                    // Event triggered when file is selected.
-                    fileUploadDiv.find(`#${fileUploadId}`).change(function () {
-                        handleFiles(this.files);
-                    });
-                });
-            };
+            $.ajax({
+                url: "{{ route('save_temp_file') }}",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status == 0) {
+                        toastr.error(response.msg);
+                    }
+                    if (response.status == 1) {
+                        const temp_files = response.temp_files;
+                        temp_files.forEach(temp_file => {
+                            const img_container = $('<div></div>').addClass('img_container');
+                            const img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" + '/' + temp_file);
+                            img_container.append(img);
+                            container.append(img_container);
 
-            // Initialize file upload
-            $("#fileUpload").fileUpload();
+                            const current_file_name = image_names_hidden.val();
+                            const new_file_name = current_file_name + ' ' + temp_file;
+                            image_names_hidden.val(new_file_name);
+                        });
+                    }
+                }
+            });
         });
     </script>
-    <script>
+    {{-- <script>
         const compressor = new window.Compress();
         $('.custom-file-input').change(function(e) {
             compressor.compress([...e.target.files], {
@@ -367,7 +311,7 @@
                 $('.no_translate_wrapper').removeClass('d-none');
             }
         });
-    </script>
+    </script> --}}
     <script>
         // Function to prevent negative values
         function validatePriceInput(input) {

@@ -16,16 +16,17 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>
-                        @if ($product->images && count($product->images) > 1)
-                            <div id="carousel-{{ $product->id }}" class="custom-carousel" data-current-index="0">
-                                @foreach ($product->images as $index => $image)
+                        {{-- @dd($product->productgallery->images); --}}
+                        @if ($product->productgallery && count($product->productgallery->images) > 0)
+                            <div class="custom-carousel carousel-{{ $product->id }}" data-product-id="{{ $product->id }}" data-current-index="0">
+                                @foreach ($product->productgallery->images as $index => $image)
                                     <img src="{{ file_exists(public_path('uploads/products/' . $image)) ? asset('uploads/products/' . $image) : asset('uploads/default.png') }}"
                                         alt="Product Image" class="carousel-image profile_img_table"
                                         style="display: {{ $index == 0 ? 'block' : 'none' }};">
                                 @endforeach
                             </div>
                         @else
-                            <img src="{{ !empty($product->images[0]) && file_exists(public_path('uploads/products/' . $product->images[0])) ? asset('uploads/products/' . $product->images[0]) : asset('uploads/default.png') }}"
+                            <img src="{{ !empty($product->image[0]) && file_exists(public_path('uploads/products/' . $product->image[0])) ? asset('uploads/products/' . $product->images[0]) : asset('uploads/default.png') }}"
                                 alt="Product Image" class="profile_img_table">
                         @endif
                     </td>
@@ -87,19 +88,20 @@
 
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const carousel = document.getElementById("carousel-{{ $product->id }}");
-        if (carousel) {
+    document.addEventListener("DOMContentLoaded", function () {
+        const carousels = document.querySelectorAll(".custom-carousel");
+
+        carousels.forEach(carousel => {
             const images = carousel.querySelectorAll(".carousel-image");
             let currentIndex = 0;
 
-            carousel.addEventListener("click", function() {
+            carousel.addEventListener("click", function () {
                 images[currentIndex].style.display = "none";
 
                 currentIndex = (currentIndex + 1) % images.length;
 
                 images[currentIndex].style.display = "block";
             });
-        }
+        });
     });
 </script>

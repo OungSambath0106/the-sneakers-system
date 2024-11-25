@@ -140,25 +140,6 @@
                                             </span>
                                         @enderror
                                     </div>
-                                    {{-- <div class="form-group col-md-6">
-                                        <div class="form-group">
-                                            <label for="image">{{ __('Image') }}</label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="hidden" name="images"
-                                                        value="{{ $product->image }}">
-                                                    <input type="file" class="custom-file-input image-file-input"
-                                                        id="image" name="image" accept="image/png, image/jpeg">
-                                                    <label class="custom-file-label"
-                                                        for="image">{{ $product->image ?? __('Choose Image') }}</label>
-                                                </div>
-                                            </div>
-                                            <div class="preview text-center border rounded mt-2" style="height: 150px">
-                                                <img src="{{ $product->image && file_exists(public_path('uploads/products/' . $product->image)) ? asset('uploads/products/' . $product->image) : asset('uploads/default.png') }}"
-                                                    alt="" height="100%">
-                                            </div>
-                                        </div>
-                                    </div> --}}
                                     <div class="form-group col-md-12">
                                         <div class="form-group mb-0">
                                             <label for="exampleInputFile">{{ __('Product Info') }}</label>
@@ -172,12 +153,12 @@
                                                 </thead>
                                                 <tbody>
                                                     @if ($product->product_info && is_array($product->product_info))
-                                                        @foreach ($product->product_info as $key => $product)
+                                                        @foreach ($product->product_info as $key => $pro_info)
                                                             <tr>
                                                                 <td>
                                                                     <input type="number" class="form-control"
                                                                         name="products_info[product_size][]" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
-                                                                        value="{{ $product['product_size'] ?? '' }}">
+                                                                        value="{{ $pro_info['product_size'] ?? '' }}">
                                                                 </td>
                                                                 <td>
                                                                     <div class="input-group">
@@ -186,13 +167,13 @@
                                                                         </div>
                                                                         <input type="number" class="form-control"
                                                                             name="products_info[product_price][]" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
-                                                                            value="{{ $product['product_price'] ?? '' }}">
+                                                                            value="{{ $pro_info['product_price'] ?? '' }}">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <input type="number" class="form-control"
                                                                         name="products_info[product_qty][]" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
-                                                                        value="{{ $product['product_qty'] ?? '' }}">
+                                                                        value="{{ $pro_info['product_qty'] ?? '' }}">
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -224,7 +205,7 @@
                                     <div class="form-group col-md-12">
                                         <div class="form-group">
                                             <label for="exampleInputFile">{{ __('Image') }}</label>
-                                            <div id="fileUpload"></div>
+                                            @include('backends.product.partial.edit_product_galleries')
                                         </div>
                                     </div>
                                 </div>
@@ -249,133 +230,55 @@
 
 @push('js')
     <script>
-        $(document).ready(function () {
-            var fileUploadCount = 0;
-
-            $.fn.fileUpload = function () {
-                return this.each(function () {
-                    var fileUploadDiv = $(this);
-                    var fileUploadId = `fileUpload-${++fileUploadCount}`;
-
-                    // Creates HTML content for the file upload area.
-                    var fileDivContent = `
-                        <label for="${fileUploadId}" class="file-upload">
-                            <div>
-                                <i class="material-icons-outlined">cloud_upload</i>
-                                <p>Upload Multi Image</p>
-                                <span>OR</span>
-                                <div>Browse Files</div>
-                            </div>
-                            <input type="file" id="${fileUploadId}" name="images[]" multiple hidden />
-                        </label>
-                    `;
-
-                    fileUploadDiv.html(fileDivContent).addClass("file-container");
-
-                    var table = null;
-                    var tableBody = null;
-
-                    // Creates a table containing file information.
-                    function createTable() {
-                        table = $(`
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>File Name</th>
-                                        <th>Preview</th>
-                                        <th>Size</th>
-                                        <th>Type</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        `);
-
-                        tableBody = table.find("tbody");
-                        fileUploadDiv.append(table);
-                    }
-
-                    // Adds the information of uploaded files to table.
-                    function handleFiles(files) {
-                        if (!table) {
-                            createTable();
-                        }
-
-                        tableBody.empty();
-                        if (files.length > 0) {
-                            $.each(files, function (index, file) {
-                                var fileName = product.images;
-                                var fileSize = (file.size / 1024).toFixed(2) + " KB";
-                                var fileType = file.type;
-                                var preview = fileType.startsWith("image")
-                                    ? `<img src="${URL.createObjectURL(file)}" alt="${fileName}" height="30">`
-                                    : `<i class ="material-icons-outlined">visibility_off</i>`;
-
-                                tableBody.append(`
-                                    <tr>
-                                        <td>${index + 1}</td>
-                                        <td>${fileName}</td>
-                                        <td>${preview}</td>
-                                        <td>${fileSize}</td>
-                                        <td>${fileType}</td>
-                                        <td><button type="button" class="deleteBtn"><i class="material-icons-outlined">delete</i></button></td>
-                                    </tr>
-                                `);
-                            });
-
-                            tableBody.find(".deleteBtn").click(function () {
-                                $(this).closest("tr").remove();
-
-                                if (tableBody.find("tr").length === 0) {
-                                    tableBody.append('<tr><td colspan="6" class="no-file">No files selected!</td></tr>');
-                                }
-                            });
-                        }
-                    }
-
-                    // Events triggered after dragging files.
-                    fileUploadDiv.on({
-                        dragover: function (e) {
-                            e.preventDefault();
-                            fileUploadDiv.toggleClass("dragover", e.type === "dragover");
-                        },
-                        drop: function (e) {
-                            e.preventDefault();
-                            fileUploadDiv.removeClass("dragover");
-                            handleFiles(e.originalEvent.dataTransfer.files);
-                        },
-                    });
-
-                    // Event triggered when file is selected.
-                    fileUploadDiv.find(`#${fileUploadId}`).change(function () {
-                        handleFiles(this.files);
-                    });
-                });
-            };
-
-            // Initialize file upload
-            $("#fileUpload").fileUpload();
-        });
-    </script>
-    <script>
+        const compressor = new window.Compress();
         $('.custom-file-input').change(function(e) {
-            var reader = new FileReader();
-            var preview = $(this).closest('.form-group').find('.preview img');
-            reader.onload = function(e) {
-                preview.attr('src', e.target.result).show();
-            }
-            reader.readAsDataURL(this.files[0]);
-        });
+            compressor.compress([...e.target.files], {
+                size: 4,
+                quality: 0.75,
+            }).then((output) => {
 
-        $(document).on('click', '.nav-tabs .nav-link', function(e) {
-            if ($(this).data('lang') != 'en') {
-                $('.no_translate_wrapper').addClass('d-none');
-            } else {
-                $('.no_translate_wrapper').removeClass('d-none');
-            }
+                var image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
+                var container = $(this).closest('.form-group').find('.preview');
+                if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
+                    container.empty();
+                }
+
+                var file = '';
+                var formData = new FormData();
+                $.each(output, function(index, value) {
+                    file = Compress.convertBase64ToFile(value.data, value.ext);
+                    formData.append('images[]', file);
+                });
+                $.ajax({
+                    url: "{{ route('save_temp_file') }}",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.status == 0) {
+                            toastr.error(response.msg);
+                        }
+                        if (response.status == 1) {
+                            var temp_files = response.temp_files;
+                            for (var i = 0; i < temp_files.length; i++) {
+                                var temp_file = temp_files[i];
+                                var img_container = $('<div></div>').addClass('img_container');
+                                var img = $('<img>').attr('src',
+                                    "{{ asset('uploads/temp') }}" + '/' + temp_file);
+                                img_container.append(img);
+                                container.append(img_container);
+
+                                var curent_file_name = image_names_hidden.val();
+                                var new_file_name = curent_file_name + ' ' + temp_file;
+
+
+                                image_names_hidden.val(new_file_name);
+                            }
+                        }
+                    }
+                });
+            });
         });
     </script>
     <script>

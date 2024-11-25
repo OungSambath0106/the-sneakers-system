@@ -15,13 +15,10 @@ class Product extends Model
 
     use SoftDeletes;
 
-    protected $appends = ['images_url'];
-
     protected $guarded = ['id'];
 
     protected $casts = [
-        'product_info' => 'array',
-        'images' => 'array'
+        'product_info' => 'array'
     ];
 
     public function getNameAttribute($name)
@@ -39,16 +36,6 @@ class Product extends Model
         return $this->translations[1]->value ?? $description;
     }
 
-    public function getImagesUrlAttribute()
-    {
-        if (!empty($this->images_url)) {
-            $images_url = asset('uploads/products/' . rawurlencode($this->images_url));
-        } else {
-            $images_url = null;
-        }
-        return $images_url;
-    }
-
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -57,6 +44,11 @@ class Product extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class, 'brand_id');
+    }
+
+    public function productgallery()
+    {
+        return $this->hasOne(ProductGallery::class, 'product_id');
     }
 
     public function translations()

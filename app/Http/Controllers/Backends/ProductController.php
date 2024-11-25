@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\BusinessSetting;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\ProductGallery;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -21,7 +22,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::latest('id')->paginate(10);
+        $products = Product::latest('id')->with('productgallery')->paginate(10);
         return view('backends.product.index', compact('products'));
     }
 
@@ -95,23 +96,26 @@ class ProductController extends Controller
                 $pro->product_info =$products_info;
             }
 
-            // if ($request->hasFile('image')) {
-            //     $pro->image = ImageManager::upload('uploads/products/', $request->image);
-            // }
-
-            if ($request->hasFile('images')) {
-                $images = [];
-
-                foreach ($request->file('images') as $image) {
-                    if ($image->isValid()) {
-                        $images[] = ImageManager::upload('uploads/products/', $image);
-                    }
-                }
-
-                $pro->images = $images;
-            }
-
             $pro->save();
+
+            $productid = $pro->id;
+            $product_gallery = new ProductGallery();
+            $product_gallery->product_id = $productid;
+            if ($request->filled('image_names')) {
+                // $imageDetails = json_decode($request->input('image_names'), true);
+                $imageDetails = explode(' ', $request->input('image_names'));
+                $product_data = [];
+                foreach ($imageDetails as $detail) {
+                    $directory = public_path('uploads/products');
+                    if (!\File::exists($directory)) {
+                        \File::makeDirectory($directory, 0777, true);
+                    }
+                    $moved_image = \File::move(public_path('uploads/temp/' . $detail), $directory . '/' . $detail);
+                    $product_data[] = $detail;
+                    $product_gallery->images = $product_data;
+                    $product_gallery->save();
+                }
+            }
 
             $data = [];
             foreach ($request->lang as $index => $key) {
@@ -166,16 +170,15 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-
-        $product = Product::withoutGlobalScopes()->with('translations')->with('brand')->findOrFail($id);
         $brands = Brand::all();
+        $product = Product::withoutGlobalScopes()->with('translations', 'brand', 'productgallery')->findOrFail($id);
 
         $language = BusinessSetting::where('type', 'language')->first();
         $language = $language->value ?? null;
         $default_lang = 'en';
         $default_lang = json_decode($language, true)[0]['code'];
 
-        return view('backends.product.edit', compact('product', 'brands', 'language', 'default_lang'));
+        return view('backends.product.edit', compact('product', 'brands', 'default_lang', 'language'));
     }
 
     /**
@@ -234,15 +237,22 @@ class ProductController extends Controller
                 $product->product_info =$products_info;
             }
 
-            if ($request->hasFile('image')) {
-                if ($product->image && file_exists(public_path('uploads/products/' . $product->image))) {
-                    unlink(public_path('uploads/products/' . $product->image));
-                }
-
-                $product->image = ImageManager::update('uploads/products/', null, $request->image);
-            }
-
             $product->save();
+
+            $product_gallery = ProductGallery::where('product_id',$product->id)->first();
+            $productgallery = $product_gallery->images??[];
+            $imageNameToUpdate = $request->input('name_images');
+            $updatedImages = array_map(function ($image) use ($imageNameToUpdate) {
+                foreach ($imageNameToUpdate as $index => $name) {
+                    if ($image['name'] === $name) {
+                        $image['alt_tag'] = $newAltTag[$index] ?? $image['alt_tag'];
+                        $image['description'] = $newDescription[$index] ?? $image['description'];
+                    }
+                }
+                return $image;
+            }, $productgallery);
+            $product_gallery->images = $updatedImages;
+            $product_gallery->save();
 
             $data = [];
             foreach ($request->lang as $index => $key) {
@@ -340,5 +350,48 @@ class ProductController extends Controller
         }
 
         return response()->json($output);
+    }
+
+    public function uploadNewGallery(Request $request)
+    {
+        try{
+            // \Log::info($request->all());
+            DB::beginTransaction();
+            $product_gallery = ProductGallery::where('product_id', $request->product_id)->first();
+            if (!$product_gallery) {
+                $product_gallery = new ProductGallery();
+                $product_gallery->product_id = $request->product_id;
+                $product_gallery->images = [];
+            }
+            $productgallery = $product_gallery->images??[];
+
+            if ($request->filled('image_names')) {
+                $imageDetails = json_decode($request->input('image_names'), true);
+                $room_data = [];
+                foreach ($imageDetails as $key => $detail) {
+                    $directory = public_path('uploads/products');
+                    if (!\File::exists($directory)) {
+                        \File::makeDirectory($directory, 0777, true);
+                    }
+                    $moved_image = \File::move(public_path('uploads/temp/' . $detail), $directory . '/' . $detail);
+                    $room_data[] = $detail;
+                }
+                $merged = array_merge($productgallery, $room_data);
+                $product_gallery->images = $merged;
+            }
+            $product_gallery->save();
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => __('Created successfully'),
+            ]);
+        } catch(Exception $e){
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }
