@@ -12,11 +12,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($products as $product)
+            @forelse ($products as $product)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>
-                        {{-- @dd($product->productgallery->images); --}}
                         @if ($product->productgallery && count($product->productgallery->images) > 0)
                             <div class="custom-carousel carousel-{{ $product->id }}" data-product-id="{{ $product->id }}" data-current-index="0">
                                 @foreach ($product->productgallery->images as $index => $image)
@@ -69,7 +68,11 @@
 
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="7" class="text-center" style="background-color: ghostwhite">{{ __('Products are not available.') }}</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 

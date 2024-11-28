@@ -110,6 +110,7 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         Route::get('product/update_status', [ProductController::class, 'updateStatus'])->name('product.update_status');
         Route::resource('product', ProductController::class);
         Route::post('product/upload/gallery', [ProductController::class, 'uploadNewGallery'])->name('product.upload_gallery');
+        Route::delete('product/delete/gallery',[ProductController::class, 'deleteProductGallery'])->name('product.delete_gallery');
     });
 
 });

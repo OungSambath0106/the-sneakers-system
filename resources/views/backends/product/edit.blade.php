@@ -140,15 +140,31 @@
                                             </span>
                                         @enderror
                                     </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="required_lable" for="rating">{{ __('Star Rating') }}</label>
+                                        <select name="rating" id="rating" class="form-control select2 @error('rating') is-invalid @enderror">
+                                            <option value="">{{ __('Select Rating') }}</option>
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <option value="{{ $i }}" {{ old('rating', $product->rating) == $i ? 'selected' : '' }}>
+                                                    {{ $i }} @if($i < 2){{ __('Star') }}@else{{ __('Stars') }}@endif
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        @error('rating')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                     <div class="form-group col-md-12">
                                         <div class="form-group mb-0">
                                             <label for="exampleInputFile">{{ __('Product Info') }}</label>
                                             <table class="table table-bordered table-striped table-hover rowfy mb-0">
                                                 <thead>
                                                     <tr>
-                                                        <th class="col-4">Size</th>
-                                                        <th class="col-4">Price</th>
-                                                        <th class="col-4">Quantity</th>
+                                                        <th class="col-4">{{ __('Size') }}</th>
+                                                        <th class="col-4">{{ __('Price') }}</th>
+                                                        <th class="col-4">{{ __('Quantity') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -231,53 +247,56 @@
 @push('js')
     <script>
         const compressor = new window.Compress();
-        $('.custom-file-input').change(function(e) {
-            compressor.compress([...e.target.files], {
-                size: 4,
-                quality: 0.75,
-            }).then((output) => {
+        $('.custom-file-input').change(function (e) {
+            const files = [...e.target.files];
+            const image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
+            const container = $(this).closest('.form-group').find('.preview');
 
-                var image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
-                var container = $(this).closest('.form-group').find('.preview');
-                if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
-                    container.empty();
-                }
+            if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
+                container.empty();
+            }
 
-                var file = '';
-                var formData = new FormData();
-                $.each(output, function(index, value) {
-                    file = Compress.convertBase64ToFile(value.data, value.ext);
+            let formData = new FormData();
+
+            files.forEach(file => {
+                if (file.type === 'image/png') {
                     formData.append('images[]', file);
-                });
-                $.ajax({
-                    url: "{{ route('save_temp_file') }}",
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        if (response.status == 0) {
-                            toastr.error(response.msg);
-                        }
-                        if (response.status == 1) {
-                            var temp_files = response.temp_files;
-                            for (var i = 0; i < temp_files.length; i++) {
-                                var temp_file = temp_files[i];
-                                var img_container = $('<div></div>').addClass('img_container');
-                                var img = $('<img>').attr('src',
-                                    "{{ asset('uploads/temp') }}" + '/' + temp_file);
-                                img_container.append(img);
-                                container.append(img_container);
+                } else {
+                    compressor.compress([file], {
+                        size: 4,
+                        quality: 0.75,
+                    }).then((output) => {
+                        output.forEach(compressed => {
+                            const compressedFile = Compress.convertBase64ToFile(compressed.data, compressed.ext);
+                            formData.append('images[]', compressedFile);
+                        });
+                    });
+                }
+            });
 
-                                var curent_file_name = image_names_hidden.val();
-                                var new_file_name = curent_file_name + ' ' + temp_file;
+            $.ajax({
+                url: "{{ route('save_temp_file') }}",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status == 0) {
+                        toastr.error(response.msg);
+                    } else if (response.status == 1) {
+                        const temp_files = response.temp_files;
+                        temp_files.forEach(temp_file => {
+                            const img_container = $('<div></div>').addClass('img_container');
+                            const img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" + '/' + temp_file);
+                            img_container.append(img);
+                            container.append(img_container);
 
-
-                                image_names_hidden.val(new_file_name);
-                            }
-                        }
+                            const current_file_name = image_names_hidden.val();
+                            const new_file_name = current_file_name + ' ' + temp_file;
+                            image_names_hidden.val(new_file_name);
+                        });
                     }
-                });
+                }
             });
         });
     </script>

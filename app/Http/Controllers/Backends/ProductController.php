@@ -20,10 +20,23 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::latest('id')->with('productgallery')->paginate(10);
-        return view('backends.product.index', compact('products'));
+        $products = Product::when($request->brand_id, function ($query) use ($request) {
+                        $query->where('brand_id', $request->brand_id);
+                    })
+                    ->with('productgallery')
+                    ->latest('id')
+                    ->paginate(10);
+        $brands = Brand::all();
+        if ($request->ajax()) {
+            $view = view('backends.product._table', compact('products', 'brands'))->render();
+            return response()->json([
+                'view' => $view
+            ]);
+        }
+
+        return view('backends.product.index', compact('products', 'brands'));
     }
 
     /**
@@ -83,6 +96,7 @@ class ProductController extends Controller
             $pro->name = $request->name[array_search('en', $request->lang)];
             $pro->description = $request->description[array_search('en', $request->lang)];
             $pro->brand_id = $request->brand_id;
+            $pro->rating = $request->rating;
             $pro->created_by = auth()->user()->id;
 
             $products_info = [];
@@ -102,8 +116,8 @@ class ProductController extends Controller
             $product_gallery = new ProductGallery();
             $product_gallery->product_id = $productid;
             if ($request->filled('image_names')) {
-                // $imageDetails = json_decode($request->input('image_names'), true);
-                $imageDetails = explode(' ', $request->input('image_names'));
+                $imageDetails = json_decode($request->input('image_names'), true);
+                // $imageDetails = explode(' ', $request->input('image_names'));
                 $product_data = [];
                 foreach ($imageDetails as $detail) {
                     $directory = public_path('uploads/products');
@@ -225,6 +239,7 @@ class ProductController extends Controller
             $product->name = $request->name[array_search('en', $request->lang)];
             $product->description = $request->description[array_search('en', $request->lang)];
             $product->brand_id = $request->brand_id;
+            $product->rating = $request->rating;
 
             $products_info = [];
             if ($request->products_info) {
@@ -241,17 +256,21 @@ class ProductController extends Controller
 
             $product_gallery = ProductGallery::where('product_id',$product->id)->first();
             $productgallery = $product_gallery->images??[];
-            $imageNameToUpdate = $request->input('name_images');
-            $updatedImages = array_map(function ($image) use ($imageNameToUpdate) {
-                foreach ($imageNameToUpdate as $index => $name) {
-                    if ($image['name'] === $name) {
-                        $image['alt_tag'] = $newAltTag[$index] ?? $image['alt_tag'];
-                        $image['description'] = $newDescription[$index] ?? $image['description'];
+            $imageNameToUpdate = $request->input('image_names');
+            $newImage = json_decode($imageNameToUpdate, true);
+            $product_data = [];
+            if (is_array($newImage)) {
+                foreach ($newImage as $detail) {
+                    $directory = public_path('uploads/products');
+                    if (!\File::exists($directory)) {
+                        \File::makeDirectory($directory, 0777, true);
                     }
+                    $moved_image = \File::move(public_path('uploads/temp/' . $detail), $directory . '/' . $detail);
+                    $product_data[] = $detail;
                 }
-                return $image;
-            }, $productgallery);
-            $product_gallery->images = $updatedImages;
+            }
+            $merge = array_merge($productgallery, $product_data);
+            $product_gallery->images = $merge;
             $product_gallery->save();
 
             $data = [];
@@ -355,7 +374,7 @@ class ProductController extends Controller
     public function uploadNewGallery(Request $request)
     {
         try{
-            // \Log::info($request->all());
+            \Log::info($request->all());
             DB::beginTransaction();
             $product_gallery = ProductGallery::where('product_id', $request->product_id)->first();
             if (!$product_gallery) {
@@ -366,17 +385,17 @@ class ProductController extends Controller
             $productgallery = $product_gallery->images??[];
 
             if ($request->filled('image_names')) {
-                $imageDetails = json_decode($request->input('image_names'), true);
-                $room_data = [];
-                foreach ($imageDetails as $key => $detail) {
+                $imageDetails = $request->input('image_names');
+                $product_data = [];
+                foreach ($imageDetails as $detail) {
                     $directory = public_path('uploads/products');
                     if (!\File::exists($directory)) {
                         \File::makeDirectory($directory, 0777, true);
                     }
                     $moved_image = \File::move(public_path('uploads/temp/' . $detail), $directory . '/' . $detail);
-                    $room_data[] = $detail;
+                    $product_data[] = $detail;
                 }
-                $merged = array_merge($productgallery, $room_data);
+                $merged = array_merge($productgallery, $product_data);
                 $product_gallery->images = $merged;
             }
             $product_gallery->save();
@@ -393,5 +412,35 @@ class ProductController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function deleteProductGallery(Request $request)
+    {
+        $productGallery = ProductGallery::where('product_id', $request->product_id)->first();
+        if ($productGallery) {
+            $imageNameToDelete = $request->input('name');
+            $images = $productGallery->images;
+            $imageExists = false;
+            foreach ($images as $image) {
+                if ($image === $imageNameToDelete) {
+                    $imageExists = true;
+                    break;
+                }
+            }
+            if ($imageExists) {
+                $newImages = array_filter($images, function ($image) use ($imageNameToDelete) {
+                    return $image !== $imageNameToDelete;
+                });
+                $imagePath = public_path('uploads/products/' . $imageNameToDelete);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                $productGallery->images = array_values($newImages);
+                $productGallery->save();
+
+                return response()->json(['success' => true]);
+            }
+        }
+        return response()->json(['success' => false, 'message' => 'Image not found.']);
     }
 }

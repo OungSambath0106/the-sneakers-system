@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($users as $user)
+            @forelse ($users as $user)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>
@@ -54,7 +54,11 @@
                         @endif
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="9" class="text-center" style="background-color: ghostwhite">{{ __('Users are not available.') }}</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 

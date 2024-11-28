@@ -82,7 +82,7 @@
                                                                     id="description_{{ $lang['code'] }}"
                                                                     class="form-control @error('description') is-invalid @enderror"
                                                                     name="description[]"
-                                                                    placeholder="{{ __('Enter description') }}"
+                                                                    placeholder="{{ __('Enter Description') }}"
                                                                     value=""></textarea>
                                                                 @error('description')
                                                                     <span class="invalid-feedback" role="alert">
@@ -121,34 +121,29 @@
 
                                         @enderror
                                     </div>
-                                    {{-- <div class="form-group col-md-6 mb-2">
-                                        <div class="form-group">
-                                            <label for="exampleInputFile">{{ __('Image') }}</label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="hidden" name="images" class="image_hidden">
-                                                    <input type="file" class="custom-file-input image-file-input"
-                                                        id="exampleInputFile" name="image" accept="image/png, image/jpeg">
-                                                    <label class="custom-file-label"
-                                                        for="exampleInputFile">{{ __('Choose Image') }}</label>
-                                                </div>
-                                            </div>
-                                            <div class="preview preview-multiple text-center border rounded mt-2"
-                                                style="height: 150px">
-                                                <img src="{{ asset('uploads/defualt.png') }}" alt=""
-                                                    height="100%">
-                                            </div>
-                                        </div>
-                                    </div> --}}
+                                    <div class="form-group col-md-6">
+                                        <label class="required_lable" for="rating">{{ __('Star Rating') }}</label>
+                                        <select name="rating" id="rating" class="form-control select2 @error('rating') is-invalid @enderror">
+                                            <option value="">{{ __('Select Rating') }}</option>
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <option value="{{ $i }}">{{ $i }} @if($i < 2){{ __('Star') }}@else{{ __('Stars') }}@endif</option>
+                                            @endfor
+                                        </select>
+                                        @error('rating')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                     <div class="form-group col-md-12">
                                         <div class="form-group mb-0">
                                             <label for="exampleInputFile">{{ __('Product Info') }}</label>
                                             <table class="table table-bordered table-striped table-hover rowfy mb-0">
                                                 <thead>
                                                     <tr>
-                                                        <th class="col-4">Size</th>
-                                                        <th class="col-4">Price</th>
-                                                        <th class="col-4">Quantity</th>
+                                                        <th class="col-4">{{ __('Size') }}</th>
+                                                        <th class="col-4">{{ __('Price') }}</th>
+                                                        <th class="col-4">{{ __('Quantity') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -257,61 +252,6 @@
             });
         });
     </script>
-    {{-- <script>
-        const compressor = new window.Compress();
-        $('.custom-file-input').change(function(e) {
-            compressor.compress([...e.target.files], {
-                size: 4,
-                quality: 0.75,
-            }).then((output) => {
-                var files = Compress.convertBase64ToFile(output[0].data, output[0].ext);
-                var formData = new FormData();
-
-                var image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
-                var container = $(this).closest('.form-group').find('.preview');
-                if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
-                    container.empty();
-                }
-                formData.append('image', files);
-
-                $.ajax({
-                    url: "{{ route('save_temp_file') }}",
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status == 0) {
-                            toastr.error(response.msg);
-                        }
-                        if (response.status == 1) {
-                            container.empty();
-                            var temp_file = response.temp_files;
-                            var img_container = $('<div></div>').addClass('img_container');
-                            var img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" +
-                                '/' + temp_file);
-                            img_container.append(img);
-                            container.append(img_container);
-
-                            var new_file_name = temp_file;
-                            console.log(new_file_name);
-
-                            image_names_hidden.val(new_file_name);
-                        }
-                    }
-                });
-            });
-        });
-
-        $(document).on('click', '.nav-tabs .nav-link', function(e) {
-            if ($(this).data('lang') != 'en') {
-                $('.no_translate_wrapper').addClass('d-none');
-            } else {
-                $('.no_translate_wrapper').removeClass('d-none');
-            }
-        });
-    </script> --}}
     <script>
         // Function to prevent negative values
         function validatePriceInput(input) {

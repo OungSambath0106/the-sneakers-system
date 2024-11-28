@@ -50,7 +50,7 @@
 
         <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <img src="                            
+                <img src="
                 @if (auth()->user()->image && file_exists(public_path('uploads/users/' . auth()->user()->image)))
                  {{ asset('uploads/users/'. auth()->user()->image) }}
                 @else
@@ -78,8 +78,8 @@
                 </li>
                 <!-- Menu Footer-->
                 <li class="user-footer">
-                    <a href="{{ route('admin.show_info',auth()->user()->id) }}" class="btn btn-info  btn-flat"><i class="fa fa-user mr-2"></i>Profile</a>
-                    <a href="{{ route('logout') }}" class="btn  btn-danger btn-flat float-right"><i class="fas fa-sign-out-alt mr-2"></i>Sign out</a>
+                    <a href="{{ route('admin.show_info',auth()->user()->id) }}" class="btn btn-info  btn-flat"><i class="fa fa-user mr-2"></i>{{ __('Profile') }}</a>
+                    <a href="{{ route('logout') }}" class="btn  btn-danger btn-flat float-right"><i class="fas fa-sign-out-alt mr-2"></i>{{ __('Sign out') }}</a>
                 </li>
             </ul>
         </li>

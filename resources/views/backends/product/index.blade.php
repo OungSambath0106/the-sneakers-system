@@ -41,6 +41,39 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
+                        <!-- /.card-header -->
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col-sm-6">
+                                    <h3 class="card-title"> <i class="fa fa-filter" aria-hidden="true"></i>
+                                        {{ __('Filter') }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="tab-content" id="custom-content-below-tabContent">
+                                        <div class="col-sm-6 filter">
+                                            <select name="brand_id" id="brand_id" class="form-control select2">
+                                                <option value="" class="form-control"
+                                                    {{ !request()->filled('brands') ? 'selected' : '' }}>
+                                                    {{ __('All Brand') }}
+                                                </option>
+                                                @foreach ($brands as $brand)
+                                                    <option value="{{ $brand->id }}" class="form-control"
+                                                        {{ $brand->id == request('brand_id') ? 'selected' : '' }}>
+                                                        {{ $brand->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col-sm-6">
@@ -168,6 +201,32 @@
                     }
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $(document).on('change', '#brand_id', function(e) {
+                e.preventDefault();
+                var brand_id = $('#brand_id').val();
+                $.ajax({
+                    type: "GET",
+                    url: '{{ route('admin.product.index') }}',
+                    data: {
+                        'brand_id': brand_id
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        if (response.view) {
+                            $('.table-wrapper').replaceWith(response.view);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+            $('#brand_id').select2();
         });
     </script>
 @endpush

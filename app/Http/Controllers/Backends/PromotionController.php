@@ -28,13 +28,18 @@ class PromotionController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $promotions = Promotion::latest('id')->paginate(10);
         $promotions = Promotion::when($request->start_date && $request->end_date, function ($query) use ($request) {
-            $query->whereDate('start_date', '=', $request->start_date)
-                ->whereDate('end_date', '=', $request->end_date);
+            $query->where(function ($query) use ($request) {
+                $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                      ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+                      ->orWhere(function ($query) use ($request) {
+                          $query->where('start_date', '<=', $request->start_date)
+                                ->where('end_date', '>=', $request->end_date);
+                      });
+            });
         })
-            ->latest('id')
-            ->paginate(10);
+        ->latest('id')
+        ->paginate(10);
 
         return view('backends.promotion.index', compact('promotions'));
     }

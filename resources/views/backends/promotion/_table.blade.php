@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($promotions as $item)
+            @forelse ($promotions as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->discount_type ?? 'Null' }}</td>
@@ -55,7 +55,11 @@
                         </form>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="8" class="text-center" style="background-color: ghostwhite">{{ __('Promotions are not available.') }}</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 
