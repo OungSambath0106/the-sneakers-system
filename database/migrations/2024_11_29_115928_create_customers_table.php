@@ -17,12 +17,12 @@ class CreateCustomersTable extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email');
+            $table->enum('gender', ['male', 'female']);
             $table->string('phone');
+            $table->string('email');
             $table->string('password');
-            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->string('image')->nullable();
-            $table->unsignedInteger('created_by')->nullable();
+            $table->integer('status')->default(1);
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

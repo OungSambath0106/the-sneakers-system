@@ -38,6 +38,9 @@ class PromotionController extends Controller
                       });
             });
         })
+        ->when($request->discount_type, function ($query, $discountType) {
+            $query->where('discount_type', $discountType);
+        })
         ->latest('id')
         ->paginate(10);
 

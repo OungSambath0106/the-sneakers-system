@@ -74,6 +74,22 @@
                                     </form>
                                 </div>
                             </div>
+                            <div class="col-9 mt-3">
+                                <div class="col-md-6">
+                                    <label for="discount_type">{{ __('Discount Type') }}</label>
+                                    <select name="discount_type" id="discount_type" class="form-control select2">
+                                        <option value="" {{ request('discount_type') == '' ? 'selected' : '' }}>
+                                            {{ __('All Discount Types') }}
+                                        </option>
+                                        <option value="percent" {{ request('discount_type') == 'percent' ? 'selected' : '' }}>
+                                            {{ __('Percent') }}
+                                        </option>
+                                        <option value="amount" {{ request('discount_type') == 'amount' ? 'selected' : '' }}>
+                                            {{ __('Amount') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="card">
@@ -104,6 +120,16 @@
     <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
 @endsection
 @push('js')
+    <script>
+        $(document).ready(function () {
+            $('#discount_type').change(function () {
+                let discountType = $(this).val();
+                let url = new URL(window.location.href);
+                url.searchParams.set('discount_type', discountType);
+                window.location.href = url.toString();
+            });
+        });
+    </script>
     <script>
         $('.btn_add').click(function(e) {
             var tbody = $('.tbody');

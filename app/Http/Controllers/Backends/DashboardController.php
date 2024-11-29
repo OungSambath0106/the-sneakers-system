@@ -16,9 +16,11 @@ class DashboardController extends Controller
     public function index()
     {
         $users = User::get();
+        $customers = Customer::take(8)->get();
+        $totalCustomers = Customer::count();
         $brands = Brand::get();
         $products = Product::get();
 
-        return view('backends.index', compact('users', 'brands', 'products'));
+        return view('backends.index', compact('users', 'customers', 'totalCustomers', 'brands', 'products'));
     }
 }

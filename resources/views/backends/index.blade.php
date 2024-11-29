@@ -17,6 +17,90 @@
         table td {
             height: 75.5px
         }
+        .card .card-head-row, .card-light .card-head-row {
+            display: flex;
+            align-items: center;
+        }
+        .card .card-head-row .card-tools, .card-light .card-head-row .card-tools {
+            margin-left: auto;
+            float: right;
+            padding-left: 15px;
+        }
+        .card-list .item-list {
+            display: flex;
+            flex-direction: row;
+            padding: 10px 0;
+            align-items: center;
+        }
+        .avatar {
+            width: 3.2rem;
+            height: 3.2rem;
+            position: relative;
+            display: inline-block;
+        }
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-list .item-list .info-user {
+            flex: 1;
+            padding-left: 1rem;
+        }
+        .card-list .item-list .info-user .username, .card-list .item-list .info-user a.username {
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .card-list .item-list .info-user .status {
+            font-size: 12px;
+            color: #7d7b7b;
+        }
+        .btn-danger {
+            color: #F25961 !important;
+            background: none;
+            border: none;
+        }
+        .avatar .avatar-title {
+            font-size: 18px;
+        }
+        .avatar .border {
+            border-width: 3px !important;
+        }
+        .avatar-title {
+            width: 100%;
+            height: 100%;
+            background-color: #6861CE;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .table thead th {
+            font-size: .85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 24px !important;
+            border-bottom-width: 1px;
+            font-weight: 600;
+        }
+        .table > tbody > tr > td, .table > tbody > tr > th {
+            padding: 16px 24px !important;
+        }
+        .table td, .table th {
+            font-size: 0.9rem;
+            border-bottom: 1px solid;
+            border-color: #ebedf2 !important;
+            vertical-align: middle !important;
+        }
+        .btn-icon.btn-sm {
+            height: 1.7rem;
+            min-width: 1.8rem;
+            width: 1.7rem;
+        }
+        .btn-round {
+            border-radius: 100px !important;
+        }
     </style>
 @endpush
 @section('contents')
@@ -30,11 +114,16 @@
                     class="small-box bg-white d-flex p-3 justify-content-between align-items-center dashboard_summary_box dashboard_shadow">
                     <div class="rounded-circle bg-light p-2" style="height: 70px; width: 70px;">
                         <div style="padding:7px;">
-                            <svg width="44px" height="44px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="9" cy="6" r="4" stroke="#3d95d0" stroke-width="1.5"/>
-                            <path d="M15 9C16.6569 9 18 7.65685 18 6C18 4.34315 16.6569 3 15 3" stroke="#3d95d0" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M5.88915 20.5843C6.82627 20.8504 7.88256 21 9 21C12.866 21 16 19.2091 16 17C16 14.7909 12.866 13 9 13C5.13401 13 2 14.7909 2 17C2 17.3453 2.07657 17.6804 2.22053 18" stroke="#3d95d0" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M18 14C19.7542 14.3847 21 15.3589 21 16.5C21 17.5293 19.9863 18.4229 18.5 18.8704" stroke="#3d95d0" stroke-width="1.5" stroke-linecap="round"/>
+                            <svg width="44px" height="44px" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="9" cy="6" r="4" stroke="#3d95d0" stroke-width="1.5" />
+                                <path d="M15 9C16.6569 9 18 7.65685 18 6C18 4.34315 16.6569 3 15 3" stroke="#3d95d0"
+                                    stroke-width="1.5" stroke-linecap="round" />
+                                <path
+                                    d="M5.88915 20.5843C6.82627 20.8504 7.88256 21 9 21C12.866 21 16 19.2091 16 17C16 14.7909 12.866 13 9 13C5.13401 13 2 14.7909 2 17C2 17.3453 2.07657 17.6804 2.22053 18"
+                                    stroke="#3d95d0" stroke-width="1.5" stroke-linecap="round" />
+                                <path d="M18 14C19.7542 14.3847 21 15.3589 21 16.5C21 17.5293 19.9863 18.4229 18.5 18.8704"
+                                    stroke="#3d95d0" stroke-width="1.5" stroke-linecap="round" />
                             </svg>
 
                         </div>
@@ -102,7 +191,186 @@
                     </div>
                 </div>
             </div>
-
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card card-round">
+                    <div class="card-body">
+                        <div class="card-head-row card-tools-still-right">
+                            <div class="card-title">{{ __('New Customers') }}</div>
+                            <div class="card-tools">
+                                <div class="dropdown">
+                                    <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-list py-4">
+                            @foreach ($customers as $customer)
+                                <div class="item-list">
+                                    <div class="avatar">
+                                        @if ($customer->image && file_exists(public_path('uploads/customers/' . $customer->image)))
+                                        <img src="{{ asset('uploads/customers/'. $customer->image) }}" alt="..." class="avatar-img rounded-circle">
+                                        @else
+                                            <span class="avatar-title rounded-circle border border-white">
+                                                {{ strtoupper(substr($customer->first_name, 0, 1)) }}{{ strtoupper(substr($customer->last_name, 0, 1)) }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="info-user ms-3">
+                                        <div class="username">{{ $customer->first_name }} {{ $customer->last_name }}</div>
+                                        <div class="status">{{ $customer->email }}</div>
+                                    </div>
+                                    <button class="btn btn-icon btn-link op-8 me-1">
+                                        <i class="far fa-envelope"></i>
+                                    </button>
+                                    <button class="btn btn-icon btn-link btn-danger op-8">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                        <span style="color: rgb(139, 139, 139)">{{ $totalCustomers }} {{ __('Customers') }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card card-round">
+                    <div class="card-header">
+                        <div class="card-head-row card-tools-still-right">
+                            <div class="card-title">{{ __('Transaction History') }}</div>
+                            <div class="card-tools">
+                                <div class="dropdown">
+                                    <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <!-- Projects table -->
+                            <table class="table align-items-center mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">{{ __('Payment Number') }}</th>
+                                        <th scope="col" class="text-end">{{ __('Date & Time') }}</th>
+                                        <th scope="col" class="text-end">{{ __('Amount') }}</th>
+                                        <th scope="col" class="text-end">{{ __('Status') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            <button class="btn btn-icon btn-round btn-success btn-sm me-2">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                            Payment from #10231
+                                        </th>
+                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
+                                        <td class="text-end">$250.00</td>
+                                        <td class="text-end">
+                                            <span class="badge badge-success">Completed</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <button class="btn btn-icon btn-round btn-success btn-sm me-2">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                            Payment from #10231
+                                        </th>
+                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
+                                        <td class="text-end">$250.00</td>
+                                        <td class="text-end">
+                                            <span class="badge badge-success">Completed</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <button class="btn btn-icon btn-round btn-success btn-sm me-2">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                            Payment from #10231
+                                        </th>
+                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
+                                        <td class="text-end">$250.00</td>
+                                        <td class="text-end">
+                                            <span class="badge badge-success">Completed</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <button class="btn btn-icon btn-round btn-success btn-sm me-2">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                            Payment from #10231
+                                        </th>
+                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
+                                        <td class="text-end">$250.00</td>
+                                        <td class="text-end">
+                                            <span class="badge badge-success">Completed</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <button class="btn btn-icon btn-round btn-success btn-sm me-2">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                            Payment from #10231
+                                        </th>
+                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
+                                        <td class="text-end">$250.00</td>
+                                        <td class="text-end">
+                                            <span class="badge badge-success">Completed</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <button class="btn btn-icon btn-round btn-success btn-sm me-2">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                            Payment from #10231
+                                        </th>
+                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
+                                        <td class="text-end">$250.00</td>
+                                        <td class="text-end">
+                                            <span class="badge badge-success">Completed</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <button class="btn btn-icon btn-round btn-success btn-sm me-2">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                            Payment from #10231
+                                        </th>
+                                        <td class="text-end">Mar 19, 2020, 2.45pm</td>
+                                        <td class="text-end">$250.00</td>
+                                        <td class="text-end">
+                                            <span class="badge badge-success">Completed</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 @endsection

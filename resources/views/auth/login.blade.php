@@ -32,21 +32,23 @@
 <body>
     <section class="ftco-section h-100vh">
         <div class="container h-100 d-flex justify-content-center align-items-center w-100">
-                <div style="width: min(100%, 750px) !important;" class="row py-4 align-items-center justify-content-center bg-white rounded shadow-sm">
+                <div style="width: min(100%, 900px) !important;" class="row py-4 align-items-center justify-content-center bg-white rounded shadow-sm">
                         <div class="col-md-4 col-lg-4">
                             <div class="px-3">
                                 @php
                                     $business = \App\Models\BusinessSetting::first();
                                     $data['web_header_logo'] = @$business->where('type', 'web_header_logo')->first()->value??'';
+                                    $data['company_name'] = @$business->where('type', 'company_name')->first()->value??'';
                                 @endphp
-                                <h2 class="heading-section d-flex justify-content-center">
+                                <h2 class="heading-section d-flex align-items-center flex-column justify-content-center">
                                     <img src="
                                         @if ($data['web_header_logo'] && file_exists('uploads/business_settings/'. $data['web_header_logo']))
                                             {{ asset('uploads/business_settings/'. $data['web_header_logo']) }}
                                         @else
                                             {{ asset('uploads/image/default.png') }}
                                         @endif
-                                        " class="custom-logo" alt="Phoum Chaufea">
+                                        " class="custom-logo" alt="The Sneaker Store">
+                                    <span class="mt-2" style="color:#3d95d0; font-size: 22px">{{ $data['company_name'] }}</span>
                                 </h2>
                             </div>
                         </div>

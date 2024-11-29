@@ -48,45 +48,38 @@
             </div>
         </li>
 
-        <li class="nav-item dropdown user-menu">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <img src="
-                @if (auth()->user()->image && file_exists(public_path('uploads/users/' . auth()->user()->image)))
-                 {{ asset('uploads/users/'. auth()->user()->image) }}
+        <li class="nav-item dropdown user-menu mt-1">
+            <a href="#" class="nav-link dropdown-toggle pr-0" data-toggle="dropdown" aria-expanded="false">
+                <img style="border:2.7px solid white;" src="
+                @if (auth()->user()->image && file_exists(public_path('uploads/users/' . auth()->user()->image))) {{ asset('uploads/users/' . auth()->user()->image) }}
                 @else
-                 {{ asset('uploads/default-profile.png') }}
-                @endif" class="user-image img-circle elevation-2"
-                    alt="User Image">
+                 {{ asset('uploads/default-profile.png') }} @endif"
+                    class="user-image img-circle elevation-2 " alt="User Image">
                 {{-- <span class="d-none d-md-inline">veha</span> --}}
             </a>
-            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;">
-                <!-- User image -->
-                <li class="user-header text-white" style="background-color: #d0803d !important;">
-                    {{-- <img src="{{ asset('uploads/default-profile.png') }}" class="img-circle elevation-2"
-                        alt="User Image"> --}}
-                        <img class="img-circle elevation-2" src="
-                            @if (auth()->user()->image && file_exists(public_path('uploads/users/' . auth()->user()->image)))
-                                {{ asset('uploads/users/'. auth()->user()->image) }}
-                            @else
-                                {{ asset('uploads/default-profile.png') }}
-                            @endif
-                            " alt="" height="100%">
-
-                    <p>
-                        <small>{{ Auth::user()->name }}</small>
-                    </p>
-                </li>
-                <!-- Menu Footer-->
-                <li class="user-footer">
-                    <a href="{{ route('admin.show_info',auth()->user()->id) }}" class="btn btn-info  btn-flat"><i class="fa fa-user mr-2"></i>{{ __('Profile') }}</a>
-                    <a href="{{ route('logout') }}" class="btn  btn-danger btn-flat float-right"><i class="fas fa-sign-out-alt mr-2"></i>{{ __('Sign out') }}</a>
-                </li>
-            </ul>
+            <div class="dropdown-menu dropdown-menu-right p-2 mt-1">
+                <div class="form-group p-2 mb-0">
+                    <h5>{{ Auth::user()->name }}</h5>
+                    <span
+                        style="color: rgb(172, 172, 172)">{{ implode(', ', Auth::user()->roles()->pluck('name')->toArray()) }}</span>
+                </div>
+                <hr class="my-2">
+                <a href="{{ route('admin.show_info', auth()->user()->id) }}"
+                    class="dropdown-item text-capitalize mb-1">
+                    {{ __('Settings') }}
+                </a>
+                <a href="{{ route('logout') }}" class="dropdown-item text-capitalize">
+                    {{ __('Log out') }}
+                </a>
+            </div>
         </li>
-        <li class="nav-item">
+        <li class="nav-item align-content-center pr-3 pl-1">
+            <span>Hi, <b class="text-capitalize" style="font-weight: 600">{{ Auth::user()->name }}</b></span>
+        </li>
+        {{-- <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                 <i class="fas fa-expand-arrows-alt"></i>
             </a>
-        </li>
+        </li> --}}
     </ul>
 </nav>

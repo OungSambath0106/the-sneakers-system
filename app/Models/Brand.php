@@ -27,11 +27,11 @@ class Brand extends Model
     public function getImagesUrlAttribute()
     {
         if (!empty($this->images_url)) {
-            $image_url = asset('uploads/brand/' . rawurlencode($this->images_url));
+            $images_url = asset('uploads/brand/' . rawurlencode($this->images_url));
         } else {
-            $image_url = null;
+            $images_url = null;
         }
-        return $image_url;
+        return $images_url;
     }
 
     public function products()

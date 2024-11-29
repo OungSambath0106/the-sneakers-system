@@ -12,6 +12,7 @@ use App\Http\Controllers\Backends\LanguageController;
 use App\Http\Controllers\Backends\DashboardController;
 use App\Http\Controllers\Backends\FileManagerController;
 use App\Http\Controllers\Backends\BusinessSettingController;
+use App\Http\Controllers\Backends\CustomerController;
 use App\Http\Controllers\Backends\OnboardController;
 use App\Http\Controllers\Backends\ProductController;
 use App\Http\Controllers\Backends\PromotionController;
@@ -86,6 +87,10 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         Route::get('/show_info/{id}', [UserController::class, 'showProfile'])->name('show_info');
         Route::POST('/update_info/{id}', [UserController::class, 'updateProfile'])->name('update_info');
         Route::resource('user', UserController::class);
+
+        //Route for Customer
+        Route::resource('customer', CustomerController::class);
+        Route::post('customer/update_status', [CustomerController::class, 'updateStatus'])->name('customer.update_status');
 
         //Route for role
         Route::resource('roles', RoleController::class);

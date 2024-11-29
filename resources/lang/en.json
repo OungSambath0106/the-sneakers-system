@@ -374,5 +374,13 @@
     "Total Products" : "Total Products",
     "Total Earning" : "Total Earning",
     "Sign out" : "Sign out",
-    "Recommend size 512 x 512 px" : "Recommend size 512 x 512 px"
+    "Recommend size 512 x 512 px" : "Recommend size 512 x 512 px",
+    "Log out" : "Log out",
+    "Gender" : "Gender",
+    "Male" : "Male",
+    "Female" : "Female",
+    "New Customers" : "New Customers",
+    "Transaction History" : "Transaction History",
+    "Payment Number" : "Payment Number",
+    "Date & Time" : "Date & Time"
  }

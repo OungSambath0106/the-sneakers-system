@@ -37,8 +37,8 @@
                 </li>
 
                 @if (auth()->user()->can('user.view') || auth()->user()->can('role.view'))
-                    <li class="nav-item @if (request()->routeIs('admin.user*', 'admin.roles*')) menu-is-opening menu-open @endif">
-                        <a href="#" class="nav-link @if (request()->routeIs('admin.user*', 'admin.roles*')) active @endif">
+                    <li class="nav-item @if (request()->routeIs('admin.user*', 'admin.customer*', 'admin.roles*')) menu-is-opening menu-open @endif">
+                        <a href="#" class="nav-link @if (request()->routeIs('admin.user*', 'admin.customer*', 'admin.roles*')) active @endif">
                             {{-- <i class="nav-icon fa fa-users"></i> --}}
                             @include('svgs.users')
                             <p>
@@ -54,6 +54,17 @@
                                         <i class="fa-solid fa-circle nav-icon"></i>
                                         <p>
                                             {{ __('Users') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (auth()->user()->can('customer.view'))
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.customer.index') }}"
+                                        class="nav-link @if (request()->routeIs('admin.customer*')) active @endif">
+                                        <i class="fa-solid fa-circle nav-icon"></i>
+                                        <p>
+                                            {{ __('Customers') }}
                                         </p>
                                     </a>
                                 </li>

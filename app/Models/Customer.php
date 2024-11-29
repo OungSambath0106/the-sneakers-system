@@ -2,19 +2,29 @@
 
 namespace App\Models;
 
-use App\Models\Comment;
-use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens as PassportHasApiTokens;
 
-class User extends Authenticatable
+class Customer extends Model
 {
-    use PassportHasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
+    use PassportHasApiTokens, HasFactory, Notifiable, SoftDeletes;
+
+    protected $appends = ['image_url'];
+
+    protected $guarded = [];
+
+    public function getImageUrlAttribute()
+    {
+        if (!empty($this->image_url)) {
+            $image_url = asset('uploads/customers/' . rawurlencode($this->image_url));
+        } else {
+            $image_url = null;
+        }
+        return $image_url;
+    }
 
     /**
      * The attributes that are mass assignable.
