@@ -74,7 +74,7 @@
             </div>
         </li>
         <li class="nav-item align-content-center pr-3 pl-1">
-            <span>Hi, <b class="text-capitalize" style="font-weight: 600">{{ Auth::user()->name }}</b></span>
+            <span>{{ __('Hi') }}, <b class="text-capitalize" style="font-weight: 600">{{ Auth::user()->name }}</b></span>
         </li>
         {{-- <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="#" role="button">

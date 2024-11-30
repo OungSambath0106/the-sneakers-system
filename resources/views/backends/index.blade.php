@@ -38,6 +38,13 @@
             position: relative;
             display: inline-block;
         }
+        .avatar-product {
+            width: 4.5rem;
+            height: 4.5rem;
+            position: relative;
+            display: inline-block;
+            align-content: center;
+        }
         .avatar-img {
             width: 100%;
             height: 100%;
@@ -58,9 +65,15 @@
         }
         .btn-danger {
             color: #F25961 !important;
-            background: none;
+            background: none !important;
             border: none;
         }
+        /* .btn-danger:hover {
+            background: none;
+        }
+        .btn-danger:hover {
+            background: none;
+        } */
         .avatar .avatar-title {
             font-size: 18px;
         }
@@ -100,6 +113,9 @@
         }
         .btn-round {
             border-radius: 100px !important;
+        }
+        .dashboard_summary_box {
+            border-radius: 1rem;
         }
     </style>
 @endpush
@@ -197,6 +213,50 @@
                 <div class="card card-round">
                     <div class="card-body">
                         <div class="card-head-row card-tools-still-right">
+                            <div class="card-title">{{ __('Best Selling Products') }}</div>
+                            <div class="card-tools">
+                                <div class="dropdown">
+                                    <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-list py-4">
+                            @foreach ($count_pro_sale as $pro_sale)
+                                <div class="item-list">
+                                    <div class="avatar-product">
+                                        @if ($pro_sale->productgallery && count($pro_sale->productgallery->images) > 0)
+                                            <div class="custom-carousel carousel-{{ $pro_sale->id }}" data-product-id="{{ $pro_sale->id }}" data-current-index="0">
+                                                @foreach ($pro_sale->productgallery->images as $index => $image)
+                                                    <img src="{{ file_exists(public_path('uploads/products/' . $image)) ? asset('uploads/products/' . $image) : asset('uploads/default.png') }}"
+                                                        alt="Product Image" class="carousel-image avatar-img rounded-circle"
+                                                        style="display: {{ $index == 0 ? 'block' : 'none' }};">
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <img src="{{ !empty($pro_sale->image[0]) && file_exists(public_path('uploads/products/' . $pro_sale->image[0])) ? asset('uploads/products/' . $pro_sale->images[0]) : asset('uploads/default.png') }}"
+                                                alt="Product Image" class="avatar-img rounded-circle">
+                                        @endif
+                                    </div>
+                                    <div class="info-user ms-3">
+                                        <div class="username"> <a class="text-dark" href="{{route('admin.product.edit', $pro_sale->id)}}"> {{ $pro_sale->name }} </a> </div>
+                                        <div class="status">{{ $pro_sale->total_qty }} {{ __('in stock') }}, {{$pro_sale->count_product_sale}} {{ __('sold') }}</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div class="card card-round">
+                    <div class="card-body">
+                        <div class="card-head-row card-tools-still-right">
                             <div class="card-title">{{ __('New Customers') }}</div>
                             <div class="card-tools">
                                 <div class="dropdown">
@@ -225,7 +285,7 @@
                                         @endif
                                     </div>
                                     <div class="info-user ms-3">
-                                        <div class="username">{{ $customer->first_name }} {{ $customer->last_name }}</div>
+                                        <div class="username"> <a class="text-dark" href="{{route('admin.customer.edit', $customer->id)}}"> {{ $customer->first_name }} {{ $customer->last_name }} </a> </div>
                                         <div class="status">{{ $customer->email }}</div>
                                     </div>
                                     <button class="btn btn-icon btn-link op-8 me-1">
@@ -375,4 +435,22 @@
     </section>
 @endsection
 @push('js')
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const carousels = document.querySelectorAll(".custom-carousel");
+
+        carousels.forEach(carousel => {
+            const images = carousel.querySelectorAll(".carousel-image");
+            let currentIndex = 0;
+
+            carousel.addEventListener("click", function () {
+                images[currentIndex].style.display = "none";
+
+                currentIndex = (currentIndex + 1) % images.length;
+
+                images[currentIndex].style.display = "block";
+            });
+        });
+    });
+</script>
 @endpush
