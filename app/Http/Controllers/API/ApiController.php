@@ -17,6 +17,7 @@ use App\Models\News;
 use App\Models\BusinessSetting;
 use App\Models\Category;
 use App\Models\Menu;
+use App\Models\Product;
 use App\Models\Promotion;
 use App\Models\User;
 use Carbon\Carbon;
@@ -101,6 +102,41 @@ class ApiController extends Controller
         }
 
         return response()->json($onboards, 200);
+    }
+
+    public function getProduct(Request $request)
+    {
+        $product = Product::where('status', '1')
+            ->with('productgallery')
+            ->select('id', 'name', 'description', 'brand_id', 'count_product_sale', 'rating', 'product_info')
+            ->get();
+
+        if ($product->isEmpty()) {
+            return response()->json(['message' => 'No records found'], 404);
+        }
+
+        return response()->json($product, 200);
+    }
+
+    public function getProductDetail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+        $id = $request->input('id');
+        $product = Product::where('id', $id)
+            ->where('status', 1)
+            ->with('productgallery')
+            ->first();
+
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        return response()->json($product, 200);
     }
 
     public function getPromotion(Request $request)

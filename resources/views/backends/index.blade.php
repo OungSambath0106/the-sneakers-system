@@ -297,7 +297,7 @@
                                 </div>
                             @endforeach
                         </div>
-                        <span style="color: rgb(139, 139, 139)">{{ $totalCustomers }} {{ __('Customers') }}</span>
+                        <span style="color: rgb(139, 139, 139)">{{ __('Total') }} {{ $totalCustomers }} {{ __('Customers') }}</span>
                     </div>
                 </div>
             </div>

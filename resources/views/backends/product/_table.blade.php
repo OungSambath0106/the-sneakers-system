@@ -5,7 +5,9 @@
                 <th>#</th>
                 <th>{{ __('Images') }}</th>
                 <th class="">{{ __('Name') }}</th>
-                <th>{{ __('Category') }}</th>
+                <th>{{ __('Brand') }}</th>
+                <th>{{ __('Sale') }}</th>
+                <th>{{ __('In Stock') }}</th>
                 <th>{{ __('Created By') }}</th>
                 <th>{{ __('Status') }}</th>
                 <th>{{ __('Action') }}</th>
@@ -35,6 +37,8 @@
                         </span>
                     </td>
                     <td>{{ $product->brand->name ?? 'Null' }}</td>
+                    <td>{{ $product->count_product_sale ?? 'Null' }}</td>
+                    <td>{{ $product->total_qty ?? 'Null' }}</td>
                     <td>{{ $product->createdBy->name ?? 'Null' }}</td>
                     <td>
                         <div class="custom-control custom-switch">
@@ -70,7 +74,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center" style="background-color: ghostwhite">{{ __('Products are not available.') }}</td>
+                    <td colspan="9" class="text-center" style="background-color: ghostwhite">{{ __('Products are not available.') }}</td>
                 </tr>
             @endforelse
         </tbody>

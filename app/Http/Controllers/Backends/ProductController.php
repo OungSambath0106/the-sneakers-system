@@ -28,15 +28,25 @@ class ProductController extends Controller
                     ->with('productgallery')
                     ->latest('id')
                     ->paginate(10);
+
+        $product_instock = $products->map(function ($product) {
+            $productInfo = $product->product_info;
+            if (is_array($productInfo)) {
+                $totalQty = array_sum(array_column($productInfo, 'product_qty'));
+                $product->total_qty = $totalQty;
+            }
+            return $product;
+        });
+
         $brands = Brand::all();
         if ($request->ajax()) {
-            $view = view('backends.product._table', compact('products', 'brands'))->render();
+            $view = view('backends.product._table', compact('products', 'brands', 'product_instock'))->render();
             return response()->json([
                 'view' => $view
             ]);
         }
 
-        return view('backends.product.index', compact('products', 'brands'));
+        return view('backends.product.index', compact('products', 'brands', 'product_instock'));
     }
 
     /**
