@@ -29,19 +29,23 @@ Route::middleware(['auth:api'])->group(function () {
 
     // Route::prefix('admin')->group(function () {
 
-        // (get_config)
+        // (Get Config)
         Route::get('get_config', [ApiController::class, 'getConfig']);
         //Route for onboard
         Route::get('get_onboard_screen',[ApiController::class,'getOnboardScreen']);
-        // (get_promotion)
+        // (Get Promotion)
         Route::get('get_promotion', [ApiController::class, 'getPromotion']);
-        // (get_promotion_detail)
+        // (Get Promotion Detail)
         Route::get('get_promotion_detail', [ApiController::class, 'getPromotionDetail']);
-        // (get_user)
+        // (Get User)
         Route::get('get_user', [ApiController::class, 'getUser']);
-        // (get_baner_slider)
+        // (Get Baner Slider)
         Route::get('get_baner_slider', [ApiController::class, 'getBanerSlider']);
-        
+        // (Get Brand)
+        Route::get('get_brand', [ApiController::class, 'getBrand']);
+        // (Get Brand Detail)
+        Route::get('get_brand_detail', [ApiController::class, 'getBrandDetail']);
+
     // });
 
     // (logout)

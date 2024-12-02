@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\CourseCategory;
 use App\Http\Controllers\Controller;
 use App\Models\Baner;
+use App\Models\Brand;
 use App\Models\News;
 use App\Models\BusinessSetting;
 use App\Models\Category;
@@ -24,15 +25,36 @@ use Illuminate\Support\Facades\Validator;
 
 class ApiController extends Controller
 {
-    public function getOnboardScreen()
+    public function getBrand(Request $request)
     {
-        $onboards = Onboard::where('status', 1)->get();
+        $brands = Brand::where('status', '1')->get();
 
-        if ($onboards->isEmpty()) {
-            return response()->json(['message' => 'No Record Found'], 200);
+        if ($brands->isEmpty()) {
+            return response()->json(['message' => 'No records found'], 404);
         }
 
-        return response()->json($onboards, 200);
+        return response()->json($brands, 200);
+    }
+
+    public function getBrandDetail(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+        $id = $request->input('id');
+        $brand = Brand::where('id', $id)
+            ->where('status', 1)
+            ->first();
+
+        if (!$brand) {
+            return response()->json(['error' => 'brand not found'], 404);
+        }
+
+        return response()->json($brand, 200);
     }
 
     public function getBanerSlider()
@@ -70,15 +92,26 @@ class ApiController extends Controller
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 
+    public function getOnboardScreen()
+    {
+        $onboards = Onboard::where('status', 1)->get();
+
+        if ($onboards->isEmpty()) {
+            return response()->json(['message' => 'No Record Found'], 200);
+        }
+
+        return response()->json($onboards, 200);
+    }
 
     public function getPromotion(Request $request)
     {
         $currentDate = Carbon::now();
 
         $promotion = Promotion::where('status', '1')
+            ->with('products.productgallery', 'brands')
             ->whereDate('start_date', '<=', $currentDate)
             ->whereDate('end_date', '>=', $currentDate)
-            ->select('id', 'title', 'banner', 'start_date', 'end_date')
+            ->select('id', 'title', 'description', 'promotion_type', 'discount_type','percent', 'amount', 'banner', 'start_date', 'end_date')
             ->get();
 
         if ($promotion->isEmpty()) {
@@ -98,9 +131,12 @@ class ApiController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
         $id = $request->input('id');
-
+        $currentDate = Carbon::now();
         $promotion = Promotion::where('id', $id)
             ->where('status', 1)
+            ->whereDate('start_date', '<=', $currentDate)
+            ->whereDate('end_date', '>=', $currentDate)
+            ->with('products.productgallery', 'brands')
             ->first();
 
         if (!$promotion) {
@@ -108,6 +144,18 @@ class ApiController extends Controller
         }
 
         return response()->json($promotion, 200);
+    }
+
+    public function getUser(Request $request)
+    {
+        $id = auth()->user()->id;
+        $user = User::findOrFail($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'No records found'], 404);
+        }
+
+        return response()->json($user, 200);
     }
 
     public function login(Request $request)
@@ -147,19 +195,6 @@ class ApiController extends Controller
             ], 401);
         }
     }
-
-    public function getUser(Request $request)
-    {
-        $id = auth()->user()->id;
-        $user = User::findOrFail($id);
-
-        if (!$user) {
-            return response()->json(['message' => 'No records found'], 404);
-        }
-
-        return response()->json($user, 200);
-    }
-
 
     public function logout(Request $request)
     {
