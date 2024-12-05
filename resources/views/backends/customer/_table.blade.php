@@ -23,8 +23,10 @@
                         <img src="
                         @if ($customer->image && file_exists(public_path('uploads/customers/' . $customer->image)))
                             {{ asset('uploads/customers/'. $customer->image) }}
-                        @else
-                            {{ asset('uploads/default-profile.png') }}
+                        @elseif ($customer->gender=='male')
+                            {{ asset('uploads/man.png') }}
+                        @elseif ($customer->gender=='female')
+                            {{ asset('uploads/woman.png') }}
                         @endif
                         " alt="" class="profile_img_table rounded-circle" style="object-fit: cover">
                     </td>

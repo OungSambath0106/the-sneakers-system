@@ -34,9 +34,19 @@ class Promotion extends Model
         return $this->belongsToMany(Product::class, 'promotion_product', 'promotion_id', 'product_id');
     }
 
+    public function activeProducts()
+    {
+        return $this->belongsToMany(Product::class, 'promotion_product', 'promotion_id', 'product_id')->where('status', 1);
+    }
+
     public function brands()
     {
         return $this->belongsToMany(Brand::class, 'promotion_brand', 'promotion_id', 'brand_id');
+    }
+
+    public function activeBrands()
+    {
+        return $this->belongsToMany(Brand::class, 'promotion_brand', 'promotion_id', 'brand_id')->where('status', 1);
     }
 
     public function getBannerUrlAttribute()

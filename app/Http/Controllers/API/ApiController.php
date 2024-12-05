@@ -16,12 +16,16 @@ use App\Models\Brand;
 use App\Models\News;
 use App\Models\BusinessSetting;
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Menu;
 use App\Models\Product;
 use App\Models\Promotion;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class ApiController extends Controller
@@ -143,18 +147,47 @@ class ApiController extends Controller
     {
         $currentDate = Carbon::now();
 
-        $promotion = Promotion::where('status', '1')
-            ->with('products.productgallery', 'brands')
+        $promotions = Promotion::where('status', '1')
+            // ->with('products.productgallery', 'brands')
+            ->with('activeProducts.productgallery', 'activeBrands')
             ->whereDate('start_date', '<=', $currentDate)
             ->whereDate('end_date', '>=', $currentDate)
             ->select('id', 'title', 'description', 'promotion_type', 'discount_type','percent', 'amount', 'banner', 'start_date', 'end_date')
             ->get();
+            $promotions->transform(function ($promotion) {
+                unset($promotion->products);
+                $promotion->products = $promotion->activeProducts->map(function ($product) {
+                    $product = [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'description' => $product->description,
+                        'brand_id' => $product->brand_id,
+                        'status' => $product->status,
+                        'product_info' => $product->product_info,
+                        'rating' => $product->rating,
+                        'count_product_sale' => $product->count_product_sale,
+                        'productgallery' => $product->productgallery->images_url
+                    ];
+                    return $product;
+                });
+                unset($promotion->activeProducts);
+                $promotion->brands = $promotion->activeBrands->map(function ($brand) {
+                    $brand = [
+                        'id' => $brand->id,
+                        'name' => $brand->name,
+                        'images_url' => $brand->images_url
+                    ];
+                    return $brand;
+                });
+                unset($promotion->activeBrands);
+                return $promotion;
+            });
 
-        if ($promotion->isEmpty()) {
+        if ($promotions->isEmpty()) {
             return response()->json(['message' => 'No records found'], 404);
         }
 
-        return response()->json($promotion, 200);
+        return response()->json($promotions, 200);
     }
 
     public function getPromotionDetail(Request $request)
@@ -241,5 +274,147 @@ class ApiController extends Controller
         }
 
         return response()->json(['message' => 'Logout failed'], 403);
+    }
+
+    public function customerRegister(Request $request)
+    {
+        // Validate incoming request
+        $validated = $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'gender' => 'required|string|in:male,female',
+            'phone' => 'required',
+            'email' => 'required|email|unique:customers,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        try {
+            $customer = Customer::create([
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'gender' => $validated['gender'],
+                'phone' => $validated['phone'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
+
+            return response()->json([
+                'message' => 'Customer registered successfully!',
+                'customer' => $customer,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Registration failed. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function customerLogin(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
+        ]);
+
+        $customer = Customer::where('email', $validated['email'])->first();
+
+        if (!$customer || !Hash::check($validated['password'], $customer->password)) {
+            return response()->json([
+                'message' => 'Invalid email or password.',
+            ], 401);
+        }
+
+        // Generate a personal access token
+        $token = $customer->createToken('accessToken')->accessToken ?? null;
+
+        return response()->json([
+            'message' => 'Login successful!',
+            'token' => $token,
+            'customer' => $customer,
+        ], 200);
+    }
+
+    public function customerRegisterWithPhone(Request $request)
+    {
+        $validated = $request->validate([
+            'phone' => 'required|unique:customers,phone',
+        ]);
+
+        try {
+            $otp = rand(100000, 999999);
+
+            Cache::put('otp_' . $validated['phone'], $otp, now()->addMinutes(5));
+
+            $this->sendOtp($validated['phone'], $otp);
+
+            return response()->json([
+                'message' => 'OTP sent to your phone!',
+                'phone' => $validated['phone'],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to send OTP. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function verifyOtpAndRegister(Request $request)
+    {
+        $validated = $request->validate([
+            'phone' => 'required',
+            'otp' => 'required|digits:6',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'gender' => 'required|string|in:male,female',
+            'email' => 'required|email|unique:customers,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        try {
+            $cachedOtp = Cache::get('otp_' . $validated['phone']);
+
+            if (!$cachedOtp || $cachedOtp != $validated['otp']) {
+                return response()->json([
+                    'message' => 'Invalid or expired OTP.',
+                ], 400);
+            }
+
+            $customer = Customer::create([
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'gender' => $validated['gender'],
+                'phone' => $validated['phone'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
+
+            Cache::forget('otp_' . $validated['phone']);
+
+            $token = $customer->createToken('accessToken')->accessToken;
+
+            return response()->json([
+                'message' => 'Customer registered successfully!',
+                'customer' => $customer,
+                'access_token' => $token,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Registration failed. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function sendOtp($phone, $otp)
+    {
+        $response = Http::post('https://textbelt.com/text', [
+            'phone' => $phone,
+            'message' => "Your OTP is: $otp",
+            'key' => 'textbelt',
+        ]);
+
+        return $response->json();
     }
 }

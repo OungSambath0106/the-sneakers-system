@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Laravel\Passport\HasApiTokens as PassportHasApiTokens;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Passport\HasApiTokens;
 
 class Customer extends Model
 {
-    use PassportHasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $appends = ['image_url'];
 
@@ -32,10 +33,14 @@ class Customer extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'gender',
+        'phone',
         'email',
         'password',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -55,4 +60,21 @@ class Customer extends Model
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($customer) {
+            if ($customer->password) {
+                $customer->password = Hash::make($customer->password);
+            }
+        });
+
+        static::updating(function ($customer) {
+            if ($customer->isDirty('password')) {
+                $customer->password = Hash::make($customer->password);
+            }
+        });
+    }
 }

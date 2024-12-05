@@ -52,6 +52,18 @@ Route::middleware(['auth:api'])->group(function () {
 
     // });
 
-    // (logout)
-    Route::get('logout', [ApiController::class, 'logout']);
+        // (logout)
+        Route::get('logout', [ApiController::class, 'logout']);
 });
+
+// (Customer Register)
+Route::post('customer_register', [ApiController::class, 'customerRegister']);
+// (Customer Login)
+Route::post('customer_login', [ApiController::class, 'customerLogin']);
+
+Route::middleware(['auth:customer'])->group(function () {
+    Route::get('customer_dashboard', [ApiController::class, 'customerDashboard']);
+});
+
+Route::post('register-with-phone', [ApiController::class, 'customerRegisterWithPhone']);
+Route::post('verify-otp-and-register', [ApiController::class, 'verifyOtpAndRegister']);

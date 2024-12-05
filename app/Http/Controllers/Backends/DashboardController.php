@@ -16,7 +16,7 @@ class DashboardController extends Controller
     public function index()
     {
         $users = User::get();
-        $customers = Customer::take(8)->get();
+        $customers = Customer::take(6)->latest('id')->get();
         $totalCustomers = Customer::count();
         $brands = Brand::get();
         $products = Product::get();

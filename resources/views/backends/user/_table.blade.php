@@ -25,7 +25,7 @@
                         @if ($user->image && file_exists(public_path('uploads/users/' . $user->image)))
                             {{ asset('uploads/users/'. $user->image) }}
                         @else
-                            {{ asset('uploads/default-profile.png') }}
+                            {{ asset('uploads/man.png') }}
                         @endif
                         " alt="" class="profile_img_table rounded-circle" style="object-fit: cover">
                     </td>
