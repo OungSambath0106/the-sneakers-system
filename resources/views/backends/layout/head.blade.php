@@ -50,6 +50,8 @@
         type="text/css" media="screen" />
 
     <link rel="stylesheet" href="{{ asset('backend/custom/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('dist/css/checkboxes.min.css') }}">
+    <link rel="stylesheet" href="dist/css/checkboxes.min.css">
 
     @stack('css')
 </head>

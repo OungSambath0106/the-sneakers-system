@@ -29,11 +29,11 @@
                     <td> {{ \Carbon\Carbon::parse($item->start_date)->format('F d, Y') }} </td>
                     <td> {{ \Carbon\Carbon::parse($item->end_date)->format('F d, Y') }} </td>
                     <td>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input switcher_input status"
+                        <div class="ckbx-style-9 mt-2">
+                            <input type="checkbox" class="status"
                                 id="status_{{ $item->id }}" data-id="{{ $item->id }}"
                                 {{ $item->status == 1 ? 'checked' : '' }} name="status">
-                            <label class="custom-control-label" for="status_{{ $item->id }}"></label>
+                            <label for="status_{{ $item->id }}"></label>
                         </div>
                     </td>
 

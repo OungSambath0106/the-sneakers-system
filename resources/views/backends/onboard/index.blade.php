@@ -9,6 +9,10 @@
         .tab-pane {
             margin-top: 20px
         }
+        .ckbx-style-9 input[type=checkbox]:checked+label:before {
+            background: #3d95d0 !important;
+            box-shadow: inset 0 1px 1px rgba(84, 116, 152, 0.5) !important;
+        }
     </style>
 @endpush
 @section('contents')
@@ -143,20 +147,45 @@
     $('input.status').on('change', function () {
         console.log($(this).data('id'));
         $.ajax({
-            type: "post",
+            type: "POST",
             url: "{{ route('admin.onboard.update_status') }}",
-            data: { "id" : $(this).data('id') },
+            data: {
+                "id": $(this).data('id'),
+                "_token": "{{ csrf_token() }}" // Ensure CSRF token is included
+            },
             dataType: "json",
             success: function (response) {
                 console.log(response);
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+
                 if (response.status == 1) {
-                    toastr.success(response.msg);
+                    // Success notification
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.msg
+                    });
                 } else {
-                    toastr.error(response.msg);
+                    // Error notification
+                    Toast.fire({
+                        icon: 'error',
+                        title: response.msg
+                    });
                 }
+            },
+            error: function (xhr, status, error) {
+                console.log("AJAX error: " + status + "\nError: " + error);
             }
         });
     });
-
 </script>
 @endpush

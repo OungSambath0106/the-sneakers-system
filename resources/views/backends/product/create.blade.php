@@ -105,6 +105,29 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <div class="form-group row col-md-12 mb-0">
+                                        <div class="form-group col-md-2">
+                                            <label class="required_lable" for="new-arrival">{{ __('New Arrival') }}</label>
+                                            <div class="ckbx-style-9">
+                                                <input type="checkbox" id="new-arrival" value="0" name="new-arrival">
+                                                <label for="new-arrival"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label class="required_lable" for="recommended">{{ __('Recommended') }}</label>
+                                            <div class="ckbx-style-9">
+                                                <input type="checkbox" id="recommended" value="0" name="recommended">
+                                                <label for="recommended"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label class="required_lable" for="popular">{{ __('Most Popular') }}</label>
+                                            <div class="ckbx-style-9">
+                                                <input type="checkbox" id="popular" value="0" name="popular">
+                                                <label for="popular"></label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="form-group col-md-6 ">
                                         <label class="required_lable" for="brand">{{ __('Brand') }}</label>
                                         <select name="brand_id" id="brand"

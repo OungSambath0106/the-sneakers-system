@@ -16,11 +16,11 @@
                     <td>{{ $brand->name }}</td>
                     <td>{{ $brand->createdBy->name }}</td>
                     <td>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input switcher_input status"
+                        <div class="ckbx-style-9 mt-2">
+                            <input type="checkbox" class="status"
                                 id="status_{{ $brand->id }}" data-id="{{ $brand->id }}"
                                 {{ $brand->status == 1 ? 'checked' : '' }} name="status">
-                            <label class="custom-control-label" for="status_{{ $brand->id }}"></label>
+                            <label for="status_{{ $brand->id }}"></label>
                         </div>
                     </td>
                     <td>

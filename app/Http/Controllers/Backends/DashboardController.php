@@ -20,16 +20,20 @@ class DashboardController extends Controller
         $totalCustomers = Customer::count();
         $brands = Brand::get();
         $products = Product::get();
-        $count_pro_sale = Product::orderBy('count_product_sale', 'desc')->take(5)->get();
-        $count_pro_sale = $products->map(function ($product) {
-            $productInfo = $product->product_info;
-            if (is_array($productInfo)) {
-                $totalQty = array_sum(array_column($productInfo, 'product_qty'));
-                $product->total_qty = $totalQty;
-            }
-            return $product;
-        });
+        $count_pro_sale = Product::select('*')
+            ->orderByRaw('CAST(count_product_sale AS UNSIGNED) DESC')
+            ->take(3)
+            ->get()
+            ->map(function ($product) {
+                $productInfo = $product->product_info;
 
+                if (is_array($productInfo)) {
+                    $totalQty = array_sum(array_column($productInfo, 'product_qty'));
+                    $product->total_qty = $totalQty;
+                }
+
+                return $product;
+            });
         return view('backends.index', compact('users', 'customers', 'totalCustomers', 'brands', 'products', 'count_pro_sale'));
     }
 }

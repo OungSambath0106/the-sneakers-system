@@ -108,6 +108,9 @@ class ProductController extends Controller
             $pro->brand_id = $request->brand_id;
             $pro->rating = $request->rating;
             $pro->created_by = auth()->user()->id;
+            $pro->new_arrival = $request->has('new-arrival') ? 1 : 0;
+            $pro->recommended = $request->has('recommended') ? 1 : 0;
+            $pro->popular = $request->has('popular') ? 1 : 0;
 
             $products_info = [];
             if ($request->products_info) {
@@ -250,6 +253,9 @@ class ProductController extends Controller
             $product->description = $request->description[array_search('en', $request->lang)];
             $product->brand_id = $request->brand_id;
             $product->rating = $request->rating;
+            $product->new_arrival = $request->has('new-arrival') ? 1 : 0;
+            $product->recommended = $request->has('recommended') ? 1 : 0;
+            $product->popular = $request->has('popular') ? 1 : 0;
 
             $products_info = [];
             if ($request->products_info) {

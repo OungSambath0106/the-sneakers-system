@@ -16,27 +16,27 @@
                 </td> --}}
                 <td>
                     <input type="file" class="d-none contact_icon_input_{{ $key }}" name="contact[icon][]">
-                
+
                     @php
                         $icon = $row['icon'] ?? 'default.png';
                     @endphp
-                
+
                     <img src="{{ asset('uploads/social_media/' . $icon) }}"
                         height="auto" width="60px" style="margin-bottom: 6px; cursor:pointer; border:none !important"
                         alt="" class="avatar border social_media_icon contact_icon_{{ $key }}">
-                
+
                     <input type="hidden" name="contact[old_icon][]" value="{{ $icon }}">
-                </td>                
+                </td>
                 <td>
                     <input type="text" class="form-control" name="contact[link][]"
                         value="{{ $row['link'] ?? null }}">
                 </td>
                 <td>
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input switcher_input status"
+                    <div class="ckbx-style-9 mt-2">
+                        <input type="checkbox" class="status"
                             id="{{ $row['title'] }}" data-id="{{ $row['title'] }}"
                             {{ $row['status'] == 1 ? 'checked' : '' }} name="contact[status_{{ $key }}]">
-                        <label class="custom-control-label" for="{{ $row['title'] }}"></label>
+                        <label for="{{ $row['title'] }}"></label>
                     </div>
                 </td>
                 <td>

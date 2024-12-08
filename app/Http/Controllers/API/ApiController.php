@@ -32,7 +32,9 @@ class ApiController extends Controller
 {
     public function getBrand(Request $request)
     {
-        $brands = Brand::where('status', '1')->get();
+        $brands = Brand::where('status', '1')
+                ->select('id', 'name', 'images', 'status')
+                ->paginate(10);
 
         if ($brands->isEmpty()) {
             return response()->json(['message' => 'No records found'], 404);
@@ -52,6 +54,7 @@ class ApiController extends Controller
         }
         $id = $request->input('id');
         $brand = Brand::where('id', $id)
+            ->select('id', 'name', 'images', 'status')
             ->where('status', 1)
             ->first();
 
@@ -64,7 +67,9 @@ class ApiController extends Controller
 
     public function getBanerSlider()
     {
-        $baner_slider = Baner::where('status', 1)->get();
+        $baner_slider = Baner::where('status', 1)
+                        ->select('id', 'name', 'image', 'status')
+                        ->get();
 
         if ($baner_slider->isEmpty()) {
             return response()->json(['message' => 'No Record Found'], 200);
@@ -99,7 +104,9 @@ class ApiController extends Controller
 
     public function getOnboardScreen()
     {
-        $onboards = Onboard::where('status', 1)->get();
+        $onboards = Onboard::where('status', 1)
+                    ->select('id', 'title', 'image', 'status')
+                    ->get();
 
         if ($onboards->isEmpty()) {
             return response()->json(['message' => 'No Record Found'], 200);
@@ -110,16 +117,31 @@ class ApiController extends Controller
 
     public function getProduct(Request $request)
     {
-        $product = Product::where('status', '1')
-            ->with('productgallery')
-            ->select('id', 'name', 'description', 'brand_id', 'count_product_sale', 'rating', 'product_info')
-            ->get();
+        $query = Product::where('status', '1')
+            ->with(['productgallery' => function($query) {
+                $query->select('id', 'product_id', 'images');
+            }])
+            ->select('id', 'name', 'description', 'brand_id', 'new_arrival', 'recommended', 'popular', 'count_product_sale', 'rating', 'product_info');
 
-        if ($product->isEmpty()) {
+        if ($request->has('new_arrival')) {
+            $query->where('new_arrival', $request->input('new_arrival'));
+        }
+
+        if ($request->has('recommended')) {
+            $query->where('recommended', $request->input('recommended'));
+        }
+
+        if ($request->has('popular')) {
+            $query->where('popular', $request->input('popular'));
+        }
+
+        $products = $query->paginate(10);
+
+        if ($products->isEmpty()) {
             return response()->json(['message' => 'No records found'], 404);
         }
 
-        return response()->json($product, 200);
+        return response()->json($products, 200);
     }
 
     public function getProductDetail(Request $request)
@@ -127,14 +149,19 @@ class ApiController extends Controller
         $validator = Validator::make($request->all(), [
             'id' => 'required'
         ]);
+
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json(['error' => $validator->errors()], 400);
         }
-        $id = $request->input('id');
-        $product = Product::where('id', $id)
+
+        $product = Product::where('id', $request->input('id'))
             ->where('status', 1)
-            ->with('productgallery')
+            ->with(['productgallery' => function ($query) {
+                $query->select('id', 'product_id', 'images');
+            }])
             ->first();
+
+        unset($product->created_by, $product->deleted_at, $product->created_at, $product->updated_at);
 
         if (!$product) {
             return response()->json(['error' => 'Product not found'], 404);
@@ -148,40 +175,39 @@ class ApiController extends Controller
         $currentDate = Carbon::now();
 
         $promotions = Promotion::where('status', '1')
-            // ->with('products.productgallery', 'brands')
             ->with('activeProducts.productgallery', 'activeBrands')
             ->whereDate('start_date', '<=', $currentDate)
             ->whereDate('end_date', '>=', $currentDate)
             ->select('id', 'title', 'description', 'promotion_type', 'discount_type','percent', 'amount', 'banner', 'start_date', 'end_date')
             ->get();
-            $promotions->transform(function ($promotion) {
-                unset($promotion->products);
-                $promotion->products = $promotion->activeProducts->map(function ($product) {
-                    $product = [
-                        'id' => $product->id,
-                        'name' => $product->name,
-                        'description' => $product->description,
-                        'brand_id' => $product->brand_id,
-                        'status' => $product->status,
-                        'product_info' => $product->product_info,
-                        'rating' => $product->rating,
-                        'count_product_sale' => $product->count_product_sale,
-                        'productgallery' => $product->productgallery->images_url
-                    ];
-                    return $product;
-                });
-                unset($promotion->activeProducts);
-                $promotion->brands = $promotion->activeBrands->map(function ($brand) {
-                    $brand = [
-                        'id' => $brand->id,
-                        'name' => $brand->name,
-                        'images_url' => $brand->images_url
-                    ];
-                    return $brand;
-                });
-                unset($promotion->activeBrands);
-                return $promotion;
+        $promotions->transform(function ($promotion) {
+            unset($promotion->products);
+            $promotion->products = $promotion->activeProducts->map(function ($product) {
+                $product = [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'description' => $product->description,
+                    'brand_id' => $product->brand_id,
+                    'status' => $product->status,
+                    'product_info' => $product->product_info,
+                    'rating' => $product->rating,
+                    'count_product_sale' => $product->count_product_sale,
+                    'productgallery' => $product->productgallery->images_url
+                ];
+                return $product;
             });
+            unset($promotion->activeProducts);
+            $promotion->brands = $promotion->activeBrands->map(function ($brand) {
+                $brand = [
+                    'id' => $brand->id,
+                    'name' => $brand->name,
+                    'images_url' => $brand->images_url
+                ];
+                return $brand;
+            });
+            unset($promotion->activeBrands);
+            return $promotion;
+        });
 
         if ($promotions->isEmpty()) {
             return response()->json(['message' => 'No records found'], 404);
@@ -192,25 +218,57 @@ class ApiController extends Controller
 
     public function getPromotionDetail(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
-            'id' => 'required'
+            'id' => 'required|integer'
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
+
         $id = $request->input('id');
         $currentDate = Carbon::now();
+
         $promotion = Promotion::where('id', $id)
             ->where('status', 1)
             ->whereDate('start_date', '<=', $currentDate)
             ->whereDate('end_date', '>=', $currentDate)
-            ->with('products.productgallery', 'brands')
+            ->with('activeProducts.productgallery', 'activeBrands')
             ->first();
 
         if (!$promotion) {
             return response()->json(['error' => 'Promotion not found'], 404);
         }
+
+        unset($promotion->created_at, $promotion->updated_at);
+
+        $promotion->products = $promotion->activeProducts->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'brand_id' => $product->brand_id,
+                'status' => $product->status,
+                'product_info' => $product->product_info,
+                'rating' => $product->rating,
+                'count_product_sale' => $product->count_product_sale,
+                'productgallery' => $product->productgallery->images_url,
+                'new_arrival' => $product->new_arrival,
+                'recommended' => $product->recommended,
+                'popular' => $product->popular
+            ];
+        });
+
+        unset($promotion->activeProducts);
+
+        $promotion->brands = $promotion->activeBrands->map(function ($brand) {
+            return [
+                'id' => $brand->id,
+                'name' => $brand->name,
+                'images_url' => $brand->images_url
+            ];
+        });
+
+        unset($promotion->activeBrands);
 
         return response()->json($promotion, 200);
     }

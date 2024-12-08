@@ -36,11 +36,11 @@
                     <td>{{ $customer->email }}</td>
                     <td>{{ $customer->created_at->format('d M Y h:i A') }}</td>
                     <td>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input switcher_input status"
+                        <div class="ckbx-style-9 mt-2">
+                            <input type="checkbox" class="status"
                                 id="status_{{ $customer->id }}" data-id="{{ $customer->id }}"
                                 {{ $customer->status == 1 ? 'checked' : '' }} name="status">
-                            <label class="custom-control-label" for="status_{{ $customer->id }}"></label>
+                            <label for="status_{{ $customer->id }}"></label>
                         </div>
                     </td>
                     <td>

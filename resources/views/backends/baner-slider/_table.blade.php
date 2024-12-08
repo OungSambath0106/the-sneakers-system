@@ -25,9 +25,9 @@
                     </td>
                     <td>{{ $baner->createdBy->name }}</td>
                     <td>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input switcher_input status" id="status_{{ $baner->id }}" data-id="{{ $baner->id }}" {{ $baner->status == 1 ? 'checked' : '' }} name="status">
-                            <label class="custom-control-label" for="status_{{ $baner->id }}"></label>
+                        <div class="ckbx-style-9 mt-2">
+                            <input type="checkbox" class="status" id="status_{{ $baner->id }}" data-id="{{ $baner->id }}" {{ $baner->status == 1 ? 'checked' : '' }} name="status">
+                            <label for="status_{{ $baner->id }}"></label>
                         </div>
                     </td>
                     <td>

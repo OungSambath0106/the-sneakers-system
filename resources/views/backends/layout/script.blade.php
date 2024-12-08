@@ -116,26 +116,36 @@
             buttonsStyling: false
         });
 
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
         @if (Session::has('msg'))
             @if (Session::get('success') == true)
-                toastr.options = {
-                    "closeButton": true,
-                    "progressBar": true
-                }
-                toastr.success("{{ Session::get('msg') }}");
+                Toast.fire({
+                    icon: 'success',
+                    title: "{{ Session::get('msg') }}"
+                });
                 success.play();
             @else
-                toastr.options = {
-                    "closeButton": true,
-                    "progressBar": true
-                }
-                toastr.error("{{ Session::get('msg') }}");
+                Toast.fire({
+                    icon: 'error',
+                    title: "{{ Session::get('msg') }}"
+                });
                 error.play();
             @endif
         @endif
-
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @stack('js')
 

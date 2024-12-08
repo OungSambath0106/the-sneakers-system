@@ -19,6 +19,10 @@
             min-height: 55px;
             object-fit: cover;
         }
+        .ckbx-style-9 input[type=checkbox]:checked+label:before {
+            background: #3d95d0 !important;
+            box-shadow: inset 0 1px 1px rgba(84, 116, 152, 0.5) !important;
+        }
     </style>
 @endpush
 @section('contents')

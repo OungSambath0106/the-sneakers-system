@@ -12,9 +12,9 @@
                     <input type="hidden" name="payment[old_icon][]" value="{{ $row['icon'] ?? null }}">
                 </td>
                 <td>
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input switcher_input status" id="{{ $row['title'] }}" data-id="{{ $row['title'] }}" {{ $row['status'] == 1 ? 'checked' : '' }} name="payment[status_{{ $key }}]">
-                        <label class="custom-control-label" for="{{ $row['title'] }}"></label>
+                    <div class="ckbx-style-9 mt-2">
+                        <input type="checkbox" class="status" id="{{ $row['title'] }}" data-id="{{ $row['title'] }}" {{ $row['status'] == 1 ? 'checked' : '' }} name="payment[status_{{ $key }}]">
+                        <label for="{{ $row['title'] }}"></label>
                     </div>
                 </td>
                 <td>
