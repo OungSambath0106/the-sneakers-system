@@ -47,6 +47,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('get_brand_detail', [ApiController::class, 'getBrandDetail']);
         // (Get Product)
         Route::get('get_product', [ApiController::class, 'getProduct']);
+        // (Search Product)
+        Route::get('/products/search', [ApiController::class, 'searchProduct']);
         // (Get Product Detail)
         Route::get('get_product_detail', [ApiController::class, 'GetProductDetail']);
 

@@ -104,15 +104,15 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         Route::post('onboard/update_status', [OnboardController::class, 'updateStatus'])->name('onboard.update_status');
 
         // Route Baner-Slider
-        Route::get('baner-slider/update_status', [BanerController::class, 'updateStatus'])->name('baner-slider.update_status');
+        Route::post('baner-slider/update_status', [BanerController::class, 'updateStatus'])->name('baner-slider.update_status');
         Route::resource('baner-slider', BanerController::class);
 
         // Route Brand
-        Route::get('brand/update_status', [BrandController::class, 'updateStatus'])->name('brand.update_status');
+        Route::post('brand/update_status', [BrandController::class, 'updateStatus'])->name('brand.update_status');
         Route::resource('brand', BrandController::class);
 
         // Route Product
-        Route::get('product/update_status', [ProductController::class, 'updateStatus'])->name('product.update_status');
+        Route::post('product/update_status', [ProductController::class, 'updateStatus'])->name('product.update_status');
         Route::resource('product', ProductController::class);
         Route::post('product/upload/gallery', [ProductController::class, 'uploadNewGallery'])->name('product.upload_gallery');
         Route::delete('product/delete/gallery',[ProductController::class, 'deleteProductGallery'])->name('product.delete_gallery');

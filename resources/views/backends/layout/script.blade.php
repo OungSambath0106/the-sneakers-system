@@ -147,5 +147,53 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+    function initializeStatusInput(url) {
+        $('input.status').off('change').on('change', function () {
+            const id = $(this).data('id');
+            console.log(id);
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {
+                    id: id,
+                    _token: "{{ csrf_token() }}"
+                },
+                dataType: "json",
+                success: function (response) {
+                    console.log(response);
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+
+                    if (response.status == 1) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.msg
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: response.msg
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("AJAX error: " + status + "\nError: " + error);
+                }
+            });
+        });
+    }
+</script>
+
 @stack('js')
 

@@ -144,48 +144,7 @@
         });
     });
 
-    $('input.status').on('change', function () {
-        console.log($(this).data('id'));
-        $.ajax({
-            type: "POST",
-            url: "{{ route('admin.onboard.update_status') }}",
-            data: {
-                "id": $(this).data('id'),
-                "_token": "{{ csrf_token() }}" // Ensure CSRF token is included
-            },
-            dataType: "json",
-            success: function (response) {
-                console.log(response);
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.onmouseenter = Swal.stopTimer;
-                        toast.onmouseleave = Swal.resumeTimer;
-                    }
-                });
-
-                if (response.status == 1) {
-                    // Success notification
-                    Toast.fire({
-                        icon: 'success',
-                        title: response.msg
-                    });
-                } else {
-                    // Error notification
-                    Toast.fire({
-                        icon: 'error',
-                        title: response.msg
-                    });
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log("AJAX error: " + status + "\nError: " + error);
-            }
-        });
-    });
+    //for update status
+    initializeStatusInput("{{ route('admin.onboard.update_status') }}");
 </script>
 @endpush

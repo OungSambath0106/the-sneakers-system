@@ -144,6 +144,31 @@ class ApiController extends Controller
         return response()->json($products, 200);
     }
 
+    public function searchProduct(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string',
+        ]);
+
+        $searchTerm = $request->input('name');
+
+        $query = Product::where('status', '1')
+            ->where('name', 'LIKE', '%' . $searchTerm . '%')
+            ->with(['productgallery' => function ($query) {
+                $query->select('id', 'product_id', 'images');
+            }])
+            ->select('id', 'name', 'description', 'brand_id', 'new_arrival', 'recommended', 'popular', 'count_product_sale', 'rating', 'product_info');
+
+        $products = $query->paginate(10);
+
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No matching products found'], 404);
+        }
+
+        return response()->json($products, 200);
+    }
+
+
     public function getProductDetail(Request $request)
     {
         $validator = Validator::make($request->all(), [

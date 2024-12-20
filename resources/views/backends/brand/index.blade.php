@@ -148,24 +148,7 @@
             });
         });
 
-        $('input.status').on('change', function() {
-            console.log($(this).data('id'));
-            $.ajax({
-                type: "get",
-                url: "{{ route('admin.brand.update_status') }}",
-                data: {
-                    "id": $(this).data('id')
-                },
-                dataType: "json",
-                success: function(response) {
-                    console.log(response);
-                    if (response.status == 1) {
-                        toastr.success(response.msg);
-                    } else {
-                        toastr.error(response.msg);
-                    }
-                }
-            });
-        });
+        //for update status
+        initializeStatusInput("{{ route('admin.brand.update_status') }}");
     </script>
 @endpush
