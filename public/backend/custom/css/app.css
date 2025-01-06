@@ -91,6 +91,13 @@ table tbody td {
 img.profile_img_table {
     height: 50px;
 }
+img.banner_img_table {
+    height: 50px;
+    width: 8.5rem;
+}
+.rounded-circle {
+    width: 50px !important;
+}
 .swal2-actions {
     gap: 6px;
 }

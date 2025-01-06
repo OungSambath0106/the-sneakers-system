@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Product;
+use App\Models\PromotionGallery;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
@@ -41,6 +42,7 @@ class PromotionController extends Controller
         ->when($request->discount_type, function ($query, $discountType) {
             $query->where('discount_type', $discountType);
         })
+        ->with('promotiongallery')
         ->latest('id')
         ->paginate(10);
 
@@ -116,17 +118,34 @@ class PromotionController extends Controller
             $promotion->end_date = $request->end_date;
             $promotion->promotion_type = $request->promotion_type;
 
-            if ($request->filled('banners')) {
-                $promotion->banner = $request->banners;
-                $directory = public_path('uploads/promotions');
-                if (!File::exists($directory)) {
-                    File::makeDirectory($directory, 0777, true);
-                }
+            // if ($request->filled('banners')) {
+            //     $promotion->banner = $request->banners;
+            //     $directory = public_path('uploads/promotions');
+            //     if (!File::exists($directory)) {
+            //         File::makeDirectory($directory, 0777, true);
+            //     }
 
-                $banner = File::move(public_path('/uploads/temp/' . $request->banners), public_path('uploads/promotions/' . $request->banners));
-            }
-
+            //     $banner = File::move(public_path('/uploads/temp/' . $request->banners), public_path('uploads/promotions/' . $request->banners));
+            // }
             $promotion->save();
+
+            $promotionid = $promotion->id;
+            $promotion_gallery = new PromotionGallery();
+            $promotion_gallery->promotion_id = $promotionid;
+            if ($request->filled('image_names')) {
+                $imageDetails = json_decode($request->input('image_names'), true);
+                $promotion_data = [];
+                foreach ($imageDetails as $detail) {
+                    $directory = public_path('uploads/promotions');
+                    if (!\File::exists($directory)) {
+                        \File::makeDirectory($directory, 0777, true);
+                    }
+                    $moved_image = \File::move(public_path('uploads/temp/' . $detail), $directory . '/' . $detail);
+                    $promotion_data[] = $detail;
+                    $promotion_gallery->images = $promotion_data;
+                    $promotion_gallery->save();
+                }
+            }
 
             if ($request->filled('products')) {
                 $productIds = $request->products;
@@ -190,7 +209,7 @@ class PromotionController extends Controller
     public function edit($id)
     {
         // $promotion = Promotion::withoutGlobalScopes()->with('translations')->findOrFail($id);
-        $promotion = Promotion::withoutGlobalScopes()->with('translations', 'products', 'brands')->findOrFail($id);
+        $promotion = Promotion::withoutGlobalScopes()->with('translations', 'products', 'brands', 'promotiongallery')->findOrFail($id);
 
         $brands = Brand::with('products')->get();
         $brand_promotionId = [];
@@ -257,15 +276,41 @@ class PromotionController extends Controller
             $promotion->promotion_type = $request->promotion_type;
 
             // Update header banner
-            if ($request->hasFile('banner')) {
-                if ($promotion->banner && file_exists(public_path('uploads/promotions/' . $promotion->banner))) {
-                    unlink(public_path('uploads/promotions/' . $promotion->banner));
-                }
+            // if ($request->hasFile('banner')) {
+            //     if ($promotion->banner && file_exists(public_path('uploads/promotions/' . $promotion->banner))) {
+            //         unlink(public_path('uploads/promotions/' . $promotion->banner));
+            //     }
 
-                $promotion->banner = ImageManager::update('uploads/promotions/', null, $request->banner);
-            }
+            //     $promotion->banner = ImageManager::update('uploads/promotions/', null, $request->banner);
+            // }
 
             $promotion->save();
+
+            $promotion_gallery = PromotionGallery::where('promotion_id',$promotion->id)->first();
+            $promotiongallery = $promotion_gallery->images??[];
+            $imageNameToUpdate = $request->input('image_names');
+            $newImage = json_decode($imageNameToUpdate, true);
+            $promotion_data = [];
+            if (is_array($newImage)) {
+                foreach ($newImage as $detail) {
+                    $directory = public_path('uploads/promotions');
+                    if (!\File::exists($directory)) {
+                        \File::makeDirectory($directory, 0777, true);
+                    }
+                    $moved_image = \File::move(public_path('uploads/temp/' . $detail), $directory . '/' . $detail);
+                    $promotion_data[] = $detail;
+                }
+            }
+            $merge = array_merge($promotiongallery, $promotion_data);
+            if ($promotion_gallery) {
+                $promotion_gallery->images = $merge;
+                $promotion_gallery->save();
+            } else {
+                $promotion_gallery = new PromotionGallery();
+                $promotion_gallery->promotion_id = $promotion->id;
+                $promotion_gallery->images = $merge;
+                $promotion_gallery->save();
+            }
 
             if ($request->promotion_type === 'brand') {
                 // Sync brands and clear products
@@ -409,5 +454,35 @@ class PromotionController extends Controller
         }
 
         return response()->json($output);
+    }
+
+    public function deletePromotionGallery(Request $request)
+    {
+        $promotionGallery = PromotionGallery::where('promotion_id', $request->promotion_id)->first();
+        if ($promotionGallery) {
+            $imageNameToDelete = $request->input('name');
+            $images = $promotionGallery->images;
+            $imageExists = false;
+            foreach ($images as $image) {
+                if ($image === $imageNameToDelete) {
+                    $imageExists = true;
+                    break;
+                }
+            }
+            if ($imageExists) {
+                $newImages = array_filter($images, function ($image) use ($imageNameToDelete) {
+                    return $image !== $imageNameToDelete;
+                });
+                $imagePath = public_path('uploads/promotions/' . $imageNameToDelete);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                $promotionGallery->images = array_values($newImages);
+                $promotionGallery->save();
+
+                return response()->json(['success' => true]);
+            }
+        }
+        return response()->json(['success' => false, 'message' => 'Image not found.']);
     }
 }

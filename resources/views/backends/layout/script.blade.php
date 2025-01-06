@@ -194,6 +194,15 @@
         });
     }
 </script>
-
+<script>
+    let table = new DataTable('#myTable', {
+        paging: false,
+        info: false,
+        responsive: false,
+        scrollX: true,
+        autoWidth: false,
+    });
+</script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 @stack('js')
 

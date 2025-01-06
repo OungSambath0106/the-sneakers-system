@@ -31,7 +31,6 @@
                         @include('svgs.dashboard')
                         <p>
                             {{ __('Dashboard') }}
-
                         </p>
                     </a>
                 </li>
@@ -152,6 +151,18 @@
                             @include('svgs.promotion1')
                             <p>
                                 {{ __('Promotion') }}
+                            </p>
+                        </a>
+                    </li>
+                @endif
+
+                @if (auth()->user()->can('payment.view'))
+                    <li class="nav-item">
+                        <a href="{{ route('admin.promotion.index') }}"
+                            class="nav-link @if (request()->routeIs('admin.payment*')) active @endif">
+                            @include('svgs.credit-card')
+                            <p>
+                                {{ __('Payment') }}
                             </p>
                         </a>
                     </li>

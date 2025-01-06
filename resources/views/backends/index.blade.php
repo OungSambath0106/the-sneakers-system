@@ -46,8 +46,8 @@
             align-content: center;
         }
         .avatar-img {
-            width: 100%;
-            height: 100%;
+            width: 100% !important;
+            height: 100% !important;
             object-fit: cover;
         }
         .card-list .item-list .info-user {

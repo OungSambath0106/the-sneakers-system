@@ -16,6 +16,7 @@ use App\Http\Controllers\Backends\CustomerController;
 use App\Http\Controllers\Backends\OnboardController;
 use App\Http\Controllers\Backends\ProductController;
 use App\Http\Controllers\Backends\PromotionController;
+use App\Http\Controllers\Backends\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +99,8 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         //Route for promotion
         Route::resource('promotion', PromotionController::class);
         Route::post('promotion/update_status', [PromotionController::class, 'updateStatus'])->name('promotion.update_status');
+        Route::delete('promotion/delete/gallery',[PromotionController::class, 'deletePromotionGallery'])->name('promotion.delete_gallery');
+
 
         //Route for onboard
         Route::resource('onboard', OnboardController::class);
@@ -116,6 +119,10 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         Route::resource('product', ProductController::class);
         Route::post('product/upload/gallery', [ProductController::class, 'uploadNewGallery'])->name('product.upload_gallery');
         Route::delete('product/delete/gallery',[ProductController::class, 'deleteProductGallery'])->name('product.delete_gallery');
+
+        // Route Transaction
+        Route::post('transaction/update_status', [TransactionController::class, 'updateStatus'])->name('transaction.update_status');
+        Route::resource('transaction', TransactionController::class);
     });
 
 });

@@ -1,5 +1,5 @@
 <div class="card-body p-0 table-wrapper">
-    <table class="table">
+    <table class="table" id="myTable">
         <thead>
             <tr>
                 <th >#</th>
@@ -21,7 +21,7 @@
                         @else
                             {{ asset('uploads/image/default.png') }} @endif
                         "
-                            alt="" class="profile_img_table">
+                            alt="" class="banner_img_table">
                     </td>
                     <td>{{ $baner->createdBy->name }}</td>
                     <td>

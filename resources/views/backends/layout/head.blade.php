@@ -115,3 +115,101 @@
         cursor: pointer;
     }
 </style>
+<style>
+    /* ✅ Search Input Styling */
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-size: 14px;
+        margin-left: 10px;
+    }
+    .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    .dataTables_wrapper .dataTables_filter label::before {
+        font-family: 'Font Awesome 6 Free';
+        content: "\f002"; /* Search icon */
+        font-weight: 900;
+        margin-right: 8px;
+    }
+
+    /* ✅ Pagination Button Styling */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        background-color: #007BFF;
+        color: #fff !important;
+        border-radius: 4px;
+        margin: 2px;
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Active Pagination Button */
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background-color: #28a745 !important;
+    }
+
+    /* ✅ Previous/Next Icons */
+    .dataTables_wrapper .dataTables_paginate .paginate_button.previous::before {
+        font-family: 'Font Awesome 6 Free';
+        content: "\f104"; /* Left Arrow Icon */
+        font-weight: 900;
+        margin-right: 5px;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.next::after {
+        font-family: 'Font Awesome 6 Free';
+        content: "\f105"; /* Right Arrow Icon */
+        font-weight: 900;
+        margin-left: 5px;
+    }
+
+    /* ✅ Table Header Styling */
+    #myTable thead th {
+        background-color: #3e3e3e;
+        color: white;
+        text-align: center;
+        font-size: 14px;
+    }
+    .table thead th {
+        background-color: #3e3e3e;
+        color: white;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    /* ✅ Table Hover Effect */
+    #myTable tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .dt-layout-cell.dt-layout-end {
+        display: none !important;
+    }
+    .dt-layout-cell.dt-layout-start {
+        display: none !important;
+    }
+    td.dt-empty {
+        display: none !important;
+    }
+
+    #myTable_filter {
+        padding: 1rem 1rem 0 1rem !important;
+    }
+    th.sorting::before {
+        background-color: unset !important;
+        content: "\f0de";
+        font-family: 'FontAwesome';
+    }
+    th.sorting::after {
+        content: "\f0dd";
+        font-family: 'FontAwesome';
+    }
+    table.dataTable>thead .sorting_asc:before, table.dataTable>thead .sorting_desc:after {
+        color: #808080 !important;
+    }
+</style>
+

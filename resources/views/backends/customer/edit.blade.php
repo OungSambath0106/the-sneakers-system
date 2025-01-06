@@ -132,15 +132,6 @@
 
 @push('js')
     <script>
-        // $('.custom-file-input').change(function (e) {
-        //     var reader = new FileReader();
-        //     var preview = $(this).closest('.form-group').find('.preview img');
-        //     reader.onload = function(e) {
-        //         preview.attr('src', e.target.result).show();
-        //     }
-        //     reader.readAsDataURL(this.files[0]);
-        // });
-
         const compressor = new window.Compress();
         $('.custom-file-input').change(function (e) {
             compressor.compress([...e.target.files], {
@@ -190,6 +181,5 @@
                 });
             });
         });
-
     </script>
 @endpush

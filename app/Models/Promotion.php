@@ -14,7 +14,7 @@ class Promotion extends Model
 
     protected $appends = ['banner_url'];
 
-    protected $guarded = [];
+    protected $guarded = ['id'];
 
     protected $casts = [
         'products' => 'array',
@@ -42,6 +42,11 @@ class Promotion extends Model
     public function brands()
     {
         return $this->belongsToMany(Brand::class, 'promotion_brand', 'promotion_id', 'brand_id');
+    }
+
+    public function promotiongallery()
+    {
+        return $this->hasOne(PromotionGallery::class, 'promotion_id');
     }
 
     public function activeBrands()

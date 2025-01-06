@@ -206,10 +206,11 @@
                                             </span>
                                         @enderror
                                     </div>
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-12">
                                         <div class="form-group">
                                             <label for="exampleInputFile">{{ __('Banner') }}</label>
-                                            <div class="input-group">
+                                            @include('backends.promotion.partial.promotion_galleries')
+                                            {{-- <div class="input-group">
                                                 <div class="custom-file">
                                                     <input type="hidden" name="banners"
                                                         class="banner_hidden">
@@ -224,7 +225,7 @@
                                                 style="height: 150px">
                                                 <img src="{{ asset('uploads/defualt.png') }}" alt=""
                                                     height="100%">
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </div>
 
@@ -251,95 +252,58 @@
 @push('js')
     <script>
         const compressor = new window.Compress();
-        $('.header-file-input').change(function(e) {
-            compressor.compress([...e.target.files], {
-                size: 4,
-                quality: 0.75,
-            }).then((output) => {
-                var files = Compress.convertBase64ToFile(output[0].data, output[0].ext);
-                var formData = new FormData();
+        $('.custom-file-input').change(function(e) {
+            const files = [...e.target.files];
+            const formData = new FormData();
+            const image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
+            const container = $(this).closest('.form-group').find('.preview');
 
-                var image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
-                var container = $(this).closest('.form-group').find('.preview');
-                if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
-                    container.empty();
+            if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
+                container.empty();
+            }
+
+            files.forEach(file => {
+                if (file.type === 'image/png') {
+                    // Skip compression for PNGs
+                    formData.append('images[]', file);
+                } else {
+                    // Compress non-PNG files
+                    compressor.compress([file], {
+                        size: 4,
+                        quality: 0.75,
+                    }).then(output => {
+                        const compressedFile = Compress.convertBase64ToFile(output[0].data, output[0].ext);
+                        formData.append('images[]', compressedFile);
+                    });
                 }
-                formData.append('image', files);
+            });
 
-                $.ajax({
-                    url: "{{ route('save_temp_file') }}",
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status == 0) {
-                            toastr.error(response.msg);
-                        }
-                        if (response.status == 1) {
-                            container.empty();
-                            var temp_file = response.temp_files;
-                            var img_container = $('<div></div>').addClass('img_container');
-                            var img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" +
-                                '/' + temp_file);
+            $.ajax({
+                url: "{{ route('save_temp_file') }}",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status == 0) {
+                        toastr.error(response.msg);
+                    }
+                    if (response.status == 1) {
+                        const temp_files = response.temp_files;
+                        temp_files.forEach(temp_file => {
+                            const img_container = $('<div></div>').addClass('img_container');
+                            const img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" + '/' + temp_file);
                             img_container.append(img);
                             container.append(img_container);
 
-                            var new_file_name = temp_file;
-                            console.log(new_file_name);
-
+                            const current_file_name = image_names_hidden.val();
+                            const new_file_name = current_file_name + ' ' + temp_file;
                             image_names_hidden.val(new_file_name);
-                        }
+                        });
                     }
-                });
-            });
-        });
-        $('.footer-file-input').change(function(e) {
-            compressor.compress([...e.target.files], {
-                size: 4,
-                quality: 0.75,
-            }).then((output) => {
-                var files = Compress.convertBase64ToFile(output[0].data, output[0].ext);
-                var formData = new FormData();
-
-                var image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
-                var container = $(this).closest('.form-group').find('.preview');
-                if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
-                    container.empty();
                 }
-                formData.append('image', files);
-
-                $.ajax({
-                    url: "{{ route('save_temp_file') }}",
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status == 0) {
-                            toastr.error(response.msg);
-                        }
-                        if (response.status == 1) {
-                            container.empty();
-                            var temp_file = response.temp_files;
-                            var img_container = $('<div></div>').addClass('img_container');
-                            var img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" +
-                                '/' + temp_file);
-                            img_container.append(img);
-                            container.append(img_container);
-
-                            var new_file_name = temp_file;
-                            console.log(new_file_name);
-
-                            image_names_hidden.val(new_file_name);
-                        }
-                    }
-                });
             });
         });
-
 
         $(document).on('click', '.nav-tabs .nav-link', function(e) {
             if ($(this).data('lang') != 'en') {

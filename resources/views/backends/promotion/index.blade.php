@@ -14,6 +14,10 @@
             background: #3d95d0 !important;
             box-shadow: inset 0 1px 1px rgba(84, 116, 152, 0.5) !important;
         }
+        .custom-carousel {
+            position: relative;
+            cursor: pointer;
+        }
     </style>
 @endpush
 @section('contents')
@@ -49,7 +53,7 @@
                                 <div class="tab-content" id="custom-content-below-tabContent">
                                     <form method="GET" action="{{ route('admin.promotion.index') }}">
                                         <div class="row">
-                                            <div class=" col-9 d-flex">
+                                            <div class=" col-10 d-flex">
                                                 <div class="col-sm-6 filter">
                                                     <label for="start_date">{{ __('Start Date') }}</label>
                                                     <input type="date" id="start_date" class="form-control"
@@ -61,7 +65,7 @@
                                                         name="end_date" value="{{ request('end_date') }}">
                                                 </div>
                                             </div>
-                                            <div class=" col-3 mt-3">
+                                            <div class=" col-2 mt-3">
                                                 <div class="col-sm-12 mt-3">
                                                     <button type="submit" class="btn btn-primary">
                                                         <i class="fa fa-filter" aria-hidden="true"></i>
@@ -78,7 +82,7 @@
                                     </form>
                                 </div>
                             </div>
-                            <div class="col-9 mt-3">
+                            <div class="col-10 mt-3">
                                 <div class="col-md-6">
                                     <label for="discount_type">{{ __('Discount Type') }}</label>
                                     <select name="discount_type" id="discount_type" class="form-control select2">

@@ -236,7 +236,8 @@
                                     <div class="form-group col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputFile">{{ __('Banner') }}</label>
-                                            <div class="input-group">
+                                            @include('backends.promotion.partial.edit_promotion_galleries')
+                                            {{-- <div class="input-group">
                                                 <div class="custom-file">
                                                     <input type="file" class="custom-file-input header-file-input"
                                                         id="exampleInputFile" name="banner"
@@ -252,7 +253,7 @@
                                                     {{ asset('uploads/defualt.png') }} @endif
                                                 "
                                                     alt="" height="100%">
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -277,6 +278,61 @@
 
 @push('js')
     <script>
+        const compressor = new window.Compress();
+        $('.custom-file-input').change(function (e) {
+            const files = [...e.target.files];
+            const image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
+            const container = $(this).closest('.form-group').find('.preview');
+
+            if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
+                container.empty();
+            }
+
+            let formData = new FormData();
+
+            files.forEach(file => {
+                if (file.type === 'image/png') {
+                    formData.append('images[]', file);
+                } else {
+                    compressor.compress([file], {
+                        size: 4,
+                        quality: 0.75,
+                    }).then((output) => {
+                        output.forEach(compressed => {
+                            const compressedFile = Compress.convertBase64ToFile(compressed.data, compressed.ext);
+                            formData.append('images[]', compressedFile);
+                        });
+                    });
+                }
+            });
+
+            $.ajax({
+                url: "{{ route('save_temp_file') }}",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status == 0) {
+                        toastr.error(response.msg);
+                    } else if (response.status == 1) {
+                        const temp_files = response.temp_files;
+                        temp_files.forEach(temp_file => {
+                            const img_container = $('<div></div>').addClass('img_container');
+                            const img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" + '/' + temp_file);
+                            img_container.append(img);
+                            container.append(img_container);
+
+                            const current_file_name = image_names_hidden.val();
+                            const new_file_name = current_file_name + ' ' + temp_file;
+                            image_names_hidden.val(new_file_name);
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+    {{-- <script>
         $('.custom-file-input').change(function(e) {
             var reader = new FileReader();
             var preview = $(this).closest('.form-group').find('.preview img');
@@ -293,7 +349,7 @@
                 $('.no_translate_wrapper').removeClass('d-none');
             }
         });
-    </script>
+    </script> --}}
     <script>
         function validateDiscountInput(input) {
             if (input.value < 0) {

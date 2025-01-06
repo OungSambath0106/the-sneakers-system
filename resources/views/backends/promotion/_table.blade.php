@@ -1,5 +1,5 @@
 <div class="card-body p-0 table-wrapper">
-    <table class="table">
+    <table class="table" id="myTable">
         <thead>
             <tr>
                 <th>#</th>
@@ -18,13 +18,27 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->discount_type ?? 'Null' }}</td>
                     <td>{{ $item->title ?? 'Null' }}</td>
-                    <td>
+                    {{-- <td>
                         <img width="90%" height="auto" src="
                         @if ($item->banner && file_exists(public_path('uploads/promotions/' . $item->banner))) {{ asset('uploads/promotions/' . $item->banner) }}
                         @else
-                        {{ asset('uploads/defualt.png') }} @endif
+                        {{ asset('uploads/default.png') }} @endif
                         "
-                        alt="" class="profile_img_table" style="object-fit: cover">
+                        alt="" class="banner_img_table" style="object-fit: cover">
+                    </td> --}}
+                    <td>
+                        @if ($item->promotiongallery && count($item->promotiongallery->images) > 0)
+                            <div class="custom-carousel carousel-{{ $item->id }}" data-promotion-id="{{ $item->id }}" data-current-index="0">
+                                @foreach ($item->promotiongallery->images as $index => $image)
+                                    <img src="{{ file_exists(public_path('uploads/promotions/' . $image)) ? asset('uploads/promotions/' . $image) : asset('uploads/default.png') }}"
+                                        alt="Promotion Image" class="carousel-image banner_img_table"
+                                        style="display: {{ $index == 0 ? 'block' : 'none' }};">
+                                @endforeach
+                            </div>
+                        @else
+                            <img src="{{ !empty($item->image[0]) && file_exists(public_path('uploads/promotions/' . $item->image[0])) ? asset('uploads/promotions/' . $item->image[0]) : asset('uploads/default.png') }}"
+                                alt="Promotion Image" class="banner_img_table">
+                        @endif
                     </td>
                     <td> {{ \Carbon\Carbon::parse($item->start_date)->format('F d, Y') }} </td>
                     <td> {{ \Carbon\Carbon::parse($item->end_date)->format('F d, Y') }} </td>
@@ -75,3 +89,21 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const carousels = document.querySelectorAll(".custom-carousel");
+
+        carousels.forEach(carousel => {
+            const images = carousel.querySelectorAll(".carousel-image");
+            let currentIndex = 0;
+
+            carousel.addEventListener("click", function () {
+                images[currentIndex].style.display = "none";
+
+                currentIndex = (currentIndex + 1) % images.length;
+
+                images[currentIndex].style.display = "block";
+            });
+        });
+    });
+</script>
