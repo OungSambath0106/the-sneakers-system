@@ -160,7 +160,7 @@
                     <li class="nav-item">
                         <a href="{{ route('admin.order.index') }}"
                             class="nav-link @if (request()->routeIs('admin.order*')) active @endif">
-                            @include('svgs.credit-card')
+                            @include('svgs.receipt')
                             <p>
                                 {{ __('Transaction Report') }}
                             </p>

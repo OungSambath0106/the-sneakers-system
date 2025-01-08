@@ -27,8 +27,6 @@ Route::post('login', [ApiController::class, 'login']);
 
 Route::middleware(['auth:api'])->group(function () {
 
-    // Route::prefix('admin')->group(function () {
-
         // (Get Config)
         Route::get('get_config', [ApiController::class, 'getConfig']);
         //Route for onboard
@@ -52,7 +50,9 @@ Route::middleware(['auth:api'])->group(function () {
         // (Get Product Detail)
         Route::get('get_product_detail', [ApiController::class, 'GetProductDetail']);
 
-    // });
+        // (Order)
+        Route::post('/orders', [ApiController::class, 'storeOrder']);
+        Route::get('order/{id}', [ApiController::class, 'showOrder']);
 
         // (logout)
         Route::get('logout', [ApiController::class, 'logout']);

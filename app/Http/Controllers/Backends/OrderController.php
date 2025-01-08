@@ -18,7 +18,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $products = Product::all();
-        $query = Order::with('customer', 'brand', 'product');
+        $query = Order::with('customer', 'details.brand', 'details.product');
 
         if ($request->has('filter')) {
             switch ($request->filter) {

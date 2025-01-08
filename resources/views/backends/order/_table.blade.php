@@ -15,47 +15,25 @@
             </tr>
         </thead>
         <tbody>
-            {{-- @foreach ($orders as $item)
+            @foreach ($orders as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->title }}</td>
+                    <td>#{{ $item->id }}</td>
+                    <td>{{ $item->customer->first_name }} {{ $item->customer->last_name }}</td>
+                    <td>$ {{ $item->order_amount }}</td>
+                    <td>$ {{ $item->discount_amount }}</td>
+                    <td>$ {{ $item->shipping_fee }}</td>
+                    <td>$ {{ $item->order_amount }}</td>
+                    <td>{{ ucwords(str_replace('_', ' ', $item->payment_method)) }}</td>
+                    <td>{{ ucwords($item->payment_status) }}</td>
                     <td>
-                        <img width="30%" height="auto" src="
-                        @if ($item->image && file_exists(public_path('uploads/onboards/' . $item->image))) {{ asset('uploads/onboards/' . $item->image) }}
-                        @else
-                            {{ asset('uploads/image/default.png') }} @endif
-                        "
-                            alt="" class="profile_img_table">
-                    </td>
-
-                    <td>
-                        <div class="ckbx-style-9 mt-2">
-                            <input type="checkbox" class="status"
-                                id="status_{{ $item->id }}" data-id="{{ $item->id }}"
-                                {{ $item->status == 1 ? 'checked' : '' }} name="status">
-                            <label for="status_{{ $item->id }}"></label>
-                        </div>
-                    </td>
-
-                    <td>
-                        <a href="{{ route('admin.onboard.edit', $item->id) }}" class="btn btn-info btn-sm btn-edit">
+                        <a href="{{ route('admin.order.edit', $item->id) }}" class="btn btn-info btn-sm btn-edit">
                             <i class="fas fa-pencil-alt"></i>
                             {{ __('Edit') }}
                         </a>
-                        <form action="{{ route('admin.onboard.destroy', $item->id) }}"
-                            class="d-inline-block form-delete-{{ $item->id }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" data-id="{{ $item->id }}"
-                                data-href="{{ route('admin.onboard.destroy', $item->id) }}"
-                                class="btn btn-danger btn-sm btn-delete">
-                                <i class="fa fa-trash-alt"></i>
-                                {{ __('Delete') }}
-                            </button>
-                        </form>
                     </td>
                 </tr>
-            @endforeach --}}
+            @endforeach
         </tbody>
     </table>
 

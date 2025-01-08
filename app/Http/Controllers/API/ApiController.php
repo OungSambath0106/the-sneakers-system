@@ -18,12 +18,14 @@ use App\Models\BusinessSetting;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Menu;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Promotion;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
@@ -296,6 +298,78 @@ class ApiController extends Controller
         unset($promotion->activeBrands);
 
         return response()->json($promotion, 200);
+    }
+
+    // Order
+    public function storeOrder(Request $request)
+    {
+        // dd($request->all());
+        $validated = $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'order_amount' => 'required|numeric',
+            'discount_amount' => 'nullable|numeric',
+            'discount_type' => 'nullable|string',
+            'shipping_method' => 'nullable|string',
+            'shipping_address' => 'nullable|string',
+            'shipping_fee' => 'nullable|numeric',
+            'payment_status' => 'required|in:unpaid,paid',
+            'payment_method' => 'required|in:cash_on_delivery,ABA,AC',
+            'order_note' => 'nullable|string',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
+            'order_details' => 'required|array',
+            'order_details.*.product_id' => 'required|exists:products,id',
+            'order_details.*.brand_id' => 'required|exists:brands,id',
+            'order_details.*.qty' => 'required|integer',
+            'order_details.*.price' => 'required|numeric',
+            'order_details.*.discount' => 'nullable|numeric',
+            'order_details.*.size' => 'nullable|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Create Order
+            $order = Order::create($validated);
+
+            // Create Order Details
+            foreach ($validated['order_details'] as $detail) {
+                $order->details()->create($detail);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order created successfully',
+                'data' => $order->load('details')
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create order',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function showOrder($id)
+    {
+        $order = Order::with('details')->find($id);
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $order
+        ], 200);
     }
 
     public function getUser(Request $request)

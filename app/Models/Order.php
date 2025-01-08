@@ -9,26 +9,30 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'customer_id',
+        'order_amount',
+        'discount_amount',
+        'discount_type',
+        'shipping_method',
+        'shipping_address',
+        'shipping_fee',
+        'order_status',
+        'order_note',
+        'payment_status',
+        'payment_method',
+        'payment_image',
+        'latitude',
+        'longitude',
+    ];
+
+    public function details()
+    {
+        return $this->hasMany(OrderDetail::class, 'order_id');
+    }
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
-    }
-
-    /**
-     * Get the brand associated with the transaction.
-     */
-    public function brand()
-    {
-        return $this->belongsTo(Brand::class);
-    }
-
-    /**
-     * Get the product associated with the transaction.
-     */
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
     }
 }
