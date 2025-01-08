@@ -14,6 +14,7 @@ use App\Http\Controllers\Backends\FileManagerController;
 use App\Http\Controllers\Backends\BusinessSettingController;
 use App\Http\Controllers\Backends\CustomerController;
 use App\Http\Controllers\Backends\OnboardController;
+use App\Http\Controllers\backends\OrderController;
 use App\Http\Controllers\Backends\ProductController;
 use App\Http\Controllers\Backends\PromotionController;
 use App\Http\Controllers\Backends\TransactionController;
@@ -121,8 +122,8 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         Route::delete('product/delete/gallery',[ProductController::class, 'deleteProductGallery'])->name('product.delete_gallery');
 
         // Route Transaction
-        Route::post('transaction/update_status', [TransactionController::class, 'updateStatus'])->name('transaction.update_status');
-        Route::resource('transaction', TransactionController::class);
+        Route::post('order/update_status', [OrderController::class, 'updateStatus'])->name('order.update_status');
+        Route::resource('order', OrderController::class);
     });
 
 });

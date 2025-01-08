@@ -1,20 +1,49 @@
 <?php
 
-namespace App\Http\Controllers\Backends;
+namespace App\Http\Controllers\backends;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
-class TransactionController extends Controller
+class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $products = Product::all();
+        $query = Order::with('customer', 'brand', 'product');
+
+        if ($request->has('filter')) {
+            switch ($request->filter) {
+                case 'today':
+                    $query->whereDate('created_at', Carbon::today());
+                    break;
+
+                case 'this_week':
+                    $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+
+                case 'this_month':
+                    $query->whereMonth('created_at', Carbon::now()->month)
+                        ->whereYear('created_at', Carbon::now()->year);
+                    break;
+
+                case 'this_year':
+                    $query->whereYear('created_at', Carbon::now()->year);
+                    break;
+            }
+        }
+
+        $orders = $query->latest('id')->paginate(10);
+
+        return view('backends.order.index', compact('orders', 'products'));
     }
 
     /**

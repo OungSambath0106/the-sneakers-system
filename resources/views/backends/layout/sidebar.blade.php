@@ -156,13 +156,13 @@
                     </li>
                 @endif
 
-                @if (auth()->user()->can('payment.view'))
+                @if (auth()->user()->can('order.view'))
                     <li class="nav-item">
-                        <a href="{{ route('admin.promotion.index') }}"
-                            class="nav-link @if (request()->routeIs('admin.payment*')) active @endif">
+                        <a href="{{ route('admin.order.index') }}"
+                            class="nav-link @if (request()->routeIs('admin.order*')) active @endif">
                             @include('svgs.credit-card')
                             <p>
-                                {{ __('Payment') }}
+                                {{ __('Transaction Report') }}
                             </p>
                         </a>
                     </li>
