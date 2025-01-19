@@ -207,6 +207,6 @@
     });
 
     //for update status
-    initializeStatusInput("{{ route('admin.onboard.update_status') }}");
+    // initializeStatusInput("{{ route('admin.shoes-slider.update_status') }}");
 </script>
 @endpush

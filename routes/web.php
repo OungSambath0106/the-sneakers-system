@@ -17,6 +17,7 @@ use App\Http\Controllers\Backends\OnboardController;
 use App\Http\Controllers\backends\OrderController;
 use App\Http\Controllers\Backends\ProductController;
 use App\Http\Controllers\Backends\PromotionController;
+use App\Http\Controllers\Backends\ShoesSliderController;
 use App\Http\Controllers\Backends\TransactionController;
 
 /*
@@ -102,14 +103,13 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         Route::post('promotion/update_status', [PromotionController::class, 'updateStatus'])->name('promotion.update_status');
         Route::delete('promotion/delete/gallery',[PromotionController::class, 'deletePromotionGallery'])->name('promotion.delete_gallery');
 
-
-        //Route for onboard
-        Route::resource('onboard', OnboardController::class);
-        Route::post('onboard/update_status', [OnboardController::class, 'updateStatus'])->name('onboard.update_status');
-
         // Route Baner-Slider
         Route::post('baner-slider/update_status', [BanerController::class, 'updateStatus'])->name('baner-slider.update_status');
         Route::resource('baner-slider', BanerController::class);
+
+        //Route for onboard
+        Route::resource('shoes-slider', ShoesSliderController::class);
+        Route::post('shoes-slider/update_status', [ShoesSliderController::class, 'updateStatus'])->name('shoes-slider.update_status');
 
         // Route Brand
         Route::post('brand/update_status', [BrandController::class, 'updateStatus'])->name('brand.update_status');

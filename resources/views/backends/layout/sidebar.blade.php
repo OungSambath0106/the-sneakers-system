@@ -120,27 +120,40 @@
                     </li>
                 @endif
 
-                @if (auth()->user()->can('banner.view'))
-                    <li class="nav-item">
-                        <a href="{{ route('admin.baner-slider.index') }}"
-                            class="nav-link @if (request()->routeIs('admin.baner-slider*')) active @endif">
+                @if (auth()->user()->can('banner.view') || auth()->user()->can('shoes-slider.view'))
+                    <li class="nav-item @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) menu-is-opening menu-open @endif">
+                        <a href="#" class="nav-link @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) active @endif">
                             @include('svgs.slider')
                             <p>
-                                {{ __('Baner Slider') }}
+                                {{ __('Banner Slider') }}
+                                <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
-                    </li>
-                @endif
+                        <ul class="nav nav-treeview">
+                            @if (auth()->user()->can('banner.view'))
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.baner-slider.index') }}"
+                                        class="nav-link @if (request()->routeIs('admin.baner-slider*')) active @endif">
+                                        <i class="fa-solid fa-circle nav-icon"></i>
+                                        <p>
+                                            {{ __('Banner') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endif
 
-                @if (auth()->user()->can('onboard.view'))
-                    <li class="nav-item">
-                        <a href="{{ route('admin.onboard.index') }}"
-                            class="nav-link @if (request()->routeIs('admin.onboard*')) active @endif">
-                            @include('svgs.blog')
-                            <p>
-                                {{ __('OnBoard') }}
-                            </p>
-                        </a>
+                            @if (auth()->user()->can('shoes-slider.view'))
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.shoes-slider.index') }}"
+                                        class="nav-link @if (request()->routeIs('admin.shoes-slider*')) active @endif">
+                                        <i class="fa-solid fa-circle nav-icon"></i>
+                                        <p>
+                                            {{ __('Shoes Slider') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endif
+                        </ul>
                     </li>
                 @endif
 

@@ -128,7 +128,7 @@
             <div class="col-lg-3 col-sm-6">
                 <div
                     class="small-box bg-white d-flex p-3 justify-content-between align-items-center dashboard_summary_box dashboard_shadow">
-                    <div class="rounded-circle bg-light p-2" style="height: 70px; width: 70px;">
+                    <div class="bg-light p-2" style="height: 70px; width: 70px; border-radius: 50%;">
                         <div style="padding:7px;">
                             <svg width="44px" height="44px" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -153,7 +153,7 @@
             <div class="col-lg-3 col-sm-6">
                 <div
                     class="small-box bg-white d-flex p-3 justify-content-between align-items-center dashboard_summary_box dashboard_shadow">
-                    <div class="rounded-circle bg-light p-2" style="height: 70px; width: 70px;">
+                    <div class="bg-light p-2" style="height: 70px; width: 70px; border-radius: 50%;">
                         <div style="padding:4px;">
                             @include('svgs.brand')
                         </div>
@@ -167,7 +167,7 @@
             <div class="col-lg-3 col-sm-6">
                 <div
                     class="small-box bg-white d-flex p-3 justify-content-between align-items-center dashboard_summary_box dashboard_shadow">
-                    <div class="rounded-circle bg-light p-2" style="height: 70px; width: 70px;">
+                    <div class="bg-light p-2" style="height: 70px; width: 70px; border-radius: 50%;">
                         <div style="padding:6px;">
                             @include('svgs.product')
                         </div>
@@ -181,7 +181,7 @@
             <div class="col-lg-3 col-sm-6">
                 <div
                     class="small-box bg-white d-flex p-3 justify-content-between align-items-center dashboard_summary_box dashboard_shadow">
-                    <div class="rounded-circle bg-light p-2" style="height: 70px; width: 70px;">
+                    <div class="bg-light p-2" style="height: 70px; width: 70px; border-radius: 50%;">
                         <div style="padding:10px;">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 80" x="0px" y="0px"
                                 style="fill:#3d95d0;">

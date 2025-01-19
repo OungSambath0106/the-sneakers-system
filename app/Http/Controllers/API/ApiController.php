@@ -21,6 +21,7 @@ use App\Models\Menu;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Promotion;
+use App\Models\ShoesSlider;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
@@ -104,17 +105,17 @@ class ApiController extends Controller
         return response()->json($data, 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function getOnboardScreen()
+    public function getShoesSlider()
     {
-        $onboards = Onboard::where('status', 1)
+        $shoes_slider = ShoesSlider::where('status', 1)
                     ->select('id', 'title', 'image', 'status')
                     ->get();
 
-        if ($onboards->isEmpty()) {
+        if ($shoes_slider->isEmpty()) {
             return response()->json(['message' => 'No Record Found'], 200);
         }
 
-        return response()->json($onboards, 200);
+        return response()->json($shoes_slider, 200);
     }
 
     public function getProduct(Request $request)

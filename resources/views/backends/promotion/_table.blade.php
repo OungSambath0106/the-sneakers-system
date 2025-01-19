@@ -3,8 +3,8 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>{{ __('Discount Type') }}</th>
                 <th>{{ __('Title') }}</th>
+                <th>{{ __('Discount Type') }}</th>
                 <th>{{ __('Banner') }}</th>
                 <th>{{ __('Start Date') }}</th>
                 <th>{{ __('End Date') }}</th>
@@ -16,8 +16,8 @@
             @forelse ($promotions as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->discount_type ?? 'Null' }}</td>
                     <td>{{ $item->title ?? 'Null' }}</td>
+                    <td>{{ $item->discount_type ?? 'Null' }}</td>
                     {{-- <td>
                         <img width="90%" height="auto" src="
                         @if ($item->banner && file_exists(public_path('uploads/promotions/' . $item->banner))) {{ asset('uploads/promotions/' . $item->banner) }}

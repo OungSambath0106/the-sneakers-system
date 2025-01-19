@@ -19,7 +19,7 @@
                         <img width="40%" height="auto" src="
                         @if ($baner->image && file_exists(public_path('uploads/baner-slider/' . $baner->image))) {{ asset('uploads/baner-slider/' . $baner->image) }}
                         @else
-                            {{ asset('uploads/image/default.png') }} @endif
+                            {{ asset('uploads/default.png') }} @endif
                         "
                             alt="" class="banner_img_table">
                     </td>

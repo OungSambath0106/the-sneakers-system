@@ -30,7 +30,7 @@ Route::middleware(['auth:api'])->group(function () {
         // (Get Config)
         Route::get('get_config', [ApiController::class, 'getConfig']);
         //Route for onboard
-        Route::get('get_onboard_screen',[ApiController::class,'getOnboardScreen']);
+        Route::get('get_shoes_slider',[ApiController::class,'getShoesSlider']);
         // (Get Promotion)
         Route::get('get_promotion', [ApiController::class, 'getPromotion']);
         // (Get Promotion Detail)
