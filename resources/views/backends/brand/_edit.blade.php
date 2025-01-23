@@ -3,7 +3,7 @@
 <div class="modal-dialog modal-md modal-dialog-centered">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">{{ __('Edit Brand') }}</h5>
+            <h5 class="modal-title">{{ __('Update Brand') }}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
             </button>
@@ -64,7 +64,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-12 px-0">
                     <div class="form-group">
                         <label for="exampleInputFile">{{ __('Image') }}</label>
                         <div class="input-group">
@@ -85,10 +85,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                <button type="submit" class="btn btn-primary submit">{{ __('Save') }}</button>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary submit float-right">{{__('Save')}}</button>
+                        {{-- <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">{{ __('Close') }}</button> --}}
+                    </div>
+                </div>
             </div>
         </form>
     </div>

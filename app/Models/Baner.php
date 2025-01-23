@@ -12,17 +12,6 @@ class Baner extends Model
 {
     use HasFactory;
 
-    protected $appends = ['image_url'];
-
-    public function getImageUrlAttribute()
-    {
-        if (!empty($this->image)) {
-            return asset('uploads/baner-slider/' . rawurlencode($this->image));
-        } else {
-            return null;
-        }
-    }
-
     public function getNameAttribute($name)
     {
         if (strpos(url()->current(), '/admin')) {

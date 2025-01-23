@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\App;
 class Brand extends Model
 {
     use HasFactory;
-
-    protected $appends = ['images_url'];
-
     protected $guarded = [];
 
     public function getNameAttribute($name)
@@ -22,16 +19,6 @@ class Brand extends Model
             return $name;
         }
         return $this->translations[0]->value ?? $name;
-    }
-
-    public function getImagesUrlAttribute()
-    {
-        if (!empty($this->images)) {
-            $image_url = asset('uploads/brand/' . rawurlencode($this->images));
-        } else {
-            $image_url = null;
-        }
-        return $image_url;
     }
 
     public function products()

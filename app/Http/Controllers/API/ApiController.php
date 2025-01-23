@@ -39,6 +39,11 @@ class ApiController extends Controller
                 ->select('id', 'name', 'images', 'status')
                 ->paginate(10);
 
+        $brands = $brands->map(function ($brand) {
+            $brand->images = asset('uploads/brand/' . $brand->images);
+            return $brand;
+        });
+
         if ($brands->isEmpty()) {
             return response()->json(['message' => 'No records found'], 404);
         }
@@ -73,6 +78,10 @@ class ApiController extends Controller
         $baner_slider = Baner::where('status', 1)
                         ->select('id', 'name', 'image', 'status')
                         ->get();
+        $baner_slider = $baner_slider->map(function ($baner) {
+            $baner->image = asset('uploads/baner/' . $baner->image);
+            return $baner;
+        });
 
         if ($baner_slider->isEmpty()) {
             return response()->json(['message' => 'No Record Found'], 200);
@@ -304,7 +313,6 @@ class ApiController extends Controller
     // Order
     public function storeOrder(Request $request)
     {
-        // dd($request->all());
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'order_amount' => 'required|numeric',
@@ -321,7 +329,7 @@ class ApiController extends Controller
             'order_details' => 'required|array',
             'order_details.*.product_id' => 'required|exists:products,id',
             'order_details.*.brand_id' => 'required|exists:brands,id',
-            'order_details.*.qty' => 'required|integer',
+            'order_details.*.qty' => 'required|integer|min:1',
             'order_details.*.price' => 'required|numeric',
             'order_details.*.discount' => 'nullable|numeric',
             'order_details.*.size' => 'nullable|string',
@@ -333,9 +341,22 @@ class ApiController extends Controller
             // Create Order
             $order = Order::create($validated);
 
-            // Create Order Details
+            // Process Order Details and Update Product Quantities
             foreach ($validated['order_details'] as $detail) {
                 $order->details()->create($detail);
+
+                // Update Product Quantity
+                $product = Product::findOrFail($detail['product_id']);
+                $productInfo = json_decode($product->product_info, true);
+
+                // Check and Update Product Quantity
+                if (isset($productInfo['product_qty']) && $productInfo['product_qty'] >= $detail['qty']) {
+                    $productInfo['product_qty'] -= $detail['qty'];
+                    $product->product_info = json_encode($productInfo);
+                    $product->save();
+                } else {
+                    throw new \Exception("Insufficient quantity for product ID {$detail['product_id']}");
+                }
             }
 
             DB::commit();
