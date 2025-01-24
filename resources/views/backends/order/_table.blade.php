@@ -2,7 +2,7 @@
     <table class="table table-striped nowrap" id="myTable">
         <thead>
             <tr>
-                <th>#</th>
+                {{-- <th>#</th> --}}
                 <th>{{ __('Order ID') }}</th>
                 <th>{{ __('Customer Name') }}</th>
                 <th>{{ __('Total Product Amount	') }}</th>
@@ -17,7 +17,7 @@
         <tbody>
             @foreach ($orders as $item)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
+                    {{-- <td>{{ $loop->iteration }}</td> --}}
                     <td>#{{ $item->id }}</td>
                     <td>{{ $item->customer->first_name }} {{ $item->customer->last_name }}</td>
                     <td>$ {{ $item->order_amount }}</td>

@@ -47,16 +47,14 @@ Route::get('get_product_detail', [ApiController::class, 'GetProductDetail']);
 Route::middleware(['auth:api'])->group(function () {
     // (Get Config)
     Route::get('get_config', [ApiController::class, 'getConfig']);
-
     // (Get User)
     Route::get('get_user', [ApiController::class, 'getUser']);
+    // (logout)
+    Route::get('logout', [ApiController::class, 'logout']);
 
     // (Order)
     Route::post('/orders', [ApiController::class, 'storeOrder']);
     Route::get('order/{id}', [ApiController::class, 'showOrder']);
-
-    // (logout)
-    Route::get('logout', [ApiController::class, 'logout']);
 });
 
 // (Customer Register)
@@ -65,6 +63,10 @@ Route::post('customer_register', [ApiController::class, 'customerRegister']);
 Route::post('customer_login', [ApiController::class, 'customerLogin']);
 
 Route::middleware(['auth:customer'])->group(function () {
+    // // (Order)
+    // Route::post('/orders', [ApiController::class, 'storeOrder']);
+    // Route::get('order/{id}', [ApiController::class, 'showOrder']);
+
     Route::get('customer_dashboard', [ApiController::class, 'customerDashboard']);
 });
 

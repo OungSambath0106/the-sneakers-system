@@ -14,17 +14,6 @@ class ShoesSlider extends Model
 
     protected $guarded = [];
 
-    protected $appends = ['image_url'];
-    public function getImageUrlAttribute()
-    {
-        if (!empty($this->image)) {
-            $image_url = asset('uploads/shoes_slider/' . rawurlencode($this->image));
-        } else {
-            $image_url = null;
-        }
-        return $image_url;
-    }
-
     public function getTitleAttribute($title)
     {
         if (strpos(url()->current(), '/admin')) {

@@ -15,6 +15,8 @@ class Customer extends Model
 
     protected $appends = ['image_url'];
 
+    protected $table = 'customers';
+
     protected $guarded = [];
 
     public function getImageUrlAttribute()
@@ -39,6 +41,8 @@ class Customer extends Model
         'phone',
         'email',
         'password',
+        'api_token',
+        'image',
     ];
 
 
@@ -51,6 +55,14 @@ class Customer extends Model
         'password',
         'remember_token',
     ];
+
+    /**
+     * Automatically hash passwords when set.
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
 
     /**
      * The attributes that should be cast.

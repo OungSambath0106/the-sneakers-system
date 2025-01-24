@@ -33,6 +33,7 @@
 <script src="{{ asset('backend/plugins/moment/moment.min.js') }}"></script>
 <script src="{{ asset('backend/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
 <script src="{{ asset('backend/plugins/daterangepicker/daterangepicker.js') }}"></script>
+
 <!-- Datepicker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
@@ -98,10 +99,11 @@
             width: 500
         });
 
-        $('.datepicker').datepicker({
-            language: "es",
-            autoclose: true,
-            format: "dd-mm-yyyy"
+        $(".datepicker").datepicker({
+            // dateFormat: "yy-mm-dd", // Customize the date format as needed
+            dateFormat: "dd-mm-yy", // Customize the date format as needed
+            changeMonth: true,
+            changeYear: true
         });
     });
 </script>

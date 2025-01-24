@@ -12,7 +12,7 @@ class Promotion extends Model
 {
     use HasFactory;
 
-    protected $appends = ['banner_url'];
+    // protected $appends = ['banner_url'];
 
     protected $guarded = ['id'];
 
@@ -54,15 +54,15 @@ class Promotion extends Model
         return $this->belongsToMany(Brand::class, 'promotion_brand', 'promotion_id', 'brand_id')->where('status', 1);
     }
 
-    public function getBannerUrlAttribute()
-    {
-        if (!empty($this->banner)) {
-            $image_url = asset('uploads/promotions/' . rawurlencode($this->banner));
-        } else {
-            $image_url = null;
-        }
-        return $image_url;
-    }
+    // public function getBannerUrlAttribute()
+    // {
+    //     if (!empty($this->banner)) {
+    //         $image_url = asset('uploads/promotions/' . rawurlencode($this->banner));
+    //     } else {
+    //         $image_url = null;
+    //     }
+    //     return $image_url;
+    // }
 
     public function translations()
     {

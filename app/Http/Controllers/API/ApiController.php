@@ -19,6 +19,7 @@ use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Menu;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Promotion;
 use App\Models\ShoesSlider;
@@ -53,13 +54,13 @@ class ApiController extends Controller
 
     public function getBrandDetail(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
-            'id' => 'required'
+            'id' => 'required|exists:brands,id'
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
+
         $id = $request->input('id');
         $brand = Brand::where('id', $id)
             ->select('id', 'name', 'images', 'status')
@@ -67,8 +68,10 @@ class ApiController extends Controller
             ->first();
 
         if (!$brand) {
-            return response()->json(['error' => 'brand not found'], 404);
+            return response()->json(['error' => 'Brand not found'], 404);
         }
+
+        $brand->images = asset('uploads/brand/' . $brand->images);
 
         return response()->json($brand, 200);
     }
@@ -120,6 +123,11 @@ class ApiController extends Controller
                     ->select('id', 'title', 'image', 'status')
                     ->get();
 
+        $shoes_slider = $shoes_slider->map(function ($shoes) {
+            $shoes->image = asset('uploads/shoes-slider/' . $shoes->image);
+            return $shoes;
+        });
+
         if ($shoes_slider->isEmpty()) {
             return response()->json(['message' => 'No Record Found'], 200);
         }
@@ -149,6 +157,17 @@ class ApiController extends Controller
 
         $products = $query->paginate(10);
 
+        $products = $products->map(function ($product) {
+            // Map the images in the product gallery to full URLs
+            if ($product->productgallery) {
+                $product->productgallery->images = array_map(function($image) {
+                    return asset('uploads/products/' . $image);
+                }, $product->productgallery->images);
+            }
+
+            return $product;
+        });
+
         if ($products->isEmpty()) {
             return response()->json(['message' => 'No records found'], 404);
         }
@@ -172,6 +191,17 @@ class ApiController extends Controller
             ->select('id', 'name', 'description', 'brand_id', 'new_arrival', 'recommended', 'popular', 'count_product_sale', 'rating', 'product_info');
 
         $products = $query->paginate(10);
+
+        $products = $products->map(function ($product) {
+            // Map the images in the product gallery to full URLs
+            if ($product->productgallery) {
+                $product->productgallery->images = array_map(function($image) {
+                    return asset('uploads/products/' . $image);
+                }, $product->productgallery->images);
+            }
+
+            return $product;
+        });
 
         if ($products->isEmpty()) {
             return response()->json(['message' => 'No matching products found'], 404);
@@ -198,11 +228,18 @@ class ApiController extends Controller
             }])
             ->first();
 
-        unset($product->created_by, $product->deleted_at, $product->created_at, $product->updated_at);
-
         if (!$product) {
             return response()->json(['error' => 'Product not found'], 404);
         }
+
+        // Map the images in the product gallery to full URLs
+        if ($product->productgallery) {
+            $product->productgallery->images = array_map(function($image) {
+                return asset('uploads/products/' . $image);
+            }, $product->productgallery->images);
+        }
+
+        unset($product->created_by, $product->deleted_at, $product->created_at, $product->updated_at);
 
         return response()->json($product, 200);
     }
@@ -213,10 +250,14 @@ class ApiController extends Controller
 
         $promotions = Promotion::where('status', '1')
             ->with('activeProducts.productgallery', 'activeBrands')
+            ->with(['promotiongallery' => function($query) {
+                $query->select('id', 'promotion_id', 'images');
+            }])
             ->whereDate('start_date', '<=', $currentDate)
             ->whereDate('end_date', '>=', $currentDate)
-            ->select('id', 'title', 'description', 'promotion_type', 'discount_type','percent', 'amount', 'banner', 'start_date', 'end_date')
+            ->select('id', 'title', 'description', 'promotion_type', 'discount_type', 'percent', 'amount', 'start_date', 'end_date')
             ->get();
+
         $promotions->transform(function ($promotion) {
             unset($promotion->products);
             $promotion->products = $promotion->activeProducts->map(function ($product) {
@@ -229,11 +270,14 @@ class ApiController extends Controller
                     'product_info' => $product->product_info,
                     'rating' => $product->rating,
                     'count_product_sale' => $product->count_product_sale,
-                    'productgallery' => $product->productgallery->images_url
+                    'productgallery' => $product->productgallery ? array_map(function($image) {
+                        return asset('uploads/products/' . $image);
+                    }, $product->productgallery->images) : null
                 ];
                 return $product;
             });
             unset($promotion->activeProducts);
+
             $promotion->brands = $promotion->activeBrands->map(function ($brand) {
                 $brand = [
                     'id' => $brand->id,
@@ -243,6 +287,14 @@ class ApiController extends Controller
                 return $brand;
             });
             unset($promotion->activeBrands);
+
+            // Map the images in the promotion gallery to full URLs
+            if ($promotion->promotiongallery) {
+                $promotion->promotiongallery->images = array_map(function($image) {
+                    return asset('uploads/promotions/' . $image);
+                }, $promotion->promotiongallery->images);
+            }
+
             return $promotion;
         });
 
@@ -255,6 +307,7 @@ class ApiController extends Controller
 
     public function getPromotionDetail(Request $request)
     {
+        // Validate the input 'id'
         $validator = Validator::make($request->all(), [
             'id' => 'required|integer'
         ]);
@@ -265,21 +318,28 @@ class ApiController extends Controller
         $id = $request->input('id');
         $currentDate = Carbon::now();
 
+        // Fetch the promotion with necessary relationships
         $promotion = Promotion::where('id', $id)
             ->where('status', 1)
             ->whereDate('start_date', '<=', $currentDate)
             ->whereDate('end_date', '>=', $currentDate)
             ->with('activeProducts.productgallery', 'activeBrands')
+            ->with(['promotiongallery' => function ($query) {
+                $query->select('id', 'promotion_id', 'images');
+            }])
             ->first();
 
+        // Return 404 if the promotion is not found
         if (!$promotion) {
             return response()->json(['error' => 'Promotion not found'], 404);
         }
 
+        // Remove unwanted fields (created_at, updated_at)
         unset($promotion->created_at, $promotion->updated_at);
 
+        // Map the products and add necessary information
         $promotion->products = $promotion->activeProducts->map(function ($product) {
-            return [
+            $productData = [
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
@@ -288,24 +348,44 @@ class ApiController extends Controller
                 'product_info' => $product->product_info,
                 'rating' => $product->rating,
                 'count_product_sale' => $product->count_product_sale,
-                'productgallery' => $product->productgallery->images_url,
                 'new_arrival' => $product->new_arrival,
                 'recommended' => $product->recommended,
                 'popular' => $product->popular
             ];
+
+            // Safely map the product's gallery images if they exist
+            if ($product->productgallery) {
+                $productData['productgallery'] = array_map(function ($image) {
+                    return asset('uploads/products/' . $image);
+                }, $product->productgallery->images);
+            } else {
+                $productData['productgallery'] = null; // No gallery found
+            }
+
+            return $productData;
         });
 
-        unset($promotion->activeProducts);
+        unset($promotion->activeProducts); // Remove unnecessary activeProducts data
 
+        // Map the brands associated with the promotion
         $promotion->brands = $promotion->activeBrands->map(function ($brand) {
             return [
                 'id' => $brand->id,
                 'name' => $brand->name,
-                'images_url' => $brand->images_url
+                'images_url' => $brand->images_url ? asset('uploads/brands/' . $brand->images_url) : null // Safe URL generation
             ];
         });
 
-        unset($promotion->activeBrands);
+        unset($promotion->activeBrands); // Remove unnecessary activeBrands data
+
+        // Safely map the promotion gallery images
+        if ($promotion->promotiongallery) {
+            $promotion->promotiongallery->images = array_map(function ($image) {
+                return asset('uploads/promotions/' . $image);
+            }, $promotion->promotiongallery->images);
+        } else {
+            $promotion->promotiongallery->images = []; // Default to an empty array if no gallery images exist
+        }
 
         return response()->json($promotion, 200);
     }
@@ -329,34 +409,57 @@ class ApiController extends Controller
             'order_details' => 'required|array',
             'order_details.*.product_id' => 'required|exists:products,id',
             'order_details.*.brand_id' => 'required|exists:brands,id',
-            'order_details.*.qty' => 'required|integer|min:1',
-            'order_details.*.price' => 'required|numeric',
-            'order_details.*.discount' => 'nullable|numeric',
-            'order_details.*.size' => 'nullable|string',
+            'order_details.*.product_qty' => 'required|integer|min:1',
+            'order_details.*.product_price' => 'required|numeric',
+            'order_details.*.product_size' => 'required|string',
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Create Order
             $order = Order::create($validated);
 
-            // Process Order Details and Update Product Quantities
             foreach ($validated['order_details'] as $detail) {
-                $order->details()->create($detail);
-
-                // Update Product Quantity
+                $order_detail = new OrderDetail();
+                $order_detail->order_id = $order->id;
+                $order_detail->product_id = $detail['product_id'];
+                $order_detail->brand_id = $detail['brand_id'];
+                $order_detail->product_qty = $detail['product_qty'];
+                $order_detail->product_price = $detail['product_price'];
+                $order_detail->product_size = $detail['product_size'];
+                $order_detail->discount = $detail['discount'];
+                $order_detail->discount_type = $detail['discount_type'];
+                $order_detail->save();
                 $product = Product::findOrFail($detail['product_id']);
-                $productInfo = json_decode($product->product_info, true);
+                $productInfo = $product->product_info;
+                $productInfoArray = is_array($productInfo) ? $productInfo : json_decode($productInfo, true);
 
-                // Check and Update Product Quantity
-                if (isset($productInfo['product_qty']) && $productInfo['product_qty'] >= $detail['qty']) {
-                    $productInfo['product_qty'] -= $detail['qty'];
-                    $product->product_info = json_encode($productInfo);
-                    $product->save();
-                } else {
-                    throw new \Exception("Insufficient quantity for product ID {$detail['product_id']}");
+                $matchingSize = null;
+                foreach ($productInfoArray as &$info) {
+                    if ($info['product_size'] === $detail['product_size']) {
+                        $matchingSize = &$info;
+                        break;
+                    }
                 }
+
+                if ($matchingSize) {
+                    if ($matchingSize['product_qty'] >= $detail['product_qty']) {
+                        $matchingSize['product_qty'] -= $detail['product_qty'];
+                    } else {
+                        throw new \Exception(
+                            "Insufficient quantity for product ID {$detail['product_id']} (Size: {$detail['product_size']}).
+                            Available: {$matchingSize['product_qty']}, Requested: {$detail['product_qty']}"
+                        );
+                    }
+                } else {
+                    throw new \Exception("Product size {$detail['product_size']} not found for product ID {$detail['product_id']}.");
+                }
+
+                $product->product_info = array_map(function($info) {
+                    $info['product_qty'] = (string) $info['product_qty'];
+                    return $info;
+                }, $productInfoArray);
+                $product->save();
             }
 
             DB::commit();
@@ -366,7 +469,6 @@ class ApiController extends Controller
                 'message' => 'Order created successfully',
                 'data' => $order->load('details')
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -491,6 +593,7 @@ class ApiController extends Controller
 
     public function customerLogin(Request $request)
     {
+        // Validate request data
         $validated = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:8',
@@ -500,17 +603,20 @@ class ApiController extends Controller
 
         if (!$customer || !Hash::check($validated['password'], $customer->password)) {
             return response()->json([
-                'message' => 'Invalid email or password.',
+                'message' => 'Invalid credentials.',
             ], 401);
         }
 
-        // Generate a personal access token
-        $token = $customer->createToken('accessToken')->accessToken ?? null;
-
+        $customer->tokens()->delete();
+        $token = $customer->createToken('CustomerAccessToken')->accessToken;
         return response()->json([
             'message' => 'Login successful!',
             'token' => $token,
-            'customer' => $customer,
+            'customer' => [
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'email' => $customer->email,
+            ],
         ], 200);
     }
 

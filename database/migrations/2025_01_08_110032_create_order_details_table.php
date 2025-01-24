@@ -19,9 +19,9 @@ class CreateOrderDetailsTable extends Migration
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('brand_id');
             $table->string('product_details')->nullable();
-            $table->integer('qty')->nullable();
-            $table->string('size')->nullable();
-            $table->decimal('price', 10, 2)->nullable();
+            $table->integer('product_qty')->nullable();
+            $table->string('product_size')->nullable();
+            $table->decimal('product_price', 10, 2)->nullable();
             $table->decimal('discount', 10, 2)->nullable();
             $table->enum('delivery_status', ['pending', 'delivered', 'cancelled'])->default('pending');
             $table->enum('payment_status', ['unpaid', 'paid'])->nullable();

@@ -213,5 +213,8 @@
     table.dataTable>thead .sorting_asc:before, table.dataTable>thead .sorting_desc:after {
         color: #808080 !important;
     }
+    .swal2-popup.swal2-toast .swal2-title {
+        margin: .6em !important;
+    }
 </style>
 
