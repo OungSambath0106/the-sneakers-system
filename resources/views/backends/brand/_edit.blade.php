@@ -69,15 +69,15 @@
                         <label for="exampleInputFile">{{ __('Image') }}</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="hidden" name="images" class="image_hidden">
+                                <input type="hidden" name="image" class="image_hidden">
                                 <input type="file" class="custom-file-input image-file-input" id="exampleInputFile" name="image">
-                                <label class="custom-file-label" for="exampleInputFile">{{ $brand->images ? basename($brand->images) : __('Choose file') }}</label>
+                                <label class="custom-file-label" for="exampleInputFile">{{ $brand->image ? basename($brand->image) : __('Choose file') }}</label>
                             </div>
                         </div>
                         <div class="preview preview-multiple text-center border rounded mt-2" style="height: 150px">
                             <img src="
-                            @if ($brand->images && file_exists(public_path('uploads/brand/' . $brand->images)))
-                                {{ asset('uploads/brand/' . $brand->images) }}
+                            @if ($brand->image && file_exists(public_path('uploads/brand/' . $brand->image)))
+                                {{ asset('uploads/brand/' . $brand->image) }}
                             @else
                                 {{ asset('uploads/defualt.png') }}
                             @endif"

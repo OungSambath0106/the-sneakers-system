@@ -38,6 +38,7 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ]);
@@ -66,7 +67,7 @@ class BrandController extends Controller
             $brand->created_by = auth()->user()->id;
 
             if ($request->hasFile('image')) {
-                $brand->images = ImageManager::upload('uploads/brand/', $request->image);
+                $brand->image = ImageManager::upload('uploads/brand/', $request->image);
             }
 
             $brand->save();
@@ -158,11 +159,11 @@ class BrandController extends Controller
             $brand = Brand::findOrFail($id);
             $brand->name = $request->name[array_search('en', $request->lang)];
             if ($request->hasFile('image')) {
-                if ($brand->images && file_exists(public_path('uploads/brand/' . $brand->images))) {
-                    unlink(public_path('uploads/brand/' . $brand->images));
+                if ($brand->image && file_exists(public_path('uploads/brand/' . $brand->image))) {
+                    unlink(public_path('uploads/brand/' . $brand->image));
                 }
 
-                $brand->images = ImageManager::update('uploads/brand/', null, $request->image);
+                $brand->image = ImageManager::update('uploads/brand/', null, $request->image);
             }
             $brand->save();
 

@@ -53,7 +53,7 @@
                         <label for="exampleInputFile">{{ __('Image') }}</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="hidden" name="images" class="image_hidden">
+                                <input type="hidden" name="image" class="image_hidden">
                                 <input type="file" class="custom-file-input image-file-input" id="exampleInputFile"
                                     name="image">
                                 <label class="custom-file-label"

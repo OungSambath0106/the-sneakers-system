@@ -37,11 +37,11 @@ class ApiController extends Controller
     public function getBrand(Request $request)
     {
         $brands = Brand::where('status', '1')
-                ->select('id', 'name', 'images', 'status')
+                ->select('id', 'name', 'image', 'status')
                 ->paginate(10);
 
         $brands = $brands->map(function ($brand) {
-            $brand->images = asset('uploads/brand/' . $brand->images);
+            $brand->image = asset('uploads/brand/' . $brand->image);
             return $brand;
         });
 
@@ -63,7 +63,7 @@ class ApiController extends Controller
 
         $id = $request->input('id');
         $brand = Brand::where('id', $id)
-            ->select('id', 'name', 'images', 'status')
+            ->select('id', 'name', 'image', 'status')
             ->where('status', 1)
             ->first();
 
@@ -71,7 +71,7 @@ class ApiController extends Controller
             return response()->json(['error' => 'Brand not found'], 404);
         }
 
-        $brand->images = asset('uploads/brand/' . $brand->images);
+        $brand->image = asset('uploads/brand/' . $brand->image);
 
         return response()->json($brand, 200);
     }
