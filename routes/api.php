@@ -39,6 +39,12 @@ Route::get('get_brands', [ApiController::class, 'getBrand']);
 Route::get('get_brand_detail', [ApiController::class, 'getBrandDetail']);
 // (Get Product)
 Route::get('get_products', [ApiController::class, 'getProduct']);
+// (Get Product New Arrival)
+Route::get('get_products_new_arrival', [ApiController::class, 'getProductNewArrival']);
+// (Get Product Recommended)
+Route::get('get_products_recommended', [ApiController::class, 'getProductRecommended']);
+// (Get Product)
+Route::get('get_products_popular', [ApiController::class, 'getProductPopular']);
 // (Search Product)
 Route::get('/products/search', [ApiController::class, 'searchProduct']);
 // (Get Product Detail)

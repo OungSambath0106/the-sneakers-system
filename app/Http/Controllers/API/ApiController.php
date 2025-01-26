@@ -37,10 +37,10 @@ class ApiController extends Controller
     public function getBrand(Request $request)
     {
         $brands = Brand::where('status', '1')
-                ->select('id', 'name', 'image', 'status')
-                ->paginate(10);
+                    ->select('id', 'name', 'image', 'status')
+                    ->paginate(10);
 
-        $brands = $brands->map(function ($brand) {
+        $brands->getCollection()->transform(function ($brand) {
             $brand->image = asset('uploads/brand/' . $brand->image);
             return $brand;
         });
@@ -141,28 +141,135 @@ class ApiController extends Controller
             ->with(['productgallery' => function($query) {
                 $query->select('id', 'product_id', 'images');
             }])
-            ->select('id', 'name', 'description', 'brand_id', 'new_arrival', 'recommended', 'popular', 'count_product_sale', 'rating', 'product_info');
-
-        if ($request->has('new_arrival')) {
-            $query->where('new_arrival', $request->input('new_arrival'));
-        }
-
-        if ($request->has('recommended')) {
-            $query->where('recommended', $request->input('recommended'));
-        }
-
-        if ($request->has('popular')) {
-            $query->where('popular', $request->input('popular'));
-        }
+            ->select('id', 'name', 'rating', 'product_info');
 
         $products = $query->paginate(10);
 
-        $products = $products->map(function ($product) {
-            // Map the images in the product gallery to full URLs
+        $products->getCollection()->transform(function ($product) {
+            if (is_array($product->product_info) && count($product->product_info) > 0) {
+                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+            } else {
+                $product->product_info = null;
+            }
+
             if ($product->productgallery) {
-                $product->productgallery->images = array_map(function($image) {
-                    return asset('uploads/products/' . $image);
-                }, $product->productgallery->images);
+                $images = $product->productgallery->images;
+                if (is_array($images) && count($images) > 0) {
+                    $product->productgallery->images = [asset($images[0])];
+                } else {
+                    $product->productgallery->images = [];
+                }
+            }
+
+            return $product;
+        });
+
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No records found'], 404);
+        }
+
+        return response()->json($products, 200);
+    }
+
+    public function getProductNewArrival(Request $request)
+    {
+        $query = Product::where('status', '1')
+            ->where('new_arrival', '1')
+            ->with(['productgallery' => function($query) {
+                $query->select('id', 'product_id', 'images');
+            }])
+            ->select('id', 'name', 'rating', 'product_info');
+
+        $products = $query->paginate(10);
+
+        $products->getCollection()->transform(function ($product) {
+            if (is_array($product->product_info) && count($product->product_info) > 0) {
+                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+            } else {
+                $product->product_info = null;
+            }
+
+            if ($product->productgallery) {
+                $images = $product->productgallery->images;
+                if (is_array($images) && count($images) > 0) {
+                    $product->productgallery->images = [asset($images[0])];
+                } else {
+                    $product->productgallery->images = [];
+                }
+            }
+
+            return $product;
+        });
+
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No records found'], 404);
+        }
+
+        return response()->json($products, 200);
+    }
+
+    public function getProductRecommended(Request $request)
+    {
+        $query = Product::where('status', '1')
+            ->where('recommended', '1')
+            ->with(['productgallery' => function($query) {
+                $query->select('id', 'product_id', 'images');
+            }])
+            ->select('id', 'name', 'rating', 'product_info');
+
+        $products = $query->paginate(10);
+
+        $products->getCollection()->transform(function ($product) {
+            if (is_array($product->product_info) && count($product->product_info) > 0) {
+                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+            } else {
+                $product->product_info = null;
+            }
+
+            if ($product->productgallery) {
+                $images = $product->productgallery->images;
+                if (is_array($images) && count($images) > 0) {
+                    $product->productgallery->images = [asset($images[0])];
+                } else {
+                    $product->productgallery->images = [];
+                }
+            }
+
+            return $product;
+        });
+
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No records found'], 404);
+        }
+
+        return response()->json($products, 200);
+    }
+
+    public function getProductPopular(Request $request)
+    {
+        $query = Product::where('status', '1')
+            ->where('popular', '1')
+            ->with(['productgallery' => function($query) {
+                $query->select('id', 'product_id', 'images');
+            }])
+            ->select('id', 'name', 'rating', 'product_info');
+
+        $products = $query->paginate(10);
+
+        $products->getCollection()->transform(function ($product) {
+            if (is_array($product->product_info) && count($product->product_info) > 0) {
+                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+            } else {
+                $product->product_info = null;
+            }
+
+            if ($product->productgallery) {
+                $images = $product->productgallery->images;
+                if (is_array($images) && count($images) > 0) {
+                    $product->productgallery->images = [asset($images[0])];
+                } else {
+                    $product->productgallery->images = [];
+                }
             }
 
             return $product;
@@ -188,16 +295,24 @@ class ApiController extends Controller
             ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
-            ->select('id', 'name', 'description', 'brand_id', 'new_arrival', 'recommended', 'popular', 'count_product_sale', 'rating', 'product_info');
+            ->select('id', 'name', 'rating', 'product_info');
 
         $products = $query->paginate(10);
 
-        $products = $products->map(function ($product) {
-            // Map the images in the product gallery to full URLs
+        $products->getCollection()->transform(function ($product) {
+            if (is_array($product->product_info) && count($product->product_info) > 0) {
+                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+            } else {
+                $product->product_info = null;
+            }
+
             if ($product->productgallery) {
-                $product->productgallery->images = array_map(function($image) {
-                    return asset('uploads/products/' . $image);
-                }, $product->productgallery->images);
+                $images = $product->productgallery->images;
+                if (is_array($images) && count($images) > 0) {
+                    $product->productgallery->images = [asset('uploads/products/' . $images[0])];
+                } else {
+                    $product->productgallery->images = [];
+                }
             }
 
             return $product;
@@ -209,7 +324,6 @@ class ApiController extends Controller
 
         return response()->json($products, 200);
     }
-
 
     public function getProductDetail(Request $request)
     {

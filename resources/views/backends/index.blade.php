@@ -236,13 +236,13 @@
                                             <div class="custom-carousel carousel-{{ $pro_sale->id }}" data-product-id="{{ $pro_sale->id }}" data-current-index="0">
                                                 @foreach ($pro_sale->productgallery->images as $index => $image)
                                                     <img src="{{ file_exists(public_path('uploads/products/' . $image)) ? asset('uploads/products/' . $image) : asset('uploads/default.png') }}"
-                                                        alt="Product Image" class="carousel-image avatar-img rounded-circle"
+                                                        alt="Product Image" class="carousel-image avatar-img"
                                                         style="display: {{ $index == 0 ? 'block' : 'none' }};">
                                                 @endforeach
                                             </div>
                                         @else
                                             <img src="{{ !empty($pro_sale->image[0]) && file_exists(public_path('uploads/products/' . $pro_sale->image[0])) ? asset('uploads/products/' . $pro_sale->images[0]) : asset('uploads/default.png') }}"
-                                                alt="Product Image" class="avatar-img rounded-circle">
+                                                alt="Product Image" class="avatar-img">
                                         @endif
                                     </div>
                                     <div class="info-user ms-3">
