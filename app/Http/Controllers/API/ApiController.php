@@ -76,13 +76,13 @@ class ApiController extends Controller
         return response()->json($brand, 200);
     }
 
-    public function getBanerSlider()
+    public function getBannerSlider()
     {
         $baner_slider = Baner::where('status', 1)
                         ->select('id', 'name', 'image', 'status')
                         ->get();
         $baner_slider = $baner_slider->map(function ($baner) {
-            $baner->image = asset('uploads/baner/' . $baner->image);
+            $baner->image = asset('uploads/banner-slider/' . $baner->image);
             return $baner;
         });
 

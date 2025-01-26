@@ -26,19 +26,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [ApiController::class, 'login']);
 
 //Route for onboard
-Route::get('get_shoes_slider',[ApiController::class,'getShoesSlider']);
+Route::get('get_shoes_sliders',[ApiController::class,'getShoesSlider']);
 // (Get Promotion)
-Route::get('get_promotion', [ApiController::class, 'getPromotion']);
+Route::get('get_promotions', [ApiController::class, 'getPromotion']);
 // (Get Promotion Detail)
 Route::get('get_promotion_detail', [ApiController::class, 'getPromotionDetail']);
 // (Get Baner Slider)
-Route::get('get_baner_slider', [ApiController::class, 'getBanerSlider']);
+Route::get('get_banner_sliders', [ApiController::class, 'getBannerSlider']);
 // (Get Brand)
-Route::get('get_brand', [ApiController::class, 'getBrand']);
+Route::get('get_brands', [ApiController::class, 'getBrand']);
 // (Get Brand Detail)
 Route::get('get_brand_detail', [ApiController::class, 'getBrandDetail']);
 // (Get Product)
-Route::get('get_product', [ApiController::class, 'getProduct']);
+Route::get('get_products', [ApiController::class, 'getProduct']);
 // (Search Product)
 Route::get('/products/search', [ApiController::class, 'searchProduct']);
 // (Get Product Detail)
@@ -48,13 +48,13 @@ Route::middleware(['auth:api'])->group(function () {
     // (Get Config)
     Route::get('get_config', [ApiController::class, 'getConfig']);
     // (Get User)
-    Route::get('get_user', [ApiController::class, 'getUser']);
+    Route::get('get_users', [ApiController::class, 'getUser']);
     // (logout)
     Route::get('logout', [ApiController::class, 'logout']);
 
     // (Order)
     Route::post('/orders', [ApiController::class, 'storeOrder']);
-    Route::get('order/{id}', [ApiController::class, 'showOrder']);
+    // Route::get('order/{id}', [ApiController::class, 'showOrder']);
 });
 
 // (Customer Register)
