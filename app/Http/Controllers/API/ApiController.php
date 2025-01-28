@@ -138,7 +138,7 @@ class ApiController extends Controller
     public function getProduct(Request $request)
     {
         $query = Product::where('status', '1')
-            ->with(['productgallery' => function($query) {
+            ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
             ->select('id', 'name', 'rating', 'product_info');
@@ -147,19 +147,21 @@ class ApiController extends Controller
 
         $products->getCollection()->transform(function ($product) {
             if (is_array($product->product_info) && count($product->product_info) > 0) {
-                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+                $product->price = $product->product_info[0]['product_price'] ?? null;
             } else {
-                $product->product_info = null;
+                $product->price = null;
             }
+            unset($product->product_info);
 
-            if ($product->productgallery) {
-                $images = $product->productgallery->images;
-                if (is_array($images) && count($images) > 0) {
-                    $product->productgallery->images = [asset($images[0])];
-                } else {
-                    $product->productgallery->images = [];
-                }
+            if ($product->productgallery && is_array($product->productgallery->images)) {
+                $firstImage = $product->productgallery->images[0] ?? null;
+                $product->image = $firstImage
+                    ? asset('uploads/products/' . $firstImage)
+                    : null;
+            } else {
+                $product->image = null;
             }
+            unset($product->productgallery);
 
             return $product;
         });
@@ -175,7 +177,7 @@ class ApiController extends Controller
     {
         $query = Product::where('status', '1')
             ->where('new_arrival', '1')
-            ->with(['productgallery' => function($query) {
+            ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
             ->select('id', 'name', 'rating', 'product_info');
@@ -184,19 +186,21 @@ class ApiController extends Controller
 
         $products->getCollection()->transform(function ($product) {
             if (is_array($product->product_info) && count($product->product_info) > 0) {
-                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+                $product->price = $product->product_info[0]['product_price'] ?? null;
             } else {
-                $product->product_info = null;
+                $product->price = null;
             }
+            unset($product->product_info);
 
-            if ($product->productgallery) {
-                $images = $product->productgallery->images;
-                if (is_array($images) && count($images) > 0) {
-                    $product->productgallery->images = [asset($images[0])];
-                } else {
-                    $product->productgallery->images = [];
-                }
+            if ($product->productgallery && is_array($product->productgallery->images)) {
+                $firstImage = $product->productgallery->images[0] ?? null;
+                $product->image = $firstImage
+                    ? asset('uploads/products/' . $firstImage)
+                    : null;
+            } else {
+                $product->image = null;
             }
+            unset($product->productgallery);
 
             return $product;
         });
@@ -212,7 +216,7 @@ class ApiController extends Controller
     {
         $query = Product::where('status', '1')
             ->where('recommended', '1')
-            ->with(['productgallery' => function($query) {
+            ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
             ->select('id', 'name', 'rating', 'product_info');
@@ -221,19 +225,21 @@ class ApiController extends Controller
 
         $products->getCollection()->transform(function ($product) {
             if (is_array($product->product_info) && count($product->product_info) > 0) {
-                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+                $product->price = $product->product_info[0]['product_price'] ?? null;
             } else {
-                $product->product_info = null;
+                $product->price = null;
             }
+            unset($product->product_info);
 
-            if ($product->productgallery) {
-                $images = $product->productgallery->images;
-                if (is_array($images) && count($images) > 0) {
-                    $product->productgallery->images = [asset($images[0])];
-                } else {
-                    $product->productgallery->images = [];
-                }
+            if ($product->productgallery && is_array($product->productgallery->images)) {
+                $firstImage = $product->productgallery->images[0] ?? null;
+                $product->image = $firstImage
+                    ? asset('uploads/products/' . $firstImage)
+                    : null;
+            } else {
+                $product->image = null;
             }
+            unset($product->productgallery);
 
             return $product;
         });
@@ -249,7 +255,7 @@ class ApiController extends Controller
     {
         $query = Product::where('status', '1')
             ->where('popular', '1')
-            ->with(['productgallery' => function($query) {
+            ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
             ->select('id', 'name', 'rating', 'product_info');
@@ -258,19 +264,21 @@ class ApiController extends Controller
 
         $products->getCollection()->transform(function ($product) {
             if (is_array($product->product_info) && count($product->product_info) > 0) {
-                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+                $product->price = $product->product_info[0]['product_price'] ?? null;
             } else {
-                $product->product_info = null;
+                $product->price = null;
             }
+            unset($product->product_info);
 
-            if ($product->productgallery) {
-                $images = $product->productgallery->images;
-                if (is_array($images) && count($images) > 0) {
-                    $product->productgallery->images = [asset($images[0])];
-                } else {
-                    $product->productgallery->images = [];
-                }
+            if ($product->productgallery && is_array($product->productgallery->images)) {
+                $firstImage = $product->productgallery->images[0] ?? null;
+                $product->image = $firstImage
+                    ? asset('uploads/products/' . $firstImage)
+                    : null;
+            } else {
+                $product->image = null;
             }
+            unset($product->productgallery);
 
             return $product;
         });
@@ -301,19 +309,21 @@ class ApiController extends Controller
 
         $products->getCollection()->transform(function ($product) {
             if (is_array($product->product_info) && count($product->product_info) > 0) {
-                $product->product_info = $product->product_info[0]['product_price'] ?? null;
+                $product->price = $product->product_info[0]['product_price'] ?? null;
             } else {
-                $product->product_info = null;
+                $product->price = null;
             }
+            unset($product->product_info);
 
-            if ($product->productgallery) {
-                $images = $product->productgallery->images;
-                if (is_array($images) && count($images) > 0) {
-                    $product->productgallery->images = [asset('uploads/products/' . $images[0])];
-                } else {
-                    $product->productgallery->images = [];
-                }
+            if ($product->productgallery && is_array($product->productgallery->images)) {
+                $firstImage = $product->productgallery->images[0] ?? null;
+                $product->image = $firstImage
+                    ? asset('uploads/products/' . $firstImage)
+                    : null;
+            } else {
+                $product->image = null;
             }
+            unset($product->productgallery);
 
             return $product;
         });
@@ -346,7 +356,6 @@ class ApiController extends Controller
             return response()->json(['error' => 'Product not found'], 404);
         }
 
-        // Map the images in the product gallery to full URLs
         if ($product->productgallery) {
             $product->productgallery->images = array_map(function($image) {
                 return asset('uploads/products/' . $image);
@@ -370,7 +379,7 @@ class ApiController extends Controller
             ->whereDate('start_date', '<=', $currentDate)
             ->whereDate('end_date', '>=', $currentDate)
             ->select('id', 'title', 'description', 'promotion_type', 'discount_type', 'percent', 'amount', 'start_date', 'end_date')
-            ->get();
+            ->paginate(10);
 
         $promotions->transform(function ($promotion) {
             unset($promotion->products);
