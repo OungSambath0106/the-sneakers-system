@@ -3,12 +3,46 @@
 namespace App\helpers;
 
 use App\Models\Notification;
+use App\Models\PlasGate;
 use App\Models\Transaction;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GlobalFunction
 {
+    public static function sendOTP($to,$otp){
+
+        $plasGate   = PlasGate::first();
+        $privateKey = $plasGate->private_key;
+        $secretKey  = $plasGate->secret_key;
+        $sender     = 'SMS Test';
+        $url = "https://cloudapi.plasgate.com/rest/send?private_key=$privateKey";
+
+        try {
+
+            $response = Http::withHeaders([
+                'X-Secret'     => $secretKey,
+                'Content-Type' => 'application/json',
+            ])->post($url, [
+                'sender'      => $sender,
+                'to'          => $to,
+                'content'     =>'Your OTP is'. $otp,
+                'dlr'         => 'yes',
+                'dlr_method'  => 'GET',
+            ]);
+
+            $responseBody = $response->json();
+
+            return $responseBody;
+        } catch (\Exception $e) {
+            Log::error('SMS Sending Failed: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
     public static function periodDate($startDate,$endDate,$day = true,$interval='1 day'){
         $begin = new \DateTime($startDate);
         $end = new \DateTime($endDate);

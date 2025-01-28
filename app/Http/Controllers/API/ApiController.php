@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\helpers\GlobalFunction;
 use App\Models\Grade;
 use App\Models\Compus;
 use App\Models\Onboard;
@@ -743,86 +744,29 @@ class ApiController extends Controller
         ], 200);
     }
 
-    public function customerRegisterWithPhone(Request $request)
-    {
-        $validated = $request->validate([
-            'phone' => 'required|unique:customers,phone',
-        ]);
+    public function generateOTP(Request $request){
 
-        try {
-            $otp = rand(100000, 999999);
-
-            Cache::put('otp_' . $validated['phone'], $otp, now()->addMinutes(5));
-
-            $this->sendOtp($validated['phone'], $otp);
-
-            return response()->json([
-                'message' => 'OTP sent to your phone!',
-                'phone' => $validated['phone'],
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to send OTP. Please try again.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function verifyOtpAndRegister(Request $request)
-    {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'phone' => 'required',
-            'otp' => 'required|digits:6',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'gender' => 'required|string|in:male,female',
-            'email' => 'required|email|unique:customers,email',
-            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        try {
-            $cachedOtp = Cache::get('otp_' . $validated['phone']);
-
-            if (!$cachedOtp || $cachedOtp != $validated['otp']) {
-                return response()->json([
-                    'message' => 'Invalid or expired OTP.',
-                ], 400);
-            }
-
-            $customer = Customer::create([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'gender' => $validated['gender'],
-                'phone' => $validated['phone'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-            ]);
-
-            Cache::forget('otp_' . $validated['phone']);
-
-            $token = $customer->createToken('accessToken')->accessToken;
-
-            return response()->json([
-                'message' => 'Customer registered successfully!',
-                'customer' => $customer,
-                'access_token' => $token,
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Registration failed. Please try again.',
-                'error' => $e->getMessage(),
-            ], 500);
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401);
         }
-    }
 
-    public function sendOtp($phone, $otp)
-    {
-        $response = Http::post('https://textbelt.com/text', [
-            'phone' => $phone,
-            'message' => "Your OTP is: $otp",
-            'key' => 'textbelt',
-        ]);
-
-        return $response->json();
+        try{
+            $to = $request->phone;
+            $otp = rand(1000,9999);
+            $response = GlobalFunction::sendOTP($to,$otp);
+            if($response){
+                $data['otp'] = $otp;
+                return response()->json($data,200);
+            }
+        }catch (\Exception $e) {
+            $data = [
+                'message'   => $e->getMessage()
+            ];
+            return response()->json($data,400);
+        }
     }
 }
