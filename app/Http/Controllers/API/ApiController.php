@@ -756,12 +756,12 @@ class ApiController extends Controller
 
         try{
             $to = $request->phone;
-            $otp = rand(1000,9999);
+            $otp = rand(100000,999999);
             $response = GlobalFunction::sendOTP($to,$otp);
-            if($response){
+            // if($response){
                 $data['otp'] = $otp;
                 return response()->json($data,200);
-            }
+            // }
         }catch (\Exception $e) {
             $data = [
                 'message'   => $e->getMessage()

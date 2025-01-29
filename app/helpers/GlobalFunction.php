@@ -14,10 +14,10 @@ class GlobalFunction
 {
     public static function sendOTP($to,$otp){
 
-        $plasGate   = PlasGate::first();
-        $privateKey = $plasGate->private_key;
-        $secretKey  = $plasGate->secret_key;
-        $sender     = 'SMS Test';
+        // $plasGate   = PlasGate::first();
+        $privateKey = '7A7cVizKODVWJob0qt__Eqxkf2mp6OoQC0MuFhB92JAADJ5nsrwADBRY-iqpME9YZsFBNnwmMGHW_aTV9de_4Q';
+        $secretKey  = '$5$rounds=535000$3wyGNEuZZTIS0ub9$oMkMpc1YFkz7VJFyMqsHQzk.Zn6c6m4ULsYturE5E98';
+        $sender     = 'PlasGateUAT';
         $url = "https://cloudapi.plasgate.com/rest/send?private_key=$privateKey";
 
         try {
@@ -25,15 +25,20 @@ class GlobalFunction
             $response = Http::withHeaders([
                 'X-Secret'     => $secretKey,
                 'Content-Type' => 'application/json',
+            ])->withOptions([
+                'verify' => false // Disable SSL verification
             ])->post($url, [
                 'sender'      => $sender,
                 'to'          => $to,
-                'content'     =>'Your OTP is'. $otp,
+                'content'     => 'Your OTP is ' . $otp,
                 'dlr'         => 'yes',
                 'dlr_method'  => 'GET',
+                'dlr_level'   => 2,
+                'dlr_url'     => "http://example.com/callback",
             ]);
 
             $responseBody = $response->json();
+            // Log::info($responseBody);
 
             return $responseBody;
         } catch (\Exception $e) {

@@ -77,7 +77,7 @@ Route::middleware(['auth:customer'])->group(function () {
 });
 
 // (Generate OTP)
-Route::get('/generate-otp',[ApiController::class,'generateOTP']);
+Route::post('/generate-otp',[ApiController::class,'generateOTP']);
 
 Route::post('register-with-phone', [ApiController::class, 'customerRegisterWithPhone']);
 Route::post('verify-otp-and-register', [ApiController::class, 'verifyOtpAndRegister']);
