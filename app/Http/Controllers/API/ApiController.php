@@ -357,11 +357,17 @@ class ApiController extends Controller
             return response()->json(['error' => 'Product not found'], 404);
         }
 
-        if ($product->productgallery) {
-            $product->productgallery->images = array_map(function($image) {
-                return asset('uploads/products/' . $image);
-            }, $product->productgallery->images);
+        if ($product->productgallery && is_array($product->productgallery->images)) {
+            $images = $product->productgallery->images ?? [];
+            $product->images = !empty($images)
+                ? array_map(function($image) {
+                    return asset('uploads/products/' . $image);
+                }, $images)
+                : null;
+        } else {
+            $product->images = null;
         }
+        unset($product->productgallery);
 
         unset($product->created_by, $product->deleted_at, $product->created_at, $product->updated_at);
 
