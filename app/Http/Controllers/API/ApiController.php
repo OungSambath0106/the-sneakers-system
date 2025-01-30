@@ -412,12 +412,17 @@ class ApiController extends Controller
             });
             unset($promotion->activeBrands);
 
-            // Map the images in the promotion gallery to full URLs
-            if ($promotion->promotiongallery) {
-                $promotion->promotiongallery->images = array_map(function($image) {
-                    return asset('uploads/promotions/' . $image);
-                }, $promotion->promotiongallery->images);
+            if ($promotion->promotiongallery && is_array($promotion->promotiongallery->images)) {
+                $images = $promotion->promotiongallery->images ?? [];
+                $promotion->images = !empty($images)
+                    ? array_map(function($image) {
+                        return asset('uploads/promotions/' . $image);
+                    }, $images)
+                    : null;
+            } else {
+                $promotion->images = null;
             }
+            unset($promotion->promotiongallery);
 
             return $promotion;
         });
