@@ -11,7 +11,7 @@ use Laravel\Passport\HasApiTokens;
 
 class Customer extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, Notifiable;
 
     protected $appends = ['image_url'];
 

@@ -442,7 +442,6 @@ class ApiController extends Controller
 
     public function getPromotionDetail(Request $request)
     {
-        // Validate the input 'id'
         $validator = Validator::make($request->all(), [
             'id' => 'required|integer'
         ]);
@@ -453,7 +452,6 @@ class ApiController extends Controller
         $id = $request->input('id');
         $currentDate = Carbon::now();
 
-        // Fetch the promotion with necessary relationships
         $promotion = Promotion::where('id', $id)
             ->where('status', 1)
             ->whereDate('start_date', '<=', $currentDate)
@@ -464,15 +462,12 @@ class ApiController extends Controller
             }])
             ->first();
 
-        // Return 404 if the promotion is not found
         if (!$promotion) {
             return response()->json(['error' => 'Promotion not found'], 404);
         }
 
-        // Remove unwanted fields (created_at, updated_at)
         unset($promotion->created_at, $promotion->updated_at);
 
-        // Map the products and add necessary information
         $promotion->products = $promotion->activeProducts->map(function ($product) {
             $productData = [
                 'id' => $product->id,
@@ -488,21 +483,21 @@ class ApiController extends Controller
                 'popular' => $product->popular
             ];
 
-            // Safely map the product's gallery images if they exist
-            if ($product->productgallery) {
-                $productData['productgallery'] = array_map(function ($image) {
-                    return asset('uploads/products/' . $image);
-                }, $product->productgallery->images);
+            if ($product->productgallery && is_array($product->productgallery->images)) {
+                $images = $product->productgallery->images ?? [];
+                $productData['images'] = !empty($images)
+                    ? array_map(function($image) {
+                        return asset('uploads/products/' . $image);
+                    }, $images)
+                    : null;
             } else {
-                $productData['productgallery'] = null; // No gallery found
+                $productData['images'] = null;
             }
 
             return $productData;
         });
+        unset($promotion->activeProducts);
 
-        unset($promotion->activeProducts); // Remove unnecessary activeProducts data
-
-        // Map the brands associated with the promotion
         $promotion->brands = $promotion->activeBrands->map(function ($brand) {
             return [
                 'id' => $brand->id,
@@ -510,17 +505,16 @@ class ApiController extends Controller
                 'images_url' => $brand->images_url ? asset('uploads/brands/' . $brand->images_url) : null // Safe URL generation
             ];
         });
+        unset($promotion->activeBrands);
 
-        unset($promotion->activeBrands); // Remove unnecessary activeBrands data
-
-        // Safely map the promotion gallery images
-        if ($promotion->promotiongallery) {
-            $promotion->promotiongallery->images = array_map(function ($image) {
+        if ($promotion->promotiongallery && is_array($promotion->promotiongallery->images)) {
+            $promotion->images = array_map(function ($image) {
                 return asset('uploads/promotions/' . $image);
             }, $promotion->promotiongallery->images);
         } else {
-            $promotion->promotiongallery->images = []; // Default to an empty array if no gallery images exist
+            $promotion->images = [];
         }
+        unset($promotion->promotiongallery); // Remove promotiongallery from the response
 
         return response()->json($promotion, 200);
     }
@@ -562,9 +556,10 @@ class ApiController extends Controller
                 $order_detail->product_qty = $detail['product_qty'];
                 $order_detail->product_price = $detail['product_price'];
                 $order_detail->product_size = $detail['product_size'];
-                $order_detail->discount = $detail['discount'];
-                $order_detail->discount_type = $detail['discount_type'];
+                $order_detail->discount = $detail['discount'] ?? 0;
+                $order_detail->discount_type = $detail['discount_type'] ?? null;
                 $order_detail->save();
+
                 $product = Product::findOrFail($detail['product_id']);
                 $productInfo = $product->product_info;
                 $productInfoArray = is_array($productInfo) ? $productInfo : json_decode($productInfo, true);
@@ -590,10 +585,15 @@ class ApiController extends Controller
                     throw new \Exception("Product size {$detail['product_size']} not found for product ID {$detail['product_id']}.");
                 }
 
-                $product->product_info = array_map(function($info) {
+                // Update product_info with new quantity
+                $product->product_info = array_map(function ($info) {
                     $info['product_qty'] = (string) $info['product_qty'];
                     return $info;
                 }, $productInfoArray);
+
+                // Increment count_product_sale
+                $product->increment('count_product_sale', $detail['product_qty']);
+
                 $product->save();
             }
 
