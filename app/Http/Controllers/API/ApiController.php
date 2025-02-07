@@ -293,14 +293,12 @@ class ApiController extends Controller
 
     public function searchProduct(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-        ]);
-
-        $searchTerm = $request->input('name');
+        $searchTerm = $request->input('name', '');
 
         $query = Product::where('status', '1')
-            ->where('name', 'LIKE', '%' . $searchTerm . '%')
+            ->when($searchTerm, function ($query, $searchTerm) {
+                return $query->where('name', 'LIKE', '%' . $searchTerm . '%');
+            })
             ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
@@ -330,7 +328,54 @@ class ApiController extends Controller
         });
 
         if ($products->isEmpty()) {
-            return response()->json(['message' => 'No matching products found'], 404);
+            return response()->json(['message' => 'No records found'], 404);
+        }
+
+        return response()->json($products, 200);
+    }
+
+    public function getProductByBrand(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'brand_id' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        $query = Product::where('status', '1')
+            ->where('brand_id', $request->input('brand_id'))
+            ->with(['productgallery' => function ($query) {
+                $query->select('id', 'product_id', 'images');
+            }])
+            ->select('id', 'name', 'rating', 'product_info');
+
+        $products = $query->paginate(10);
+
+        $products->getCollection()->transform(function ($product) {
+            if (is_array($product->product_info) && count($product->product_info) > 0) {
+                $product->price = $product->product_info[0]['product_price'] ?? null;
+            } else {
+                $product->price = null;
+            }
+            unset($product->product_info);
+
+            if ($product->productgallery && is_array($product->productgallery->images)) {
+                $firstImage = $product->productgallery->images[0] ?? null;
+                $product->image = $firstImage
+                    ? asset('uploads/products/' . $firstImage)
+                    : null;
+            } else {
+                $product->image = null;
+            }
+            unset($product->productgallery);
+
+            return $product;
+        });
+
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No records found'], 404);
         }
 
         return response()->json($products, 200);
