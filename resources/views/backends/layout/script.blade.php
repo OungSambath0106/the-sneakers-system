@@ -1,6 +1,3 @@
-<!-- jQuery -->
-
-
 <script src="{{ asset('backend/plugins/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('backend/sweetalert2/js/sweetalert2@10.js') }}"></script>
 <script src="{{ asset('backend/plugins/select2/js/select2.full.min.js') }}"></script>
@@ -13,7 +10,6 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="{{ asset('backend/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
 <!-- AdminLTE App -->
 <script src="{{ asset('backend/dist/js/adminlte.min.js') }}"></script>
 <!-- DataTables  & Plugins -->
@@ -29,36 +25,89 @@
 <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
 <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
 <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
-
 <script src="{{ asset('backend/plugins/moment/moment.min.js') }}"></script>
 <script src="{{ asset('backend/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
 <script src="{{ asset('backend/plugins/daterangepicker/daterangepicker.js') }}"></script>
-
 <!-- Datepicker -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-
-{{-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> --}}
 {{-- summernote --}}
 <script src="{{ asset('backend/plugins/summernote/summernote-bs4.min.js') }}"></script>
-
 <!-- AdminLTE for demo purposes -->
 {{-- <script src="{{ asset('backend/dist/js/demo.js') }}"></script> --}}
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.js"></script>
-
-{{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 <script src="{{ asset('backend/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
 <script src="{{ asset('backend/plugins/daterangepicker/daterangepicker.js') }}"></script>
 <script src="{{ asset('js/compress.js') }}"></script>
 <script src="{{ asset('js/rowfy.js') }}"></script>
-
 {{ Session::has('message') }}
+<script>
+    $(document).ready(function () {
+        if ($('#bookingTable').length && $('#bookingTableButtons').length) {
+            if ($.fn.DataTable.isDataTable('#bookingTable')) {
+                $('#bookingTable').DataTable().clear().destroy();
+                $('#bookingTable').empty();
+            }
+            setTimeout(function () {
+                let actionColumnIndex = -1;
+                $('#bookingTable thead th').each(function (index) {
+                    let columnText = $(this).text().trim().toLowerCase();
+                    if (columnText.includes('action')) {
+                        actionColumnIndex = index;
+                    }
+                });
 
+                var table = $('#bookingTable').DataTable({
+                    responsive: true,
+                    dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
+                    buttons: [
+                        { extend: 'csv', text: '<i class="fas fa-file-csv"></i> Export to CSV', exportOptions: { columns: ':visible:not(:last-child)' } },
+                        { extend: 'excel', text: '<i class="fas fa-file-excel"></i> Export to Excel', exportOptions: { columns: ':visible:not(:last-child)' } },
+                        { extend: 'print', text: '<i class="fas fa-print"></i> Print', exportOptions: { columns: ':visible:not(:last-child)' } },
+                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Column Visibility'},
+                        { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> Export to PDF', exportOptions: { columns: ':visible:not(:last-child)' } },
+                    ],
+                    columnDefs: actionColumnIndex !== -1 ? [{ orderable: false, targets: actionColumnIndex }] : [],
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search...",
+                        paginate: {
+                            first: "<<",
+                            previous: "<",
+                            next: ">",
+                            last: ">>"
+                        }
+                    },
+                    pagingType: "full_numbers"
+                });
 
+                if ($('#bookingTableButtons').length) {
+                    $('.dataTables_length').prependTo('#bookingTableButtons');
+                    table.buttons().container().appendTo('#bookingTableButtons');
+                    $('.dataTables_filter').appendTo('#bookingTableButtons');
+                } else {
+                    console.error("Div #bookingTableButtons not found.");
+                }
+            }, 100);
+
+        } else {
+            console.error("Table #bookingTable or Div #bookingTableButtons not found.");
+        }
+    });
+</script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
+<script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+<!-- Required for Export to Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<!-- Required for Export to PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <script>
     $(function() {
 
@@ -196,16 +245,5 @@
         });
     }
 </script>
-<script>
-    let table = new DataTable('#myTable', {
-        paging: false,
-        info: false,
-        responsive: false,
-        scrollX: true,
-        autoWidth: false,
-    });
-</script>
-<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
-{{-- <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> --}}
 @stack('js')
 

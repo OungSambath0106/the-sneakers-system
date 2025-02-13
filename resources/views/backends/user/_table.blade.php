@@ -1,15 +1,11 @@
-<div class="card-body p-0 table-wrapper">
-    <table class="table" id="myTable">
+<div class="table-wrapper table-responsive">
+    <table id="bookingTable" class="table table-striped" style="white-space: nowrap;">
         <thead class="text-uppercase">
             <tr>
-                <th >#</th>
-                <th>{{ __('Image') }}</th>
-                <th>{{ __('First Name') }}</th>
-                <th>{{ __('Last Name') }}</th>
                 <th>{{ __('Username') }}</th>
+                <th>{{ __('Gender') }}</th>
                 <th>{{ __('Phone') }}</th>
                 <th>{{ __('Email') }}</th>
-                {{-- <th>Created by</th> --}}
                 <th>{{ __('Created date') }}</th>
                 @if (auth()->user()->can('user.edit'))
                 <th>{{ __('Action') }}</th>
@@ -19,21 +15,20 @@
         <tbody>
             @forelse ($users as $user)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
                     <td>
                         <img src="
-                        @if ($user->image && file_exists(public_path('uploads/users/' . $user->image)))
-                            {{ asset('uploads/users/'. $user->image) }}
-                        @else
-                            {{ asset('uploads/man.png') }}
-                        @endif
-                        " alt="" class="profile_img_table rounded-circle" style="object-fit: cover">
+                            @if ($user->image && file_exists(public_path('uploads/users/' . $user->image)))
+                                {{ asset('uploads/users/'. $user->image) }}
+                            @else
+                                {{ asset('uploads/man.png') }}
+                            @endif
+                            " alt="" class="profile_img_table rounded-circle mr-3" style="object-fit: cover; cursor: pointer;"
+                            data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
+                        {{ @$user->first_name }} {{ @$user->last_name ?? 'N/A' }}
                     </td>
-                    <td>{{ $user->first_name }}</td>
-                    <td>{{ $user->last_name }}</td>
-                    <td>{{$user->name}}</td>
-                    <td>{{ $user->phone }}</td>
-                    <td>{{ $user->email }}</td>
+                    <td>{{ ucfirst(@$user->gender ?? 'N/A') }}</td>
+                    <td>{{ @$user->phone ?? 'N/A' }}</td>
+                    <td>{{ @$user->email ?? 'N/A' }}</td>
                     <td>{{ $user->created_at->format('d M Y h:i A') }}</td>
                     <td>
                         @if (auth()->user()->can('user.edit'))
@@ -61,15 +56,4 @@
             @endforelse
         </tbody>
     </table>
-
-    <div class="row">
-        <div class="col-12 d-flex flex-row flex-wrap">
-            <div class="row" style="width: -webkit-fill-available;">
-                <div class="col-12 col-sm-6 text-center text-sm-left pl-3" style="margin-block: 20px">
-                    {{ __('Showing') }} {{ $users->firstItem() }} {{ __('to') }} {{ $users->lastItem() }} {{ __('of') }} {{ $users->total() }} {{ __('entries') }}
-                </div>
-                <div class="col-12 col-sm-6 pagination-nav pr-3"> {{ $users->links() }}</div>
-            </div>
-        </div>
-    </div>
 </div>

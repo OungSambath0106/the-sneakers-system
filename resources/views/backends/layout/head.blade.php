@@ -30,10 +30,10 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('backend/dist/css/adminlte.min.css') }}">
     <!-- DataTables -->
-    <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}"> --}}
     <link rel="stylesheet"
         href="{{ asset('backend/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}"> --}}
     {{-- summernote --}}
     <link rel="stylesheet" href="{{ asset('backend/plugins/summernote/summernote-bs4.min.css') }}">
 
@@ -52,12 +52,35 @@
     <link rel="stylesheet" href="{{ asset('backend/custom/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/css/checkboxes.min.css') }}">
     <link rel="stylesheet" href="dist/css/checkboxes.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
 
     @stack('css')
 </head>
-
+<style>
+    .table-wrapper {
+        overflow-x: auto;
+        -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
+        scrollbar-width: none; /* Hide scrollbar for Firefox */
+    }
+    .table-wrapper::-webkit-scrollbar {
+        display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: #007bff !important;
+        border: 1px solid #007bff !important;
+        color: #007bff !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #007bff ;
+        border: 1px solid #007bff ;
+        color: #FFF !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+        color: #FFF !important;
+    }
+</style>
 <style type="text/css">
     .pagination {
         float: right;
@@ -118,103 +141,66 @@
     }
 </style>
 <style>
-    /* ✅ Search Input Styling */
-    .dataTables_wrapper .dataTables_filter input {
+    #bookingTableButtons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+    #bookingTableButtons .dt-buttons {
+        display: flex;
+    }
+    #bookingTableButtons .dt-buttons .dt-button {
+        margin: 0;
+        border: 1px solid #DDDDDD;
+        border-radius: 0;
+        background: #A1E9C9;
+        color: #229865;
+        padding: .3rem .65rem;
+        font-size: 10px;
+    }
+    #bookingTableButtons input[type="search"] {
+        height: 29px;
         border: 1px solid #ccc;
-        border-radius: 4px;
-        padding: 6px 12px;
-        font-size: 14px;
-        margin-left: 10px;
-    }
-    .dataTables_wrapper .dataTables_filter input:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-    .dataTables_wrapper .dataTables_filter label::before {
-        font-family: 'Font Awesome 6 Free';
-        content: "\f002"; /* Search icon */
-        font-weight: 900;
-        margin-right: 8px;
-    }
-
-    /* ✅ Pagination Button Styling */
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-        background-color: #007BFF;
-        color: #fff !important;
-        border-radius: 4px;
-        margin: 2px;
+        border-radius: 5px;
         padding: 5px 10px;
         font-size: 14px;
+        width: 200px;
     }
-    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-        background-color: #0056b3;
+    #bookingTableButtons input[type="search"]:focus,
+    #bookingTableButtons input[type="search"]:focus-visible {
+        outline: none;
+        border-color: #ccc;
+        box-shadow: none;
     }
-
-    /* Active Pagination Button */
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-        background-color: #28a745 !important;
+    #bookingTable_length label {
+        font-size: 13px;
+        font-weight: 400;
+        margin-top: .5rem;
     }
-
-    /* ✅ Previous/Next Icons */
-    .dataTables_wrapper .dataTables_paginate .paginate_button.previous::before {
-        font-family: 'Font Awesome 6 Free';
-        content: "\f104"; /* Left Arrow Icon */
-        font-weight: 900;
-        margin-right: 5px;
+    #bookingTable_length label select {
+        width: 4rem;
+        height: 1.5rem;
+        border-radius: 5px;
     }
-    .dataTables_wrapper .dataTables_paginate .paginate_button.next::after {
-        font-family: 'Font Awesome 6 Free';
-        content: "\f105"; /* Right Arrow Icon */
-        font-weight: 900;
-        margin-left: 5px;
+    #bookingTable_filter label {
+        margin: 0;
     }
-
-    /* ✅ Table Header Styling */
-    #myTable thead th {
-        background-color: #3e3e3e;
-        color: white;
-        text-align: center;
-        font-size: 14px;
+    #bookingTable_info {
+        padding-top: 1.5rem;
     }
-    .table thead th {
-        background-color: #3e3e3e;
-        color: white;
-        text-align: center;
-        font-size: 14px;
+    #bookingTable_paginate {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding-block: 0rem;
+        margin-block: 1rem;
+    }
+    .table-wrapper {
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 
-    /* ✅ Table Hover Effect */
-    #myTable tbody tr:hover {
-        background-color: #f1f1f1;
-    }
-
-    .dt-layout-cell.dt-layout-end {
-        display: none !important;
-    }
-    .dt-layout-cell.dt-layout-start {
-        display: none !important;
-    }
-    td.dt-empty {
-        display: none !important;
-    }
-
-    #myTable_filter {
-        padding: 1rem 1rem 0 1rem !important;
-    }
-    th.sorting::before {
-        background-color: unset !important;
-        content: "\f0de";
-        font-family: 'FontAwesome';
-    }
-    th.sorting::after {
-        content: "\f0dd";
-        font-family: 'FontAwesome';
-    }
-    table.dataTable>thead .sorting_asc:before, table.dataTable>thead .sorting_desc:after {
-        color: #808080 !important;
-    }
-    .swal2-popup.swal2-toast .swal2-title {
-        margin: .6em !important;
+    .table-wrapper::-webkit-scrollbar {
+        display: none;
     }
 </style>
-

@@ -43,7 +43,7 @@
                                                 </span>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-6">
+                                        {{-- <div class="form-group col-md-6">
                                             <label class="required_label">{{__('Username')}}</label>
                                             <input type="name" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}"
                                                 name="username" placeholder="{{__('Enter Username')}}" >
@@ -52,23 +52,6 @@
                                                     <strong>{{ $message }}</strong>
                                                 </span>
                                             @enderror
-                                        </div>
-                                        {{-- <div class="form-group col-md-6">
-                                            <label class="required_label">{{__('User Id')}}</label>
-                                            <input type="name" class="form-control @error('user_id') is-invalid @enderror" value="{{ old('user_id') }}"
-                                                name="user_id" placeholder="{{__('Enter User ID')}}" >
-                                            @error('user_id')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div> --}}
-                                        {{-- <div class="form-group col-md-6">
-                                            <label>{{__('Gender')}}</label>
-                                            <select class="form-control" name="gender" >
-                                                <option value="1">{{__('Male')}}</option>
-                                                <option value="2">{{__('Female')}}</option>
-                                            </select>
                                         </div> --}}
                                         <div class="form-group col-md-6">
                                             <label class="required_label">{{__('Phone Number')}}</label>
@@ -110,7 +93,18 @@
                                                 </span>
                                             @enderror
                                         </div>
-
+                                        <div class="form-group col-md-6">
+                                            <label class="required_label" for="gender">{{__('Gender')}}</label>
+                                            <select class="form-control select2" name="gender">
+                                                <option value="male">{{__('Male')}}</option>
+                                                <option value="female">{{__('Female')}}</option>
+                                            </select>
+                                            @error('gender')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
                                         <div class="form-group col-md-6">
                                             <label class="required_label" for="role">{{__('Role')}}</label>
                                             <select name="role" id="role" class="form-control select2 @error('password') is-invalid @enderror">
@@ -123,7 +117,6 @@
                                                     <strong>{{ $message }}</strong>
                                                 </span>
                                             @enderror
-
                                         </div>
                                         {{-- <div class="form-group col-md-6">
                                             <label>{{__('Address')}}</label>

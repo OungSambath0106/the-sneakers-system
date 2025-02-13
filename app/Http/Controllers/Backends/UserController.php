@@ -25,8 +25,8 @@ class UserController extends Controller
                 ->whereDate('created_at', '<=', $request->end_date);
         })
             ->latest('id')
-            ->paginate(10);
-            
+            ->get();
+
         return view('backends.user.index', compact('users'));
     }
     public function create()
@@ -47,8 +47,6 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required',
-            // 'user_id' => 'required|unique:users,user_id',
             'phone' => 'required',
             'role' => 'required',
             'email' => 'required|email|unique:users,email',
@@ -68,8 +66,7 @@ class UserController extends Controller
             $user = new User;
             $user->first_name = $request->first_name;
             $user->last_name = $request->last_name;
-            $user->name = $request->username;
-            // $user->user_id = $request->user_id;
+            $user->gender = $request->gender;
             $user->phone = $request->phone;
             $user->telegram = $request->telegram ?? null;
             $user->email = $request->email;
@@ -97,6 +94,7 @@ class UserController extends Controller
             ];
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             $output = [
                 'success' => 0,
                 'msg' => __('Something went wrong')
@@ -136,12 +134,10 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required',
-            // 'user_id' => 'required|unique:users,user_id,' . $id,
+            'gender' => 'required',
             'phone' => 'required',
             'role' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
-            // 'email' => ['required', 'email', Rule::unique('users')->ignore($id)],
             'password' => 'nullable|min:8',
         ]);
 
@@ -158,8 +154,7 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             $user->first_name = $request->first_name;
             $user->last_name = $request->last_name;
-            $user->name = $request->username;
-            // $user->user_id = $request->user_id;
+            $user->gender = $request->gender;
             $user->phone = $request->phone;
             $user->telegram = $request->telegram ?? null;
             $user->email = $request->email;

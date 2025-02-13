@@ -1,5 +1,5 @@
 @extends('backends.master')
-
+@section('page_title', __('User Management'))
 @push('css')
     <style>
         .preview {
@@ -12,25 +12,11 @@
     </style>
 @endpush
 @section('contents')
-
-<!-- Content Header (Page header) -->
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h3>{{ __('User Management') }}</h3>
-            </div>
-            <div class="col-sm-6" style="text-align: right">
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 mt-4">
                 <div class="card">
                     <div class="card-header">
                         <div class="row align-items-center">
@@ -76,38 +62,46 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col-sm-6">
-                                <h3 class="card-title">{{ __('User List') }}</h3>
-                            </div>
-                            {{-- <span class="badge bg-warning total-count">{{ $grades->total() }}</span> --}}
-                            <div class="col-sm-6">
-                                {{-- <a href="{{ au }}"></a> --}}
-                                @if (auth()->user()->can('user.create'))
-                                <a class="btn btn-primary float-right" href="{{ route('admin.user.create') }}">
-                                    <i class=" fa fa-plus-circle"></i>
+                <fieldset class="border fieldset-table px-3 mb-4">
+                    <legend class="w-auto mb-0 pb-0 title-table text-uppercase">{{ __('User List') }}</legend>
+                    <div class="card-header pt-2 px-0">
+                        <div class="row mx-0 align-items-center" style="justify-content: space-between">
+                            <div id="bookingTableButtons" class="col-md-10" style="justify-content: space-between"></div>
+                            @if (auth()->user()->can('user.create'))
+                                <a class="btn btn-primary" href="{{ route('admin.user.create') }}">
+                                    <i class="fas fa-plus-circle"></i>
                                     {{ __('Add New') }}
                                 </a>
-                                @endif
-                            </div>
+                            @endif
                         </div>
                     </div>
-                    <!-- /.card-header -->
-
-                    {{-- table --}}
                     @include('backends.user._table')
-
-                </div>
+                </fieldset>
             </div>
         </div>
     </div>
 </section>
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center position-relative">
+                {{-- <button type="button" class="close position-absolute" style="right: 3px; top: 0; color: red;" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> --}}
+                <img id="modalImage" src="" alt="User Image" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
 
 @endsection
 @push('js')
+<script>
+    function showImageModal(img) {
+        document.getElementById('modalImage').src = img.src;
+    }
+</script>
 <script>
     $('.btn_add').click(function (e) {
         var tbody = $('.tbody');
