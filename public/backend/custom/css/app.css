@@ -10,6 +10,9 @@ h2#swal2-title {
 legend.title-table {
     font-size: 16px;
 }
+legend.title-form {
+    font-size: 18px;
+}
 .fieldset-table {
     border-radius: 10px;
     background: #fff;
@@ -22,8 +25,18 @@ legend.title-table {
     background-color: #28914A !important;
 }
 
+.nav-sidebar .main-nav-item {
+    padding-block: .25rem;
+}
+
+.nav-sidebar .nav-item .main-nav-link {
+    border: 1px solid #ccc;
+}
+.form-control:disabled, .form-control[readonly] {
+    background-color: #fff !important;
+}
 .elevation-4 {
-    box-shadow: none !important;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, -0.75), 0 10px 10px rgba(0, 0, 0, .22) !important;
     border-right: 1px solid #ced4da;
 }
 .layout-navbar-fixed .wrapper .sidebar-light-info .brand-link:not([class*=navbar]) {
@@ -54,7 +67,7 @@ legend.title-table {
     color: #3d95d0;
 
 }
-.sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active::before {
+/* .sidebar-light-primary .nav-sidebar>.nav-item>.nav-link.active::before {
     content: '';
     height: 80%;
     width: 2px;
@@ -62,7 +75,7 @@ legend.title-table {
     left: 7px;
     background-color: #3d95d0;
     position: absolute;
-}
+} */
 .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
     color: #00e3a5 !important;
 }

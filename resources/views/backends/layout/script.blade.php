@@ -41,6 +41,10 @@
 <script src="{{ asset('backend/plugins/daterangepicker/daterangepicker.js') }}"></script>
 <script src="{{ asset('js/compress.js') }}"></script>
 <script src="{{ asset('js/rowfy.js') }}"></script>
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {{ Session::has('message') }}
 <script>
     $(document).ready(function () {
@@ -49,6 +53,18 @@
                 $('#bookingTable').DataTable().clear().destroy();
                 $('#bookingTable').empty();
             }
+
+            let thCount = $('#bookingTable thead th').length;
+            let tdCount = $('#bookingTable tbody tr:first td').length;
+
+            console.log("TH count:", thCount);
+            console.log("TD count:", tdCount);
+
+            if (thCount !== tdCount) {
+                console.error("Mismatch detected! Thead columns:", thCount, "Tbody columns:", tdCount);
+                return; // Stop DataTables from initializing if there's a mismatch
+            }
+
             setTimeout(function () {
                 let actionColumnIndex = -1;
                 $('#bookingTable thead th').each(function (index) {
@@ -154,9 +170,27 @@
             changeMonth: true,
             changeYear: true
         });
+
     });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        flatpickr(".current-flatpickr", {
+            dateFormat: "Y-m-d", // Stored format (for database)
+            altInput: true,
+            altFormat: "d / M / Y", // Display format in the input
+            minDate: "today",
+            disableMobile: true
+        });
 
+        flatpickr(".flatpickr", {
+            dateFormat: "Y-m-d", // Stored format (for database)
+            altInput: true,
+            altFormat: "d / M / Y", // Display format in the input
+            placeholder: "Select Date"
+        });
+    });
+</script>
 <script>
     $(document).ready(function() {
         const Confirmation = Swal.mixin({

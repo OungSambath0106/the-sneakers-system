@@ -37,8 +37,8 @@
                         </span>
                     </td>
                     <td>{{ $product->brand->name ?? 'Null' }}</td>
-                    <td>{{ $product->count_product_sale ?? 'Null' }}</td>
-                    <td>{{ $product->total_qty ?? 'Null' }}</td>
+                    <td>{{ $product->count_product_sale ?? '0' }}</td>
+                    <td>{{ $product->total_qty ?? '0' }}</td>
                     <td>{{ $product->createdBy->name ?? 'Null' }}</td>
                     <td>
                         <div class="ckbx-style-9 mt-2">

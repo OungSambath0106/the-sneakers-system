@@ -22,12 +22,10 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
 
-                <li class="nav-item">
+                <li class="nav-item main-nav-item">
                     <a href="{{ route('admin.dashboard') }}"
-                        class="nav-link @if (request()->routeIs('admin.dashboard')) active @endif">
+                        class="nav-link main-nav-link @if (request()->routeIs('admin.dashboard')) active @endif">
                         @include('svgs.dashboard')
                         <p>
                             {{ __('Dashboard') }}
@@ -36,8 +34,8 @@
                 </li>
 
                 @if (auth()->user()->can('user.view') || auth()->user()->can('role.view'))
-                    <li class="nav-item @if (request()->routeIs('admin.user*', 'admin.customer*', 'admin.roles*')) menu-is-opening menu-open @endif">
-                        <a href="#" class="nav-link @if (request()->routeIs('admin.user*', 'admin.customer*', 'admin.roles*')) active @endif">
+                    <li class="nav-item main-nav-item @if (request()->routeIs('admin.user*', 'admin.customer*', 'admin.roles*')) menu-is-opening menu-open @endif">
+                        <a href="#" class="nav-link main-nav-link @if (request()->routeIs('admin.user*', 'admin.customer*', 'admin.roles*')) active @endif">
                             {{-- <i class="nav-icon fa fa-users"></i> --}}
                             @include('svgs.users')
                             <p>
@@ -84,8 +82,8 @@
                 @endif
 
                 @if (auth()->user()->can('brand.view') || auth()->user()->can('product.view'))
-                    <li class="nav-item @if (request()->routeIs('admin.brand*', 'admin.product*')) menu-is-opening menu-open @endif">
-                        <a href="#" class="nav-link @if (request()->routeIs('admin.brand*', 'admin.product*')) active @endif">
+                    <li class="nav-item main-nav-item @if (request()->routeIs('admin.brand*', 'admin.product*')) menu-is-opening menu-open @endif">
+                        <a href="#" class="nav-link main-nav-link @if (request()->routeIs('admin.brand*', 'admin.product*')) active @endif">
                             {{-- @include('svgs.blog') --}}
                             <i class="nav-icon fa-solid fa-boxes"></i>
                             <p>
@@ -121,8 +119,8 @@
                 @endif
 
                 @if (auth()->user()->can('banner.view') || auth()->user()->can('shoes-slider.view'))
-                    <li class="nav-item @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) menu-is-opening menu-open @endif">
-                        <a href="#" class="nav-link @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) active @endif">
+                    <li class="nav-item main-nav-item @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) menu-is-opening menu-open @endif">
+                        <a href="#" class="nav-link main-nav-link @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) active @endif">
                             @include('svgs.slider')
                             <p>
                                 {{ __('Banner Slider') }}
@@ -158,9 +156,9 @@
                 @endif
 
                 @if (auth()->user()->can('promotion.view'))
-                    <li class="nav-item">
+                    <li class="nav-item main-nav-item">
                         <a href="{{ route('admin.promotion.index') }}"
-                            class="nav-link @if (request()->routeIs('admin.promotion*')) active @endif">
+                            class="nav-link main-nav-link @if (request()->routeIs('admin.promotion*')) active @endif">
                             @include('svgs.promotion1')
                             <p>
                                 {{ __('Promotion') }}
@@ -170,9 +168,9 @@
                 @endif
 
                 @if (auth()->user()->can('order.view'))
-                    <li class="nav-item">
+                    <li class="nav-item main-nav-item">
                         <a href="{{ route('admin.order.index') }}"
-                            class="nav-link @if (request()->routeIs('admin.order*')) active @endif">
+                            class="nav-link main-nav-link @if (request()->routeIs('admin.order*')) active @endif">
                             @include('svgs.receipt')
                             <p>
                                 {{ __('Transaction Report') }}
@@ -182,9 +180,9 @@
                 @endif
 
                 @if (auth()->user()->can('setting.view'))
-                    <li class="nav-item">
+                    <li class="nav-item main-nav-item">
                         <a href="{{ route('admin.setting.index') }}"
-                            class="nav-link @if (request()->routeIs('admin.setting*')) active @endif">
+                            class="nav-link main-nav-link @if (request()->routeIs('admin.setting*')) active @endif">
                             {{-- <i class="nav-icon fas fa-cog"></i> --}}
                             @include('svgs.setting')
                             <p>

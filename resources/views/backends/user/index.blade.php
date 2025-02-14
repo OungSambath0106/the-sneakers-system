@@ -34,12 +34,12 @@
                                         <div class=" col-9 d-flex">
                                             <div class="col-sm-6 filter">
                                                 <label for="start_date">{{ __('Start Date') }}</label>
-                                                <input type="date" id="start_date" class="form-control"
+                                                <input type="date" id="start_date" class="form-control flatpickr" placeholder="Select Date"
                                                     name="start_date" value="{{ request('start_date') }}">
                                             </div>
                                             <div class="col-sm-6 filter">
                                                 <label for="end_date">{{ __('End Date') }}</label>
-                                                <input type="date" id="end_date" class="form-control"
+                                                <input type="date" id="end_date" class="form-control flatpickr" placeholder="Select Date"
                                                     name="end_date" value="{{ request('end_date') }}">
                                             </div>
                                         </div>
@@ -94,9 +94,49 @@
     </div>
 </div>
 <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
+@include('backends.user.partial.delete_user_modal')
 
 @endsection
 @push('js')
+<script>
+    $(document).on('click', '.btn-delete', function (e) {
+        e.preventDefault();
+
+        const userId = $(this).data('id');
+        const userName = $(this).data('username');
+        const deleteUrl = $(this).data('href');
+
+        $('#user-name').text(userName);
+        $('#confirm-delete').data('id', userId).data('url', deleteUrl);
+        $('#delete-user-modal').modal('show');
+    });
+
+    $(document).on('click', '#confirm-delete', function () {
+        const userId = $(this).data('id');
+        const deleteUrl = $(this).data('url');
+
+        $.ajax({
+            type: "POST",
+            url: deleteUrl,
+            data: $(`.form-delete-${userId}`).serialize(),
+            success: function (response) {
+                $('#delete-user-modal').modal('hide');
+                if (response.status == 1) {
+                    $('.table-wrapper').replaceWith(response.view);
+                    toastr.success(response.msg);
+                    window.location.reload();
+                } else {
+                    toastr.error(response.msg)
+
+                }
+            },
+            error: function () {
+                $('#delete-user-modal').modal('hide');
+                toastr.error('An error occurred while deleting the user.');
+            }
+        });
+    });
+</script>
 <script>
     function showImageModal(img) {
         document.getElementById('modalImage').src = img.src;
@@ -129,50 +169,50 @@
         reader.readAsDataURL(this.files[0]);
     });
 
-    $(document).on('click', '.btn-delete', function (e) {
-        e.preventDefault();
+    // $(document).on('click', '.btn-delete', function (e) {
+    //     e.preventDefault();
 
-        const Confirmation = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: false
-        });
+    //     const Confirmation = Swal.mixin({
+    //         customClass: {
+    //             confirmButton: 'btn btn-success',
+    //             cancelButton: 'btn btn-danger'
+    //         },
+    //         buttonsStyling: false
+    //     });
 
-        Confirmation.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
+    //     Confirmation.fire({
+    //         title: 'Are you sure?',
+    //         text: "You won't be able to revert this!",
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonText: 'Yes, delete it!',
+    //         cancelButtonText: 'No, cancel!',
+    //         reverseButtons: true
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
 
-                console.log(`.form-delete-${$(this).data('id')}`);
-                var data = $(`.form-delete-${$(this).data('id')}`).serialize();
-                // console.log(data);
-                $.ajax({
-                    type: "post",
-                    url: $(this).data('href'),
-                    data: data,
-                    // dataType: "json",
-                    success: function (response) {
-                        console.log(response);
-                        if (response.status == 1) {
-                            $('.table-wrapper').replaceWith(response.view);
-                            toastr.success(response.msg);
-                        } else {
-                            toastr.error(response.msg)
+    //             console.log(`.form-delete-${$(this).data('id')}`);
+    //             var data = $(`.form-delete-${$(this).data('id')}`).serialize();
+    //             // console.log(data);
+    //             $.ajax({
+    //                 type: "post",
+    //                 url: $(this).data('href'),
+    //                 data: data,
+    //                 // dataType: "json",
+    //                 success: function (response) {
+    //                     console.log(response);
+    //                     if (response.status == 1) {
+    //                         $('.table-wrapper').replaceWith(response.view);
+    //                         toastr.success(response.msg);
+    //                     } else {
+    //                         toastr.error(response.msg)
 
-                        }
-                    }
-                });
-            }
-        });
-    });
+    //                     }
+    //                 }
+    //             });
+    //         }
+    //     });
+    // });
 
 </script>
 @endpush
