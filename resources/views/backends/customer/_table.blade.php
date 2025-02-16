@@ -1,11 +1,9 @@
-<div class="card-body p-0 table-wrapper">
-    <table class="table" id="myTable">
+<div class="table-wrapper table-responsive">
+    <table id="bookingTable" class="table table-striped" style="white-space: nowrap;">
         <thead class="text-uppercase">
             <tr>
-                <th >#</th>
-                <th>{{ __('Image') }}</th>
-                <th>{{ __('First Name') }}</th>
-                <th>{{ __('Last Name') }}</th>
+                <th>{{ __('Customer Name') }}</th>
+                <th>{{ __('Gender') }}</th>
                 <th>{{ __('Phone') }}</th>
                 <th>{{ __('Email') }}</th>
                 <th>{{ __('Created date') }}</th>
@@ -18,7 +16,6 @@
         <tbody>
             @forelse ($customers as $customer)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
                     <td>
                         <img src="
                         @if ($customer->image && file_exists(public_path('uploads/customers/' . $customer->image)))
@@ -28,12 +25,13 @@
                         @elseif ($customer->gender=='female')
                             {{ asset('uploads/woman.png') }}
                         @endif
-                        " alt="" class="profile_img_table rounded-circle" style="object-fit: cover">
+                        " alt="" class="profile_img_table rounded-circle mr-3" style="object-fit: cover; cursor: pointer;"
+                        data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
+                        {{ @$customer->first_name }} {{ @$customer->last_name ?? 'N/A' }}
                     </td>
-                    <td>{{ $customer->first_name }}</td>
-                    <td>{{ $customer->last_name }}</td>
-                    <td>{{ $customer->phone }}</td>
-                    <td>{{ $customer->email }}</td>
+                    <td>{{ ucfirst(@$customer->gender ?? 'N/A') }}</td>
+                    <td>{{ $customer->phone ?? 'N/A' }}</td>
+                    <td>{{ $customer->email ?? 'N/A' }}</td>
                     <td>{{ $customer->created_at->format('d M Y h:i A') }}</td>
                     <td>
                         <div class="ckbx-style-9 mt-2">
@@ -45,39 +43,33 @@
                     </td>
                     <td>
                         @if (auth()->user()->can('customer.edit'))
-                        <a href="{{ route('admin.customer.edit', $customer->id) }}" class="btn btn-info btn-sm btn-edit">
-                            <i class="fas fa-pencil-alt"></i>
-                            {{ __('Edit') }}
-                        </a>
+                            <a href="{{ route('admin.customer.edit', $customer->id) }}" class="btn btn-info btn-sm btn-edit">
+                                <i class="fas fa-pencil-alt"></i> {{ __('Edit') }}
+                            </a>
                         @endif
                         @if (auth()->user()->can('customer.delete'))
-                        <form action="{{ route('admin.customer.destroy', $customer->id) }}" class="d-inline-block form-delete-{{ $customer->id }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" data-id="{{ $customer->id }}" data-href="{{ route('admin.customer.destroy', $customer->id) }}" class="btn btn-danger btn-sm btn-delete">
-                                <i class="fa fa-trash-alt"></i>
-                                {{ __('Delete') }}
-                            </button>
-                        </form>
+                            <form action="{{ route('admin.customer.destroy', $customer->id) }}" class="d-inline-block form-delete-{{ $customer->id }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" data-id="{{ $customer->id }}" data-username="{{ @$customer->first_name }} {{ @$customer->last_name ?? 'N/A' }}"
+                                    data-href="{{ route('admin.customer.destroy', $customer->id) }}" class="btn btn-danger btn-sm btn-delete" title="Delete">
+                                    <i class="fa fa-trash-alt"></i> {{ __('Delete') }}
+                                </button>
+                            </form>
+                        @endif
+
+                        @if (!auth()->user()->can('customer.edit') && !auth()->user()->can('customer.delete'))
+                            <span class="text-muted">No Actions</span>
                         @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" class="text-center" style="background-color: ghostwhite">{{ __('Customers are not available.') }}</td>
+                    <td colspan="{{ auth()->user()->can('customer.edit') || auth()->user()->can('customer.delete') ? 7 : 6 }}" class="text-center" style="background-color: ghostwhite">
+                        {{ __('Customers are not available.') }}
+                    </td>
                 </tr>
             @endforelse
         </tbody>
     </table>
-
-    <div class="row">
-        <div class="col-12 d-flex flex-row flex-wrap">
-            <div class="row" style="width: -webkit-fill-available;">
-                <div class="col-12 col-sm-6 text-center text-sm-left pl-3" style="margin-block: 20px">
-                    {{ __('Showing') }} {{ $customers->firstItem() }} {{ __('to') }} {{ $customers->lastItem() }} {{ __('of') }} {{ $customers->total() }} {{ __('entries') }}
-                </div>
-                <div class="col-12 col-sm-6 pagination-nav pr-3"> {{ $customers->links() }}</div>
-            </div>
-        </div>
-    </div>
 </div>

@@ -1,5 +1,5 @@
 @extends('backends.master')
-
+@section('page_title', __('Customer Management'))
 @push('css')
     <style>
         .preview {
@@ -16,25 +16,11 @@
     </style>
 @endpush
 @section('contents')
-
-<!-- Content Header (Page header) -->
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h3>{{ __('Customer Management') }}</h3>
-            </div>
-            <div class="col-sm-6" style="text-align: right">
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 mt-4">
                 <div class="card">
                     <div class="card-header">
                         <div class="row align-items-center">
@@ -52,24 +38,23 @@
                                         <div class=" col-9 d-flex">
                                             <div class="col-sm-6 filter">
                                                 <label for="start_date">{{ __('Start Date') }}</label>
-                                                <input type="date" id="start_date" class="form-control"
+                                                <input type="date" id="start_date" class="form-control flatpickr" placeholder="Select Date"
                                                     name="start_date" value="{{ request('start_date') }}">
                                             </div>
                                             <div class="col-sm-6 filter">
                                                 <label for="end_date">{{ __('End Date') }}</label>
-                                                <input type="date" id="end_date" class="form-control"
+                                                <input type="date" id="end_date" class="form-control flatpickr" placeholder="Select Date"
                                                     name="end_date" value="{{ request('end_date') }}">
                                             </div>
                                         </div>
                                         <div class=" col-3 mt-3">
                                             <div class="col-sm-12 mt-3">
                                                 <button type="submit" class="btn btn-primary">
-                                                    <i class="fa fa-filter" aria-hidden="true"></i>
+                                                    <i class="fa fa-filter fa-fade" style="--fa-animation-duration: 2s; --fa-fade-opacity: 0.6;"></i>
                                                     {{ __('Filter') }}
                                                 </button>
-                                                <a href="{{ route('admin.customer.index') }}"
-                                                    class=" btn btn-danger">
-                                                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                                                <a href="javascript:void(0);" class="btn btn-danger" id="resetButton">
+                                                    <i class="fas fa-sync-alt" id="resetIcon"></i>
                                                     {{ __('Reset') }}
                                                 </a>
                                             </div>
@@ -80,38 +65,54 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col-sm-6">
-                                <h3 class="card-title">{{ __('Customer List') }}</h3>
-                            </div>
-                            {{-- <span class="badge bg-warning total-count">{{ $grades->total() }}</span> --}}
-                            <div class="col-sm-6">
-                                {{-- <a href="{{ au }}"></a> --}}
-                                @if (auth()->user()->can('customer.create'))
-                                <a class="btn btn-primary float-right" href="{{ route('admin.customer.create') }}">
-                                    <i class=" fa fa-plus-circle"></i>
+                <fieldset class="border fieldset-table px-3 mb-4">
+                    <legend class="w-auto mb-0 pb-0 title-table text-uppercase">{{ __('Customer List') }}</legend>
+                    <div class="card-header pt-2 px-0">
+                        <div class="row mx-0 align-items-center" style="justify-content: space-between">
+                            <div id="bookingTableButtons" class="col-md-10" style="justify-content: space-between"></div>
+                            @if (auth()->user()->can('customer.create'))
+                                <a class="btn btn-primary" href="{{ route('admin.customer.create') }}">
+                                    <i class="fas fa-plus-circle"></i>
                                     {{ __('Add New') }}
                                 </a>
-                                @endif
-                            </div>
+                            @endif
                         </div>
                     </div>
-                    <!-- /.card-header -->
-
-                    {{-- table --}}
                     @include('backends.customer._table')
-
-                </div>
+                </fieldset>
             </div>
         </div>
     </div>
 </section>
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center position-relative">
+                {{-- <button type="button" class="close position-absolute" style="right: 3px; top: 0; color: red;" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> --}}
+                <img id="modalImage" src="" alt="User Image" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
 
 @endsection
 @push('js')
+<script>
+    document.getElementById('resetButton').addEventListener('click', function () {
+        let icon = document.getElementById('resetIcon');
+        icon.classList.add('fa-spin'); // Add animation
+
+        window.location.href = "{{ route('admin.customer.index') }}";
+    });
+</script>
+<script>
+    function showImageModal(img) {
+        document.getElementById('modalImage').src = img.src;
+    }
+</script>
 <script>
     $('.btn_add').click(function (e) {
         var tbody = $('.tbody');
@@ -160,23 +161,38 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
+                let row = $(this).closest('tr');
+                let dataTable = $('#bookingTable').DataTable();
 
-                console.log(`.form-delete-${$(this).data('id')}`);
                 var data = $(`.form-delete-${$(this).data('id')}`).serialize();
-                // console.log(data);
                 $.ajax({
                     type: "post",
                     url: $(this).data('href'),
                     data: data,
-                    // dataType: "json",
                     success: function (response) {
-                        console.log(response);
-                        if (response.status == 1) {
-                            $('.table-wrapper').replaceWith(response.view);
-                            toastr.success(response.msg);
-                        } else {
-                            toastr.error(response.msg)
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
 
+                        if (response.success == 1) {
+                            dataTable.row(row).remove().draw(false); // Remove row from DataTable instantly
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.msg
+                            });
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: response.msg
+                            });
                         }
                     }
                 });

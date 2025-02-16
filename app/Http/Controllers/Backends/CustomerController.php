@@ -28,7 +28,7 @@ class CustomerController extends Controller
                 ->whereDate('created_at', '<=', $request->end_date);
         })
             ->latest('id')
-            ->paginate(10);
+            ->get();
 
         return view('backends.customer.index', compact('customers'));
     }
@@ -237,15 +237,15 @@ class CustomerController extends Controller
 
             DB::commit();
             $output = [
-                'status' => 1,
+                'success' => 1,
                 'view'  => $view,
-                'msg' => __('Customer Deleted successfully')
+                'msg' => __('Deleted successfully')
             ];
         } catch (Exception $e) {
             DB::rollBack();
 
             $output = [
-                'status' => 0,
+                'success' => 0,
                 'msg' => __('Something when wrong')
             ];
         }

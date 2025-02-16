@@ -113,20 +113,10 @@
                                     </div> --}}
 
                                     <div class="form-group col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputFile">{{__('Image')}}</label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="hidden" name="image_names" class="image_names_hidden">
-                                                    <input type="file" class="custom-file-input" id="exampleInputFile" name="image" accept="image/png, image/jpeg">
-                                                    <label class="custom-file-label" for="exampleInputFile">{{ __('Choose file') }}</label>
-                                                </div>
-                                            </div>
-                                            <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
-                                            <div class="preview preview-multiple text-center border rounded mt-2" style="height: 150px">
-                                                <img src="{{ asset('uploads/default-profile.png') }}" alt="" height="100%">
-                                            </div>
-                                        </div>
+                                        <label for="dropifyInput">{{ __('Image') }}</label>
+                                        <input type="hidden" name="image_names" class="image_names_hidden">
+                                        <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image">
+                                        <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -157,51 +147,38 @@
 
 @push('js')
     <script>
-        const compressor = new window.Compress();
-        $('.custom-file-input').change(function (e) {
-            compressor.compress([...e.target.files], {
-                size: 4,
-                quality: 0.75,
-            }).then((output) => {
-                var extension = output[0].ext;
-                console.log(extension);
-                var files = Compress.convertBase64ToFile(output[0].data, output[0].ext);
-                var formData = new FormData();
+        $(document).ready(function () {
+            $('.dropify').dropify(); // Initialize Dropify
 
-                var image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
-                var container = $(this).closest('.form-group').find('.preview');
-                if (container.find('img').attr('src') === `{{ asset('uploads/default-profile.png') }}`) {
-                    container.empty();
-                }
+            const compressor = new window.Compress();
+            const maxSize = 51200; // 50KB in bytes
 
-                formData.append('image', files);
+            $('.custom-file-input').change(async function (e) {
+                const fileInput = $(this);
+                const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
 
-                $.ajax({
+                const output = await compressor.compress([...e.target.files], {
+                    size: 0.05, // Max 50KB
+                    quality: 0.7,
+                    maxWidth: 512,
+                    maxHeight: 512
+                });
+
+                const compressedFile = Compress.convertBase64ToFile(output[0].data, output[0].ext);
+
+                if (compressedFile.size > maxSize) return toastr.error("The image size exceeds 50KB. Please choose a smaller file.");
+
+                const formData = new FormData();
+                formData.append('image', compressedFile);
+
+                $.post({
                     url: "{{ route('save_temp_file') }}",
-                    type: 'POST',
                     data: formData,
                     processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status == 0) {
-                            toastr.error(response.msg);
-                        }
-                        if (response.status == 1) {
-                            container.empty();
-                            var temp_file = response.temp_files;
-                            var img_container = $('<div></div>').addClass('img_container');
-                            var img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" +'/'+ temp_file);
-                            img_container.append(img);
-                            container.append(img_container);
-
-                            var new_file_name = temp_file;
-                            console.log(new_file_name);
-
-                            image_names_hidden.val(new_file_name);
-                        }
-                    }
-                });
+                    contentType: false
+                }).done(response => {
+                    response.status === 1 ? imageNamesHidden.val(response.temp_files) : toastr.error(response.msg);
+                }).fail(() => toastr.error("Error uploading image"));
             });
         });
     </script>

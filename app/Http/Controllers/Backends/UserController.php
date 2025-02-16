@@ -75,15 +75,18 @@ class UserController extends Controller
             $role = Role::findOrFail($request->role);
             $user->assignRole($role->name);
 
+            // Handle Image Upload
             if ($request->filled('image_names')) {
-                $user->image = $request->image_names;
-                $directory = public_path('uploads/users');
-                if (!\File::exists($directory)) {
-                    \File::makeDirectory($directory, 0777, true);
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $userPath = public_path("uploads/users/{$imageName}");
+
+                // Move image if exists & ensure directory creation
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/users'), 0777, true);
+                    \File::move($tempPath, $userPath);
+                    $user->image = $imageName;
                 }
-
-                $image = \File::move(public_path('uploads/temp/' . $request->image_names), public_path('uploads/users/'. $request->image_names));
-
             }
 
             $user->save();
@@ -94,7 +97,7 @@ class UserController extends Controller
             ];
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
+            // dd($e);
             $output = [
                 'success' => 0,
                 'msg' => __('Something went wrong')
@@ -143,66 +146,58 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput()
-                    ->with(['success' => 0, 'msg' => __('Invalid form input')]);
+                ->withErrors($validator)
+                ->withInput()
+                ->with(['success' => 0, 'msg' => __('Invalid form input')]);
         }
 
         try {
             DB::beginTransaction();
 
             $user = User::findOrFail($id);
-            $user->first_name = $request->first_name;
-            $user->last_name = $request->last_name;
-            $user->gender = $request->gender;
-            $user->phone = $request->phone;
-            $user->telegram = $request->telegram ?? null;
-            $user->email = $request->email;
+            $user->fill($request->only(['first_name', 'last_name', 'gender', 'phone', 'telegram', 'email']));
 
-            $role_id        = $request->role;
-            $user_role      = $user->roles->first();
-            $previous_role  = !empty($user_role->id) ? $user_role->id : 0;
-            if ($previous_role != $role_id) {
-                if (!empty($previous_role)) {
-                    $user->removeRole($user_role->name);
-                }
-
-                $role = Role::findOrFail($role_id);
-                $user->assignRole($role->name);
+            // Update Role if changed
+            $newRole = Role::findOrFail($request->role);
+            if (!$user->hasRole($newRole->name)) {
+                $user->syncRoles([$newRole->name]);
             }
 
-            if ($request->password) {
-                $user->password = Hash::make($request['password']);
+            // Update Password if provided
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
             }
 
+            // Handle Image Update
             if ($request->filled('image_names')) {
-                $user->image = $request->image_names;
-                $directory = public_path('uploads/users');
-                if (!\File::exists($directory)) {
-                    \File::makeDirectory($directory, 0777, true);
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $userPath = public_path("uploads/users/{$imageName}");
+
+                // Check if the user already has an image, then delete it
+                if ($user->image && \File::exists(public_path("uploads/users/{$user->image}"))) {
+                    \File::delete(public_path("uploads/users/{$user->image}"));
                 }
 
-                $image = \File::move(public_path('uploads/temp/' . $request->image_names), public_path('uploads/users/'. $request->image_names));
-
+                // Move the new file from temp to the final users directory
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/users'), 0777, true);
+                    \File::move($tempPath, $userPath);
+                    $user->image = $imageName;
+                }
             }
 
             $user->save();
-
             DB::commit();
-            $output = [
-                'success' => 1,
-                'msg' => __('Updated successfully')
-            ];
-        } catch (Exception $e) {
-            dd($e);
-            DB::rollBack();
-            $output = [
-                'success' => 0,
-                'msg' => __('Something went wrong')
-            ];
-        }
 
-        return redirect()->route('admin.user.index')->with($output);
+            return redirect()->route('admin.user.index')->with(['success' => 1, 'msg' => __('Updated successfully')]);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            \Log::error('User Update Error: ' . $e->getMessage());
+
+            return redirect()->back()->with(['success' => 0, 'msg' => __('Something went wrong')]);
+        }
     }
 
     /**
@@ -228,20 +223,37 @@ class UserController extends Controller
 
             DB::commit();
             $output = [
-                'status' => 1,
+                'success' => 1,
                 'view'  => $view,
-                'msg' => __('User Deleted successfully')
+                'msg' => __('Deleted successfully')
             ];
         } catch (Exception $e) {
             DB::rollBack();
 
             $output = [
-                'status' => 0,
+                'success' => 0,
                 'msg' => __('Something when wrong')
             ];
         }
 
         return response()->json($output);
+    }
+
+    public function deleteUserImage(Request $request)
+    {
+        if (!$request->has('image_name')) {
+            return response()->json(['status' => 0, 'msg' => 'No image name provided']);
+        }
+
+        $imageName = $request->image_name;
+        $imagePath = public_path("uploads/users/{$imageName}");
+
+        if (\File::exists($imagePath)) {
+            \File::delete($imagePath);
+            return response()->json(['status' => 1, 'msg' => 'Image removed successfully']);
+        }
+
+        return response()->json(['status' => 0, 'msg' => 'Image not found']);
     }
 
     public function showProfile()

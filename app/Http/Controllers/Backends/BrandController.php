@@ -16,7 +16,7 @@ class BrandController extends Controller
 {
     public function index()
     {
-        $brands = Brand::latest('id')->paginate(10);
+        $brands = Brand::latest('id')->get();
         return view('backends.brand.index', compact('brands'));
     }
 
@@ -25,12 +25,7 @@ class BrandController extends Controller
      */
     public function create()
     {
-        $language = BusinessSetting::where('type', 'language')->first();
-        $language = $language->value ?? null;
-        $default_lang = 'en';
-        $default_lang = json_decode($language, true)[0]['code'];
-
-        return view('backends.brand._create', compact('language', 'default_lang'));
+        return view('backends.brand._create');
     }
 
     /**
@@ -43,7 +38,7 @@ class BrandController extends Controller
             'name' => 'required',
         ]);
 
-        if (is_null($request->name[array_search('en', $request->lang)])) {
+        if (is_null($request->name)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'name',
@@ -60,10 +55,9 @@ class BrandController extends Controller
         }
 
         try {
-            // dd($request->all());
             DB::beginTransaction();
             $brand = new Brand();
-            $brand->name = $request->name[array_search('en', $request->lang)];
+            $brand->name = $request->name;
             $brand->created_by = auth()->user()->id;
 
             if ($request->hasFile('image')) {
@@ -71,20 +65,6 @@ class BrandController extends Controller
             }
 
             $brand->save();
-            $data = [];
-            foreach ($request->lang as $index => $key) {
-                if ($request->name[$index] && $key != 'en') {
-                    array_push($data, array(
-                        'translationable_type' => 'App\Models\Brand',
-                        'translationable_id' => $brand->id,
-                        'locale' => $key,
-                        'key' => 'name',
-                        'value' => $request->name[$index],
-                    ));
-                }
-            }
-            Translation::insert($data);
-
             DB::commit();
 
             $output = [
@@ -118,14 +98,9 @@ class BrandController extends Controller
     public function edit($id)
     {
         // dd($id);
-        $brand = Brand::withoutGlobalScopes()->with('translations')->findOrFail($id);
+        $brand = Brand::withoutGlobalScopes()->findOrFail($id);
 
-        $language = BusinessSetting::where('type', 'language')->first();
-        $language = $language->value ?? null;
-        $default_lang = 'en';
-        $default_lang = json_decode($language, true)[0]['code'];
-
-        return view('backends.brand._edit', compact('brand', 'language', 'default_lang'));
+        return view('backends.brand._edit', compact('brand'));
     }
 
     /**
@@ -137,7 +112,7 @@ class BrandController extends Controller
             'name' => 'required',
         ]);
 
-        if (is_null($request->name[array_search('en', $request->lang)])) {
+        if (is_null($request->name)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'name',
@@ -157,7 +132,7 @@ class BrandController extends Controller
             DB::beginTransaction();
 
             $brand = Brand::findOrFail($id);
-            $brand->name = $request->name[array_search('en', $request->lang)];
+            $brand->name = $request->name;
             if ($request->hasFile('image')) {
                 if ($brand->image && file_exists(public_path('uploads/brand/' . $brand->image))) {
                     unlink(public_path('uploads/brand/' . $brand->image));
@@ -166,23 +141,6 @@ class BrandController extends Controller
                 $brand->image = ImageManager::update('uploads/brand/', null, $request->image);
             }
             $brand->save();
-
-            $data = [];
-            foreach ($request->lang as $index => $key) {
-                if ($request->name[$index] && $key != 'en') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Brand',
-                            'translationable_id' => $brand->id,
-                            'locale' => $key,
-                            'key' => 'name'
-                        ],
-                        ['value' => $request->name[$index]]
-                    );
-                }
-            }
-            Translation::insert($data);
-
             DB::commit();
 
             $output = [

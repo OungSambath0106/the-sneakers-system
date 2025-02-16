@@ -114,7 +114,7 @@
                                             name="address" placeholder="{{__('Enter Address')}}" >
                                     </div> --}}
 
-                                    <div class="form-group col-md-6">
+                                    {{-- <div class="form-group col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputFile">{{__('Image')}}</label>
                                             <div class="input-group">
@@ -139,6 +139,18 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div> --}}
+                                    <div class="form-group col-md-6">
+                                        <label for="dropifyInput">{{ __('Image') }}</label>
+                                        <input type="hidden" name="image_names" class="image_names_hidden">
+
+                                        <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image"
+                                               data-default-file="{{ isset($user) && $user->image && file_exists(public_path('uploads/users/' . $user->image))
+                                                                    ? asset('uploads/users/' . $user->image)
+                                                                    : asset('uploads/default-profile.png') }}"
+                                               accept="image/png, image/jpeg">
+
+                                        <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -160,72 +172,78 @@
                     </fieldset>
                 </div>
             </div>
-            <!-- /.row -->
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
-    <!-- /.content -->
 @endsection
 
 @push('js')
     <script>
-        // $('.custom-file-input').change(function (e) {
-        //     var reader = new FileReader();
-        //     var preview = $(this).closest('.form-group').find('.preview img');
-        //     reader.onload = function(e) {
-        //         preview.attr('src', e.target.result).show();
-        //     }
-        //     reader.readAsDataURL(this.files[0]);
-        // });
+        $(document).ready(function () {
+            $('.dropify').dropify(); // Initialize Dropify
 
-        const compressor = new window.Compress();
-        $('.custom-file-input').change(function (e) {
-            compressor.compress([...e.target.files], {
-                size: 4,
-                quality: 0.75,
-            }).then((output) => {
-                var files = Compress.convertBase64ToFile(output[0].data, output[0].ext);
-                var formData = new FormData();
+            const compressor = new window.Compress();
+            const maxSize = 51200; // 50KB in bytes
 
-                var image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
-                var container = $(this).closest('.form-group').find('.preview');
-                container.find('.update_image').empty();
-                if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
-                    container.empty();
-                }
-                formData.append('image', files);
+            $('.custom-file-input').change(async function (e) {
+                const fileInput = $(this);
+                const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
 
-                $.ajax({
+                const output = await compressor.compress([...e.target.files], {
+                    size: 0.05, // Max 50KB
+                    quality: 0.7,
+                    maxWidth: 512,
+                    maxHeight: 512
+                });
+
+                const compressedFile = Compress.convertBase64ToFile(output[0].data, output[0].ext);
+
+                if (compressedFile.size > maxSize) return toastr.error("The image size exceeds 50KB. Please choose a smaller file.");
+
+                const formData = new FormData();
+                formData.append('image', compressedFile);
+
+                $.post({
                     url: "{{ route('save_temp_file') }}",
-                    type: 'POST',
                     data: formData,
                     processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status == 0) {
-                            toastr.error(response.msg);
-                        }
-                        if (response.status == 1) {
-                            container.empty();
-                            var temp_files = response.temp_files;
-                            for (var i = 0; i < temp_files.length; i++) {
-                                var temp_file = temp_files[i];
-                                var img_container = $('<div></div>').addClass('img_container');
-                                var img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" +'/'+ temp_file);
-                                img_container.append(img);
-                                container.append(img_container);
-                                // $(selector).replaceWith(newContent);
-
-                                var new_file_name = temp_file;
-                                console.log(new_file_name);
-
-                                image_names_hidden.val(new_file_name);
-                            }
-                        }
-                    }
-                });
+                    contentType: false
+                }).done(response => {
+                    response.status === 1 ? imageNamesHidden.val(response.temp_files) : toastr.error(response.msg);
+                }).fail(() => toastr.error("Error uploading image"));
             });
         });
+    </script>
+    <script>
+        $(document).ready(function () {
+            let dropifyInstance = $('.dropify').dropify(); // Initialize Dropify
 
+            // Handle Dropify image removal
+            $(document).on('click', '.dropify-clear', function () {
+                let imageName = $('.image_names_hidden').val(); // Get current image name
+                console.log("Attempting to delete:", imageName); // Debugging
+
+                if (imageName) {
+                    $.ajax({
+                        url: "{{ route('admin.user.delete_image') }}", // Ensure this matches your route
+                        type: 'POST',
+                        data: {
+                            image_name: imageName,
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function (response) {
+                            if (response.status === 1) {
+                                toastr.success("Image removed successfully!");
+                                $('.image_names_hidden').val(''); // Clear hidden input
+                            } else {
+                                toastr.error(response.msg);
+                            }
+                        },
+                        error: function () {
+                            toastr.error("Error removing image.");
+                        }
+                    });
+                }
+            });
+        });
     </script>
 @endpush

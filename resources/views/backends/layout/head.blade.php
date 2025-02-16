@@ -56,9 +56,33 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
 
+    <!-- Dropify CSS -->
+    {{-- <link rel="stylesheet" href="{{ asset('dist/css/demo.css') }}"> --}}
+    {{-- <link rel="stylesheet" href="{{ asset('dist/css/dropify.min.css') }}"> --}}
+    <link rel="stylesheet" type="text/css" href="https://jeremyfagis.github.io/dropify/dist/css/dropify.min.css">
+
     @stack('css')
 </head>
 <style>
+    .dropify-wrapper .dropify-message span.file-icon p {
+        font-size: 20px !important;
+        color: #CCC;
+    }
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:before {
+        content: " 🠗" !important;
+        font-size: 18px !important;
+        opacity: 1;
+        color: #000;
+        padding-right: 6px;
+        line-height: 0 !important;
+    }
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting_desc:after {
+        content: " 🠕" !important;
+        font-size: 18px !important;
+        line-height: 0 !important;
+    }
     .table-wrapper {
         overflow-x: auto;
         -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */

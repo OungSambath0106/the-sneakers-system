@@ -8,29 +8,62 @@ use App\Http\Controllers\Controller;
 
 class FileManagerController extends Controller
 {
-    public function saveTempFile ()
+    public function saveTempFile()
     {
         $temp_files = [];
         $files = request('image') ?? request('images') ?? request('files');
+
         if (!is_array($files)) {
             $files = [$files];
         }
-        foreach ($files as $key => $file) {
-            // $temp_files[] = asset('uploads/temp/' . ImageManager::upload_temp($image));
+
+        foreach ($files as $file) {
+            // Validate file size (Before processing, should be under 50KB)
+            if ($file->getSize() > 51200) { // 50KB in bytes
+                return response()->json([
+                    'status' => 0,
+                    'msg' => __('The image exceeds the 50KB size limit.')
+                ]);
+            }
+
+            // Compress and Upload Image
             $temp = ImageManager::upload_temp($file);
             if ($temp['status'] == 0) {
                 return response()->json([
                     'status' => 0,
-                    'msg' => __('Something went wrong')
+                    'msg' => __('Something went wrong while uploading.')
                 ]);
             }
 
             $temp_files[] = $temp['file'];
         }
+
         return response()->json([
             'status' => 1,
             'temp_files' => $temp_files,
         ]);
+    }
+
+    public function saveTempBanner(Request $request)
+    {
+        if ($request->hasFile('banner')) {
+            $file = $request->file('banner');
+
+            // Validate file size (ensure it's under 300KB)
+            if ($file->getSize() > 307200) { // 300KB in bytes
+                return response()->json([
+                    'status' => 0,
+                    'msg' => __('The banner image exceeds the 300KB size limit.')
+                ]);
+            }
+
+            $imageName = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/temp'), $imageName);
+
+            return response()->json(['status' => 1, 'temp_files' => $imageName]);
+        }
+
+        return response()->json(['status' => 0, 'msg' => 'File upload failed']);
     }
 
     public function removeTempFile ()

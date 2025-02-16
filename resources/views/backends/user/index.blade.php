@@ -46,12 +46,11 @@
                                         <div class=" col-3 mt-3">
                                             <div class="col-sm-12 mt-3">
                                                 <button type="submit" class="btn btn-primary">
-                                                    <i class="fa fa-filter" aria-hidden="true"></i>
+                                                    <i class="fa fa-filter fa-fade" style="--fa-animation-duration: 2s; --fa-fade-opacity: 0.6;"></i>
                                                     {{ __('Filter') }}
                                                 </button>
-                                                <a href="{{ route('admin.user.index') }}"
-                                                    class=" btn btn-danger">
-                                                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                                                <a href="javascript:void(0);" class="btn btn-danger" id="resetButton">
+                                                    <i class="fas fa-sync-alt" id="resetIcon"></i>
                                                     {{ __('Reset') }}
                                                 </a>
                                             </div>
@@ -99,42 +98,11 @@
 @endsection
 @push('js')
 <script>
-    $(document).on('click', '.btn-delete', function (e) {
-        e.preventDefault();
+    document.getElementById('resetButton').addEventListener('click', function () {
+        let icon = document.getElementById('resetIcon');
+        icon.classList.add('fa-spin'); // Add animation
 
-        const userId = $(this).data('id');
-        const userName = $(this).data('username');
-        const deleteUrl = $(this).data('href');
-
-        $('#user-name').text(userName);
-        $('#confirm-delete').data('id', userId).data('url', deleteUrl);
-        $('#delete-user-modal').modal('show');
-    });
-
-    $(document).on('click', '#confirm-delete', function () {
-        const userId = $(this).data('id');
-        const deleteUrl = $(this).data('url');
-
-        $.ajax({
-            type: "POST",
-            url: deleteUrl,
-            data: $(`.form-delete-${userId}`).serialize(),
-            success: function (response) {
-                $('#delete-user-modal').modal('hide');
-                if (response.status == 1) {
-                    $('.table-wrapper').replaceWith(response.view);
-                    toastr.success(response.msg);
-                    window.location.reload();
-                } else {
-                    toastr.error(response.msg)
-
-                }
-            },
-            error: function () {
-                $('#delete-user-modal').modal('hide');
-                toastr.error('An error occurred while deleting the user.');
-            }
-        });
+        window.location.href = "{{ route('admin.user.index') }}";
     });
 </script>
 <script>
@@ -169,50 +137,64 @@
         reader.readAsDataURL(this.files[0]);
     });
 
-    // $(document).on('click', '.btn-delete', function (e) {
-    //     e.preventDefault();
+    $(document).on('click', '.btn-delete', function (e) {
+        e.preventDefault();
 
-    //     const Confirmation = Swal.mixin({
-    //         customClass: {
-    //             confirmButton: 'btn btn-success',
-    //             cancelButton: 'btn btn-danger'
-    //         },
-    //         buttonsStyling: false
-    //     });
+        const Confirmation = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        });
 
-    //     Confirmation.fire({
-    //         title: 'Are you sure?',
-    //         text: "You won't be able to revert this!",
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Yes, delete it!',
-    //         cancelButtonText: 'No, cancel!',
-    //         reverseButtons: true
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
+        Confirmation.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let row = $(this).closest('tr');
+                let dataTable = $('#bookingTable').DataTable();
 
-    //             console.log(`.form-delete-${$(this).data('id')}`);
-    //             var data = $(`.form-delete-${$(this).data('id')}`).serialize();
-    //             // console.log(data);
-    //             $.ajax({
-    //                 type: "post",
-    //                 url: $(this).data('href'),
-    //                 data: data,
-    //                 // dataType: "json",
-    //                 success: function (response) {
-    //                     console.log(response);
-    //                     if (response.status == 1) {
-    //                         $('.table-wrapper').replaceWith(response.view);
-    //                         toastr.success(response.msg);
-    //                     } else {
-    //                         toastr.error(response.msg)
+                var data = $(`.form-delete-${$(this).data('id')}`).serialize();
+                $.ajax({
+                    type: "post",
+                    url: $(this).data('href'),
+                    data: data,
+                    success: function (response) {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            }
+                        });
 
-    //                     }
-    //                 }
-    //             });
-    //         }
-    //     });
-    // });
-
+                        if (response.success == 1) {
+                            dataTable.row(row).remove().draw(false); // Remove row from DataTable instantly
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.msg
+                            });
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: response.msg
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    });
 </script>
 @endpush

@@ -45,9 +45,22 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <!-- Flatpickr JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script src="{{ asset('dist/js/dropify.min.js') }}"></script>
+<script src="{{ asset('dist/js/dropify.js') }}"></script>
+
 {{ Session::has('message') }}
 <script>
+    $(document).ready(function(){
+        $('.dropify').dropify();
+    });
+</script>
+<script>
     $(document).ready(function () {
+        initDataTable();
+    });
+
+    function initDataTable() {
         if ($('#bookingTable').length && $('#bookingTableButtons').length) {
             if ($.fn.DataTable.isDataTable('#bookingTable')) {
                 $('#bookingTable').DataTable().clear().destroy();
@@ -60,9 +73,20 @@
             console.log("TH count:", thCount);
             console.log("TD count:", tdCount);
 
+            $('#bookingTable_wrapper .dataTables_info').remove();
+            $('#bookingTable_wrapper .dataTables_paginate').remove();
+            $('#bookingTableButtons .dt-buttons').remove();
+            $('#bookingTableButtons .dataTables_filter').remove();
+            $('#bookingTableButtons .dataTables_length').remove();
+
             if (thCount !== tdCount) {
                 console.error("Mismatch detected! Thead columns:", thCount, "Tbody columns:", tdCount);
                 return; // Stop DataTables from initializing if there's a mismatch
+            }
+
+            if ($('#bookingTable tbody tr').length === 0) {
+                console.warn("No data found in table. Skipping DataTables initialization.");
+                return;
             }
 
             setTimeout(function () {
@@ -81,7 +105,7 @@
                         { extend: 'csv', text: '<i class="fas fa-file-csv"></i> Export to CSV', exportOptions: { columns: ':visible:not(:last-child)' } },
                         { extend: 'excel', text: '<i class="fas fa-file-excel"></i> Export to Excel', exportOptions: { columns: ':visible:not(:last-child)' } },
                         { extend: 'print', text: '<i class="fas fa-print"></i> Print', exportOptions: { columns: ':visible:not(:last-child)' } },
-                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Column Visibility'},
+                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Column Visibility' },
                         { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> Export to PDF', exportOptions: { columns: ':visible:not(:last-child)' } },
                     ],
                     columnDefs: actionColumnIndex !== -1 ? [{ orderable: false, targets: actionColumnIndex }] : [],
@@ -93,11 +117,17 @@
                             previous: "<",
                             next: ">",
                             last: ">>"
+                        },
+                        processing: "Loading...",
+                        aria: {
+                            sortAscending: " 🠕",
+                            sortDescending: " 🠗"
                         }
                     },
                     pagingType: "full_numbers"
                 });
 
+                // Move elements correctly
                 if ($('#bookingTableButtons').length) {
                     $('.dataTables_length').prependTo('#bookingTableButtons');
                     table.buttons().container().appendTo('#bookingTableButtons');
@@ -106,11 +136,19 @@
                     console.error("Div #bookingTableButtons not found.");
                 }
             }, 100);
-
         } else {
             console.error("Table #bookingTable or Div #bookingTableButtons not found.");
         }
-    });
+    }
+
+    function refreshTable(response) {
+        $('#bookingTable').replaceWith(response.view);
+        toastr.success(response.msg);
+
+        setTimeout(function () {
+            initDataTable();
+        }, 500);
+    }
 </script>
 <!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>

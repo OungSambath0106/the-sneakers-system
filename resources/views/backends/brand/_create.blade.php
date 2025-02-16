@@ -14,37 +14,16 @@
                 @csrf
                 <div class="row">
                     <div class="col-12">
-                        <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
-                            {{-- @dump($languages) --}}
-                            @foreach (json_decode($language, true) as $lang)
-                                @if ($lang['status'] == 1)
-                                    <li class="nav-item">
-                                        <a class="nav-link text-capitalize {{ $lang['code'] == $default_lang ? 'active' : '' }}"
-                                            id="lang_{{ $lang['code'] }}-tab" data-toggle="pill"
-                                            href="#lang_{{ $lang['code'] }}" role="tab"
-                                            aria-controls="lang_{{ $lang['code'] }}"
-                                            aria-selected="false">{{ \App\helpers\AppHelper::get_language_name($lang['code']) . '(' . strtoupper($lang['code']) . ')' }}</a>
-                                    </li>
-                                @endif
-                            @endforeach
-
-                        </ul>
                         <div class="tab-content" id="custom-content-below-tabContent">
-                            @foreach (json_decode($language, true) as $lang)
-                                @if ($lang['status'] == 1)
-                                    <div class="tab-pane fade {{ $lang['code'] == $default_lang ? 'show active' : '' }}"
-                                        id="lang_{{ $lang['code'] }}" role="tabpanel"
-                                        aria-labelledby="lang_{{ $lang['code'] }}-tab">
-                                        <div class="form-group">
-                                            <input type="hidden" name="lang[]" value="{{ $lang['code'] }}">
-                                            <label
-                                                for="name_{{ $lang['code'] }}">{{ __('Name') }}({{ strtoupper($lang['code']) }})</label>
-                                            <input type="text" name="name[]" id="name_{{ $lang['code'] }}"
-                                                class="form-control" {{ $lang['code'] == 'en' ? 'required' : '' }}>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
+                            <div class="form-group">
+                                <label class="required_label" for="name">{{ __('Name') }}</label>
+                                <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror">
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -64,12 +43,10 @@
                             <img src="{{ asset('uploads\defualt.png') }}" alt="" height="100%">
                         </div>
                     </div>
-
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <button type="submit" class="btn btn-primary submit float-right">{{__('Save')}}</button>
-                        {{-- <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">{{ __('Close') }}</button> --}}
                     </div>
                 </div>
             </div>
@@ -80,7 +57,6 @@
 <script>
     const compressor = new window.Compress();
     $('.image-file-input').change(function(e) {
-        // Update the custom file label with the selected file name
         const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose Image';
         $(this).siblings('.custom-file-label').text(fileName);
 
@@ -128,14 +104,4 @@
             });
         });
     });
-
-    $(document).on('click', '.nav-tabs .nav-link', function(e) {
-        if ($(this).data('lang') != 'en') {
-            $('.no_translate_wrapper').addClass('d-none');
-        } else {
-            $('.no_translate_wrapper').removeClass('d-none');
-        }
-    });
 </script>
-{{-- @push('js')
-@endpush --}}
