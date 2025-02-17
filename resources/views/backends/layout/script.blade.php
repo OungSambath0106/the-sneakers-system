@@ -70,9 +70,6 @@
             let thCount = $('#bookingTable thead th').length;
             let tdCount = $('#bookingTable tbody tr:first td').length;
 
-            console.log("TH count:", thCount);
-            console.log("TD count:", tdCount);
-
             $('#bookingTable_wrapper .dataTables_info').remove();
             $('#bookingTable_wrapper .dataTables_paginate').remove();
             $('#bookingTableButtons .dt-buttons').remove();
@@ -81,7 +78,7 @@
 
             if (thCount !== tdCount) {
                 console.error("Mismatch detected! Thead columns:", thCount, "Tbody columns:", tdCount);
-                return; // Stop DataTables from initializing if there's a mismatch
+                return;
             }
 
             if ($('#bookingTable tbody tr').length === 0) {
@@ -91,24 +88,89 @@
 
             setTimeout(function () {
                 let actionColumnIndex = -1;
+                let usernameColumnIndex = -1;
+                let emailColumnIndex = -1;
                 $('#bookingTable thead th').each(function (index) {
                     let columnText = $(this).text().trim().toLowerCase();
                     if (columnText.includes('action')) {
                         actionColumnIndex = index;
                     }
+                    if (columnText.includes('username')) {
+                        usernameColumnIndex = index;
+                    }
+                    if (columnText.includes('email')) {
+                        emailColumnIndex = index;
+                    }
                 });
+
+                // Custom sorting to ensure first names sort numerically
+                $.fn.dataTable.ext.type.order['custom-username-asc'] = function (a, b) {
+                    return a.localeCompare(b, undefined, { numeric: true });
+                };
+                $.fn.dataTable.ext.type.order['custom-username-desc'] = function (a, b) {
+                    return b.localeCompare(a, undefined, { numeric: true });
+                };
+
+                // Custom sorting to ensure emails sort numerically
+                $.fn.dataTable.ext.type.order['custom-email-asc'] = function (a, b) {
+                    return a.localeCompare(b, undefined, { numeric: true });
+                };
+                $.fn.dataTable.ext.type.order['custom-email-desc'] = function (a, b) {
+                    return b.localeCompare(a, undefined, { numeric: true });
+                }
 
                 var table = $('#bookingTable').DataTable({
                     responsive: true,
                     dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
                     buttons: [
-                        { extend: 'csv', text: '<i class="fas fa-file-csv"></i> Export to CSV', exportOptions: { columns: ':visible:not(:last-child)' } },
-                        { extend: 'excel', text: '<i class="fas fa-file-excel"></i> Export to Excel', exportOptions: { columns: ':visible:not(:last-child)' } },
-                        { extend: 'print', text: '<i class="fas fa-print"></i> Print', exportOptions: { columns: ':visible:not(:last-child)' } },
-                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Column Visibility' },
-                        { extend: 'pdf', text: '<i class="fas fa-file-pdf"></i> Export to PDF', exportOptions: { columns: ':visible:not(:last-child)' } },
+                        {
+                            extend: 'csv',
+                            text: '<i class="fas fa-file-csv"></i> Export to CSV',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)',
+                                modifier: { page: 'current' } // Export only current page
+                            }
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)',
+                                modifier: { page: 'current' } // Export only current page
+                            }
+                        },
+                        {
+                            extend: 'pdf',
+                            text: '<i class="fas fa-file-pdf"></i> Export to PDF',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)',
+                                modifier: { page: 'current' } // Export only current page
+                            }
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fas fa-print"></i> Print',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)',
+                                modifier: { page: 'current' } // Print only current page
+                            }
+                        },
+                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Column Visibility' }
                     ],
-                    columnDefs: actionColumnIndex !== -1 ? [{ orderable: false, targets: actionColumnIndex }] : [],
+                    columnDefs: [
+                        {
+                            targets: actionColumnIndex,
+                            orderable: false
+                        },
+                        {
+                            targets: usernameColumnIndex,
+                            type: 'custom-username'
+                        },
+                        {
+                            targets: emailColumnIndex,
+                            type: 'custom-email'
+                        }
+                    ],
                     language: {
                         search: "",
                         searchPlaceholder: "Search...",
@@ -136,8 +198,6 @@
                     console.error("Div #bookingTableButtons not found.");
                 }
             }, 100);
-        } else {
-            console.error("Table #bookingTable or Div #bookingTableButtons not found.");
         }
     }
 

@@ -155,7 +155,12 @@ class UserController extends Controller
             DB::beginTransaction();
 
             $user = User::findOrFail($id);
-            $user->fill($request->only(['first_name', 'last_name', 'gender', 'phone', 'telegram', 'email']));
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->gender = $request->gender;
+            $user->phone = $request->phone;
+            $user->telegram = $request->telegram ?? null;
+            $user->email = $request->email;
 
             // Update Role if changed
             $newRole = Role::findOrFail($request->role);
@@ -239,21 +244,25 @@ class UserController extends Controller
         return response()->json($output);
     }
 
-    public function deleteUserImage(Request $request)
+    public function deleteImage(Request $request)
     {
-        if (!$request->has('image_name')) {
-            return response()->json(['status' => 0, 'msg' => 'No image name provided']);
+        $user = User::find($request->user_id);
+        if ($user && $user->image) {
+            $imagePath = public_path('uploads/users/' . $user->image);
+
+            // Delete the image from storage
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            // Remove image reference from database
+            $user->image = null;
+            $user->save();
+
+            return response()->json(['success' => true, 'message' => 'Image deleted']);
         }
 
-        $imageName = $request->image_name;
-        $imagePath = public_path("uploads/users/{$imageName}");
-
-        if (\File::exists($imagePath)) {
-            \File::delete($imagePath);
-            return response()->json(['status' => 1, 'msg' => 'Image removed successfully']);
-        }
-
-        return response()->json(['status' => 0, 'msg' => 'Image not found']);
+        return response()->json(['success' => false, 'message' => 'User or image not found']);
     }
 
     public function showProfile()
@@ -265,9 +274,8 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required',
             'phone' => 'required',
-            // 'role' => 'required',
+            'gender' => 'required',
             'email' => 'required|email|unique:users,email,' . auth()->user()->id,
             'password' => 'nullable|min:8',
         ]);
@@ -280,21 +288,16 @@ class UserController extends Controller
 
         try {
             DB::beginTransaction();
-            // $users = User::where('id' != $id)->where('email', $request->email)->get();
-            // if(count($users) > 0) {
-            //     return redirect()->back()
-            //         ->withErrors($validator)
-            //         ->withInput()
-            //         ->with(['success' => 0, 'msg' => __('Email already exists')]);
-            // }
+
             $id = auth()->user()->id;
             $user = User::findOrFail($id);
             $user->first_name = $request->first_name;
             $user->last_name = $request->last_name;
-            $user->name = $request->username;
+            $user->gender = $request->gender;
             $user->phone = $request->phone;
             $user->telegram = $request->telegram ?? null;
             $user->email = $request->email;
+
             if ($request->password) {
                 $user->password = Hash::make($request['password']);
             }
@@ -307,11 +310,9 @@ class UserController extends Controller
                 }
 
                 $image = \File::move(public_path('uploads/temp/' . $request->image_names), public_path('uploads/users/'. $request->image_names));
-
             }
 
             $user->save();
-
             DB::commit();
             $output = [
                 'success' => 1,
@@ -325,7 +326,6 @@ class UserController extends Controller
                 'msg' => __('Something went wrong')
             ];
         }
-
         return redirect()->back()->with($output);
     }
 }

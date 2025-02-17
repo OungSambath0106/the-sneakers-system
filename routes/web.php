@@ -90,7 +90,7 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         Route::get('/show_info/{id}', [UserController::class, 'showProfile'])->name('show_info');
         Route::POST('/update_info/{id}', [UserController::class, 'updateProfile'])->name('update_info');
         Route::resource('user', UserController::class);
-        Route::post('/delete-user-image', [UserController::class, 'deleteUserImage'])->name('user.delete_image');
+        Route::post('/delete-image', [UserController::class, 'deleteImage'])->name('user.delete.image');
 
         //Route for Customer
         Route::resource('customer', CustomerController::class);

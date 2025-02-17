@@ -2,6 +2,7 @@
     <table id="bookingTable" class="table table-striped" style="white-space: nowrap;">
         <thead class="text-uppercase">
             <tr>
+                <th>{{ __('#') }}</th>
                 <th>{{ __('Username') }}</th>
                 <th>{{ __('Gender') }}</th>
                 <th>{{ __('Phone') }}</th>
@@ -15,7 +16,8 @@
         <tbody>
             @forelse ($users as $user)
                 <tr>
-                    <td>
+                    <td>{{ $loop->iteration }}</td>
+                    <td data-order="{{ strtolower(@$user->first_name) . ' ' . strtolower(@$user->last_name) }}">
                         <img src="
                             @if ($user->image && file_exists(public_path('uploads/users/' . $user->image)))
                                 {{ asset('uploads/users/'. $user->image) }}
@@ -28,8 +30,12 @@
                     </td>
                     <td>{{ ucfirst(@$user->gender ?? 'N/A') }}</td>
                     <td>{{ @$user->phone ?? 'N/A' }}</td>
-                    <td>{{ @$user->email ?? 'N/A' }}</td>
-                    <td>{{ $user->created_at->format('d M Y h:i A') }}</td>
+                    <td data-order="{{ strtolower(@$user->email) }}">
+                        {{ @$user->email ?? 'N/A' }}
+                    </td>
+                    <td data-order="{{ $user->created_at->timestamp }}">
+                        {{ $user->created_at->format('d M Y h:i A') }}
+                    </td>
                     <td>
                         @if (auth()->user()->can('user.edit'))
                             <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-info btn-sm btn-edit">
@@ -54,7 +60,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ auth()->user()->can('user.edit') || auth()->user()->can('user.delete') ? 6 : 5 }}" class="text-center" style="background-color: ghostwhite">
+                    <td colspan="{{ auth()->user()->can('user.edit') || auth()->user()->can('user.delete') ? 7 : 6 }}" class="text-center" style="background-color: ghostwhite">
                         {{ __('Users are not available.') }}
                     </td>
                 </tr>

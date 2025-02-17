@@ -14,7 +14,7 @@
                                     <div class="form-group col-md-6 ">
                                         <label class="required_label">{{__('First Name')}}</label>
                                         <input type="name" class="form-control @error('first_name') is-invalid @enderror" value="{{ old('first_name', $user->first_name) }}"
-                                            name="first_name" placeholder="{{__('Enter First Name')}}">
+                                            name="first_name" placeholder="{{__('John')}}">
                                         @error('first_name')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -24,7 +24,7 @@
                                     <div class="form-group col-md-6">
                                         <label class="required_label">{{__('Last Name')}}</label>
                                         <input type="name" class="form-control @error('last_name') is-invalid @enderror" value="{{ old('last_name', $user->last_name) }}"
-                                            name="last_name" placeholder="{{__('Enter Last Name')}}" >
+                                            name="last_name" placeholder="{{__('Doe')}}" >
                                         @error('last_name')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -44,7 +44,7 @@
                                     <div class="form-group col-md-6">
                                         <label class="required_label">{{__('Phone Number')}}</label>
                                         <input type="text" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}"
-                                            name="phone" placeholder="{{__('Enter Phone Number')}}" >
+                                            name="phone" placeholder="{{__('+855 12 345 678')}}" >
                                         @error('phone')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -54,7 +54,7 @@
                                     <div class="form-group col-md-6">
                                         <label class="required_label">{{__('Telegram Number')}}</label>
                                         <input type="text" class="form-control @error('telegram') is-invalid @enderror" value="{{ old('telegram', $user->telegram) }}"
-                                            name="telegram" placeholder="{{__('Enter Telegram Number')}}" >
+                                            name="telegram" placeholder="{{__('+855 12 345 678')}}" >
                                         @error('telegram')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -64,7 +64,7 @@
                                     <div class="form-group col-md-6">
                                         <label class="required_label">{{__('Email')}}</label>
                                         <input type="text" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}"
-                                            name="email" placeholder="{{__('Enter Email')}}" >
+                                            name="email" placeholder="{{__('john.doe@example.com')}}" >
                                         @error('email')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -74,7 +74,7 @@
                                     <div class="form-group col-md-6">
                                         <label class="">{{__('Password')}}</label> <span class=" font-italic text-secondary ">{{ __('Leave it blank if you don\'t want to change.') }}</span>
                                         <input type="password" class="form-control @error('password') is-invalid @enderror" value=""
-                                            name="password" placeholder="{{__('Enter Password')}}" >
+                                            name="password" placeholder="{{__('********')}}" >
                                         @error('password')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -114,43 +114,13 @@
                                             name="address" placeholder="{{__('Enter Address')}}" >
                                     </div> --}}
 
-                                    {{-- <div class="form-group col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputFile">{{__('Image')}}</label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="hidden" name="image_names" class="image_names_hidden">
-                                                    <input type="file" class="custom-file-input" id="exampleInputFile" name="image" accept="image/png, image/jpeg">
-                                                    <label class="custom-file-label" for="exampleInputFile">{{ $user->image ?? __('Choose file') }}</label>
-                                                </div>
-                                            </div>
-                                            <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
-                                            <div class="preview preview-multiple text-center border rounded mt-2" style="height: 150px">
-                                                <div class="update_image">
-                                                    <div class="img_container">
-                                                        <img src="
-                                                        @if ($user->image && file_exists(public_path('uploads/users/' . $user->image)))
-                                                            {{ asset('uploads/users/'. $user->image) }}
-                                                        @else
-                                                            {{ asset('uploads/default-profile.png') }}
-                                                        @endif
-                                                        " alt="" height="100%">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> --}}
                                     <div class="form-group col-md-6">
-                                        <label for="dropifyInput">{{ __('Image') }}</label>
+                                        <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span> </label>
                                         <input type="hidden" name="image_names" class="image_names_hidden">
-
                                         <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image"
-                                               data-default-file="{{ isset($user) && $user->image && file_exists(public_path('uploads/users/' . $user->image))
-                                                                    ? asset('uploads/users/' . $user->image)
-                                                                    : asset('uploads/default-profile.png') }}"
-                                               accept="image/png, image/jpeg">
-
-                                        <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
+                                                data-default-file="{{ isset($user) && $user->image && file_exists(public_path('uploads/users/' . $user->image))
+                                                ? asset('uploads/users/' . $user->image)
+                                                : '' }}" accept="image/png, image/jpeg">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -174,34 +144,31 @@
             </div>
         </div>
     </section>
+    <!-- Modal remove image -->
+    @include('backends.user.partial.delete_user_image_modal')
 @endsection
 
 @push('js')
     <script>
         $(document).ready(function () {
-            $('.dropify').dropify(); // Initialize Dropify
-
+            $('.dropify').dropify();
             const compressor = new window.Compress();
-            const maxSize = 51200; // 50KB in bytes
+            const maxSize = 51200;
 
             $('.custom-file-input').change(async function (e) {
                 const fileInput = $(this);
                 const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
-
                 const output = await compressor.compress([...e.target.files], {
-                    size: 0.05, // Max 50KB
+                    size: 0.05,
                     quality: 0.7,
                     maxWidth: 512,
                     maxHeight: 512
                 });
-
                 const compressedFile = Compress.convertBase64ToFile(output[0].data, output[0].ext);
-
                 if (compressedFile.size > maxSize) return toastr.error("The image size exceeds 50KB. Please choose a smaller file.");
 
                 const formData = new FormData();
                 formData.append('image', compressedFile);
-
                 $.post({
                     url: "{{ route('save_temp_file') }}",
                     data: formData,
@@ -215,35 +182,54 @@
     </script>
     <script>
         $(document).ready(function () {
-            let dropifyInstance = $('.dropify').dropify(); // Initialize Dropify
+            var dropifyInstance = $('#dropifyInput').dropify();
+            var userId = "{{ isset($user) ? $user->id : null }}";
+            var deleteConfirmed = false;
 
-            // Handle Dropify image removal
-            $(document).on('click', '.dropify-clear', function () {
-                let imageName = $('.image_names_hidden').val(); // Get current image name
-                console.log("Attempting to delete:", imageName); // Debugging
+            dropifyInstance.on('dropify.beforeClear', function (event, element) {
+                if (!deleteConfirmed) {
+                    $('#deleteImageModal').modal('show');
+                    return false;
+                }
+                deleteConfirmed = false;
+            });
 
-                if (imageName) {
+            $('.btn-confirm-modal').click(function () {
+                if (userId) {
                     $.ajax({
-                        url: "{{ route('admin.user.delete_image') }}", // Ensure this matches your route
-                        type: 'POST',
+                        url: "{{ route('admin.user.delete.image') }}",
+                        type: "POST",
                         data: {
-                            image_name: imageName,
-                            _token: "{{ csrf_token() }}"
+                            _token: "{{ csrf_token() }}",
+                            user_id: userId
                         },
                         success: function (response) {
-                            if (response.status === 1) {
-                                toastr.success("Image removed successfully!");
-                                $('.image_names_hidden').val(''); // Clear hidden input
+                            if (response.success) {
+                                deleteConfirmed = true;
+
+                                removeDropifyPreview();
                             } else {
-                                toastr.error(response.msg);
+                                console.log("Error deleting image.");
                             }
                         },
                         error: function () {
-                            toastr.error("Error removing image.");
+                            console.log("Request failed.");
                         }
                     });
                 }
+                $('#deleteImageModal').modal('hide');
             });
+
+            $('.btn-cancel-modal').click(function () {
+                $('#deleteImageModal').modal('hide');
+            });
+
+            function removeDropifyPreview() {
+                var dropifyInput = $('#dropifyInput');
+                dropifyInput.closest('.dropify-wrapper').find('.dropify-render img').remove();
+                dropifyInput.closest('.dropify-wrapper').find('.dropify-preview').css('display', 'none');
+                dropifyInput.val('');
+            }
         });
     </script>
 @endpush
