@@ -2,7 +2,6 @@
     <table id="bookingTable" class="table table-striped" style="white-space: nowrap;">
         <thead class="text-uppercase">
             <tr>
-                <th>{{ __('#') }}</th>
                 <th>{{ __('Username') }}</th>
                 <th>{{ __('Gender') }}</th>
                 <th>{{ __('Phone') }}</th>
@@ -16,7 +15,6 @@
         <tbody>
             @forelse ($users as $user)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
                     <td data-order="{{ strtolower(@$user->first_name) . ' ' . strtolower(@$user->last_name) }}">
                         <img src="
                             @if ($user->image && file_exists(public_path('uploads/users/' . $user->image)))
@@ -60,7 +58,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ auth()->user()->can('user.edit') || auth()->user()->can('user.delete') ? 7 : 6 }}" class="text-center" style="background-color: ghostwhite">
+                    <td colspan="{{ auth()->user()->can('user.edit') || auth()->user()->can('user.delete') ? 6 : 5 }}" class="text-center" style="background-color: ghostwhite">
                         {{ __('Users are not available.') }}
                     </td>
                 </tr>

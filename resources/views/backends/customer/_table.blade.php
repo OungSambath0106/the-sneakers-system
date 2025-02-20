@@ -16,7 +16,7 @@
         <tbody>
             @forelse ($customers as $customer)
                 <tr>
-                    <td>
+                    <td data-order="{{ strtolower(@$customer->first_name) . ' ' . strtolower(@$customer->last_name) }}">
                         <img src="
                         @if ($customer->image && file_exists(public_path('uploads/customers/' . $customer->image)))
                             {{ asset('uploads/customers/'. $customer->image) }}
@@ -31,9 +31,13 @@
                     </td>
                     <td>{{ ucfirst(@$customer->gender ?? 'N/A') }}</td>
                     <td>{{ $customer->phone ?? 'N/A' }}</td>
-                    <td>{{ $customer->email ?? 'N/A' }}</td>
-                    <td>{{ $customer->created_at->format('d M Y h:i A') }}</td>
-                    <td>
+                    <td data-order="{{ strtolower(@$customer->email) }}">
+                        {{ @$customer->email ?? 'N/A' }}
+                    </td>
+                    <td data-order="{{ $customer->created_at->timestamp }}">
+                        {{ $customer->created_at->format('d M Y h:i A') }}
+                    </td>
+                    <td data-order="{{ $customer->status }}">
                         <div class="ckbx-style-9 mt-2">
                             <input type="checkbox" class="status"
                                 id="status_{{ $customer->id }}" data-id="{{ $customer->id }}"

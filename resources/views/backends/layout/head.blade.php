@@ -167,15 +167,15 @@
     }
 </style>
 <style>
-    #bookingTableButtons {
+    #dataTableButtons {
         display: flex;
         gap: 15px;
         align-items: center;
     }
-    #bookingTableButtons .dt-buttons {
+    #dataTableButtons .dt-buttons {
         display: flex;
     }
-    #bookingTableButtons .dt-buttons .dt-button {
+    #dataTableButtons .dt-buttons .dt-button {
         margin: 0;
         border: 1px solid #DDDDDD;
         border-radius: 0;
@@ -184,7 +184,7 @@
         padding: .3rem .65rem;
         font-size: 10px;
     }
-    #bookingTableButtons input[type="search"] {
+    #dataTableButtons input[type="search"] {
         height: 29px;
         border: 1px solid #ccc;
         border-radius: 5px;
@@ -192,8 +192,8 @@
         font-size: 14px;
         width: 200px;
     }
-    #bookingTableButtons input[type="search"]:focus,
-    #bookingTableButtons input[type="search"]:focus-visible {
+    #dataTableButtons input[type="search"]:focus,
+    #dataTableButtons input[type="search"]:focus-visible {
         outline: none;
         border-color: #ccc;
         box-shadow: none;

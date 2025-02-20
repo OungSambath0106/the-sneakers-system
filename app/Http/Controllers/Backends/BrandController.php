@@ -191,6 +191,26 @@ class BrandController extends Controller
 
         return response()->json($output);
     }
+
+    public function deleteImage(Request $request)
+    {
+        $brand = Brand::find($request->brand_id);
+        if ($brand && $brand->image) {
+            $imagePath = public_path('uploads/brand/' . $brand->image);
+
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            $brand->image = null;
+            $brand->save();
+
+            return response()->json(['success' => true, 'message' => 'Image deleted']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'User or image not found']);
+    }
+
     public function updateStatus(Request $request)
     {
         try {

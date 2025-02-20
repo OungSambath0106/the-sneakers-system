@@ -61,7 +61,7 @@
     });
 
     function initDataTable() {
-        if ($('#bookingTable').length && $('#bookingTableButtons').length) {
+        if ($('#bookingTable').length && $('#dataTableButtons').length) {
             if ($.fn.DataTable.isDataTable('#bookingTable')) {
                 $('#bookingTable').DataTable().clear().destroy();
                 $('#bookingTable').empty();
@@ -72,9 +72,9 @@
 
             $('#bookingTable_wrapper .dataTables_info').remove();
             $('#bookingTable_wrapper .dataTables_paginate').remove();
-            $('#bookingTableButtons .dt-buttons').remove();
-            $('#bookingTableButtons .dataTables_filter').remove();
-            $('#bookingTableButtons .dataTables_length').remove();
+            $('#dataTableButtons .dt-buttons').remove();
+            $('#dataTableButtons .dataTables_filter').remove();
+            $('#dataTableButtons .dataTables_length').remove();
 
             if (thCount !== tdCount) {
                 console.error("Mismatch detected! Thead columns:", thCount, "Tbody columns:", tdCount);
@@ -90,16 +90,21 @@
                 let actionColumnIndex = -1;
                 let usernameColumnIndex = -1;
                 let emailColumnIndex = -1;
+                let statusColumnIndex = -1;
+
                 $('#bookingTable thead th').each(function (index) {
                     let columnText = $(this).text().trim().toLowerCase();
                     if (columnText.includes('action')) {
                         actionColumnIndex = index;
                     }
-                    if (columnText.includes('username')) {
+                    if (columnText.includes('username') || columnText.includes('customer name')) {
                         usernameColumnIndex = index;
                     }
                     if (columnText.includes('email')) {
                         emailColumnIndex = index;
+                    }
+                    if (columnText.includes('status')) {
+                        statusColumnIndex = index;
                     }
                 });
 
@@ -118,6 +123,14 @@
                 $.fn.dataTable.ext.type.order['custom-email-desc'] = function (a, b) {
                     return b.localeCompare(a, undefined, { numeric: true });
                 }
+
+                // Custom sorting for status (numeric)
+                $.fn.dataTable.ext.order['custom-status-asc'] = function (a, b) {
+                    return a - b; // 1 appears before 0
+                };
+                $.fn.dataTable.ext.order['custom-status-desc'] = function (a, b) {
+                    return b - a; // 0 appears before 1
+                };
 
                 var table = $('#bookingTable').DataTable({
                     responsive: true,
@@ -169,6 +182,9 @@
                         {
                             targets: emailColumnIndex,
                             type: 'custom-email'
+                        },
+                        { targets: statusColumnIndex,
+                            type: 'custom-status'
                         }
                     ],
                     language: {
@@ -190,12 +206,12 @@
                 });
 
                 // Move elements correctly
-                if ($('#bookingTableButtons').length) {
-                    $('.dataTables_length').prependTo('#bookingTableButtons');
-                    table.buttons().container().appendTo('#bookingTableButtons');
-                    $('.dataTables_filter').appendTo('#bookingTableButtons');
+                if ($('#dataTableButtons').length) {
+                    $('.dataTables_length').prependTo('#dataTableButtons');
+                    table.buttons().container().appendTo('#dataTableButtons');
+                    $('.dataTables_filter').appendTo('#dataTableButtons');
                 } else {
-                    console.error("Div #bookingTableButtons not found.");
+                    console.error("Div #dataTableButtons not found.");
                 }
             }, 100);
         }

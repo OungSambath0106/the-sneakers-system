@@ -65,7 +65,7 @@
                     <legend class="w-auto mb-0 pb-0 title-table text-uppercase">{{ __('User List') }}</legend>
                     <div class="card-header pt-2 px-0">
                         <div class="row mx-0 align-items-center" style="justify-content: space-between">
-                            <div id="bookingTableButtons" class="col-md-10" style="justify-content: space-between"></div>
+                            <div id="dataTableButtons" class="col-md-10" style="justify-content: space-between"></div>
                             @if (auth()->user()->can('user.create'))
                                 <a class="btn btn-primary" href="{{ route('admin.user.create') }}">
                                     <i class="fas fa-plus-circle"></i>
@@ -125,16 +125,6 @@
                 $(tbody).append(response.tr);
             }
         });
-    });
-
-    $('.custom-file-input').change(function (e) {
-        var reader = new FileReader();
-        var preview = $(this).closest('.form-group').find('.preview img');
-        console.log(preview);
-        reader.onload = function(e) {
-            preview.attr('src', e.target.result).show();
-        }
-        reader.readAsDataURL(this.files[0]);
     });
 
     $(document).on('click', '.btn-delete', function (e) {

@@ -26,7 +26,7 @@
                         <legend class="w-auto mb-0 pb-0 title-table text-uppercase">{{ __('Brand List') }}</legend>
                         <div class="card-header pt-2 px-0">
                             <div class="row mx-0 align-items-center" style="justify-content: space-between">
-                                <div id="bookingTableButtons" class="col-md-10" style="justify-content: space-between"></div>
+                                <div id="dataTableButtons" class="col-md-10" style="justify-content: space-between"></div>
                                 @if (auth()->user()->can('brand.create'))
                                     <a class="btn btn-primary btn-modal" href="#" data-href="{{ route('admin.brand.create') }}"
                                         data-toggle="modal" data-container=".modal_form">
@@ -87,58 +87,54 @@
             });
         });
 
-        $('.custom-file-input').change(function(e) {
-            var reader = new FileReader();
-            var preview = $(this).closest('.form-group').find('.preview img');
-            console.log(preview);
-            reader.onload = function(e) {
-                preview.attr('src', e.target.result).show();
-            }
-            reader.readAsDataURL(this.files[0]);
-        });
-
-
-        $(document).on('click', '.btn-delete', function(e) {
+        $(document).on('click', '.btn-delete', function (e) {
             e.preventDefault();
 
-            const Confirmation = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false
-            });
+            let brandId = $(this).data('id');
+            let deleteUrl = $(this).data('href');
 
-            Confirmation.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
+            $('#deleteBrandModal').data('brand-id', brandId).data('delete-url', deleteUrl).modal('show');
+        });
 
-                    console.log(`.form-delete-${$(this).data('id')}`);
-                    var data = $(`.form-delete-${$(this).data('id')}`).serialize();
-                    // console.log(data);
-                    $.ajax({
-                        type: "post",
-                        url: $(this).data('href'),
-                        data: data,
-                        // dataType: "json",
-                        success: function(response) {
-                            console.log(response);
-                            if (response.status == 1) {
-                                $('.table-wrapper').replaceWith(response.view);
-                                toastr.success(response.msg);
-                            } else {
-                                toastr.error(response.msg)
+        $(document).on('click', '.btn-confirm-modal', function () {
+            let modal = $('#deleteBrandModal');
+            let brandId = modal.data('brand-id');
+            let deleteUrl = modal.data('delete-url');
 
-                            }
+            let row = $(`.btn-delete[data-id="${brandId}"]`).closest('tr');
+            let dataTable = $('#bookingTable').DataTable();
+
+            var data = $(`.form-delete-${brandId}`).serialize();
+
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: data,
+                success: function (response) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
                         }
                     });
+                    if (response.success == 1) {
+                        dataTable.row(row).remove().draw(false);
+                        modal.modal('hide');
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.msg
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: response.msg
+                        });
+                    }
                 }
             });
         });

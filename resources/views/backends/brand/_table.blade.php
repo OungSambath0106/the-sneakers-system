@@ -11,7 +11,7 @@
         <tbody>
             @forelse ($brands as $brand)
                 <tr>
-                    <td>
+                    <td data-order="{{ strtolower($brand->name) }}">
                         <img src="
                             @if ($brand->image && file_exists(public_path('uploads/brand/' . $brand->image)))
                                 {{ asset('uploads/brand/'. $brand->image) }}

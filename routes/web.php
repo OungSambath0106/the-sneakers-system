@@ -94,6 +94,7 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
 
         //Route for Customer
         Route::resource('customer', CustomerController::class);
+        Route::post('/delete-image', [CustomerController::class, 'deleteImage'])->name('customer.delete_image');
         Route::post('customer/update_status', [CustomerController::class, 'updateStatus'])->name('customer.update_status');
 
         //Route for role
@@ -115,6 +116,7 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         // Route Brand
         Route::post('brand/update_status', [BrandController::class, 'updateStatus'])->name('brand.update_status');
         Route::resource('brand', BrandController::class);
+        Route::post('/delete-image', [BrandController::class, 'deleteImage'])->name('brand.delete.image');
 
         // Route Product
         Route::post('product/update_status', [ProductController::class, 'updateStatus'])->name('product.update_status');

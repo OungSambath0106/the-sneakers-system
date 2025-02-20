@@ -75,13 +75,11 @@ class UserController extends Controller
             $role = Role::findOrFail($request->role);
             $user->assignRole($role->name);
 
-            // Handle Image Upload
             if ($request->filled('image_names')) {
                 $imageName = $request->image_names;
                 $tempPath = public_path("uploads/temp/{$imageName}");
                 $userPath = public_path("uploads/users/{$imageName}");
 
-                // Move image if exists & ensure directory creation
                 if (\File::exists($tempPath)) {
                     \File::ensureDirectoryExists(public_path('uploads/users'), 0777, true);
                     \File::move($tempPath, $userPath);

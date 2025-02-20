@@ -69,7 +69,7 @@
                     <legend class="w-auto mb-0 pb-0 title-table text-uppercase">{{ __('Customer List') }}</legend>
                     <div class="card-header pt-2 px-0">
                         <div class="row mx-0 align-items-center" style="justify-content: space-between">
-                            <div id="bookingTableButtons" class="col-md-10" style="justify-content: space-between"></div>
+                            <div id="dataTableButtons" class="col-md-10" style="justify-content: space-between"></div>
                             @if (auth()->user()->can('customer.create'))
                                 <a class="btn btn-primary" href="{{ route('admin.customer.create') }}">
                                     <i class="fas fa-plus-circle"></i>
@@ -91,12 +91,13 @@
                 {{-- <button type="button" class="close position-absolute" style="right: 3px; top: 0; color: red;" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button> --}}
-                <img id="modalImage" src="" alt="User Image" class="img-fluid rounded">
+                <img id="modalImage" src="" alt="Customer Image" class="img-fluid rounded">
             </div>
         </div>
     </div>
 </div>
 <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
+@include('backends.customer.partial.delete_customer_modal')
 
 @endsection
 @push('js')
@@ -130,72 +131,54 @@
         });
     });
 
-    $('.custom-file-input').change(function (e) {
-        var reader = new FileReader();
-        var preview = $(this).closest('.form-group').find('.preview img');
-        console.log(preview);
-        reader.onload = function(e) {
-            preview.attr('src', e.target.result).show();
-        }
-        reader.readAsDataURL(this.files[0]);
-    });
-
     $(document).on('click', '.btn-delete', function (e) {
         e.preventDefault();
 
-        const Confirmation = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: false
-        });
+        let customerId = $(this).data('id');
+        let deleteUrl = $(this).data('href');
 
-        Confirmation.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                let row = $(this).closest('tr');
-                let dataTable = $('#bookingTable').DataTable();
+        $('#deleteCustomerModal').data('customer-id', customerId).data('delete-url', deleteUrl).modal('show');
+    });
 
-                var data = $(`.form-delete-${$(this).data('id')}`).serialize();
-                $.ajax({
-                    type: "post",
-                    url: $(this).data('href'),
-                    data: data,
-                    success: function (response) {
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: "top-end",
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.onmouseenter = Swal.stopTimer;
-                                toast.onmouseleave = Swal.resumeTimer;
-                            }
-                        });
+    $(document).on('click', '.btn-confirm-modal', function () {
+        let modal = $('#deleteCustomerModal');
+        let customerId = modal.data('customer-id');
+        let deleteUrl = modal.data('delete-url');
 
-                        if (response.success == 1) {
-                            dataTable.row(row).remove().draw(false); // Remove row from DataTable instantly
-                            Toast.fire({
-                                icon: 'success',
-                                title: response.msg
-                            });
-                        } else {
-                            Toast.fire({
-                                icon: 'error',
-                                title: response.msg
-                            });
-                        }
+        let row = $(`.btn-delete[data-id="${customerId}"]`).closest('tr');
+        let dataTable = $('#bookingTable').DataTable();
+
+        var data = $(`.form-delete-${customerId}`).serialize();
+
+        $.ajax({
+            type: "POST",
+            url: deleteUrl,
+            data: data,
+            success: function (response) {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
                     }
                 });
+                if (response.success == 1) {
+                    dataTable.row(row).remove().draw(false);
+                    modal.modal('hide');
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.msg
+                    });
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: response.msg
+                    });
+                }
             }
         });
     });

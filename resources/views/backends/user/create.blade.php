@@ -113,10 +113,9 @@
                                     </div> --}}
 
                                     <div class="form-group col-md-6">
-                                        <label for="dropifyInput">{{ __('Image') }}</label>
+                                        <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs"> {{ __('Recommend size 512 x 512 px') }} </span> </label>
                                         <input type="hidden" name="image_names" class="image_names_hidden">
                                         <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image" accept="image/png, image/jpeg">
-                                        <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -145,9 +144,10 @@
 @push('js')
     <script>
         $(document).ready(function () {
-            $('.dropify').dropify();
+            var dropifyInput = $('.dropify').dropify();
             const compressor = new window.Compress();
             const maxSize = 51200;
+
             $('.custom-file-input').change(async function (e) {
                 const fileInput = $(this);
                 const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
@@ -157,18 +157,31 @@
                     maxWidth: 512,
                     maxHeight: 512
                 });
+
                 const compressedFile = Compress.convertBase64ToFile(output[0].data, output[0].ext);
-                if (compressedFile.size > maxSize) return toastr.error("The image size exceeds 50KB. Please choose a smaller file.");
+
+                if (compressedFile.size > maxSize) {
+                    return toastr.error("The image size exceeds 50KB. Please choose a smaller file.");
+                }
                 const formData = new FormData();
                 formData.append('image', compressedFile);
+
                 $.post({
                     url: "{{ route('save_temp_file') }}",
                     data: formData,
                     processData: false,
                     contentType: false
                 }).done(response => {
-                    response.status === 1 ? imageNamesHidden.val(response.temp_files) : toastr.error(response.msg);
+                    if (response.status === 1) {
+                        imageNamesHidden.val(response.temp_files);
+                    } else {
+                        toastr.error(response.msg);
+                    }
                 }).fail(() => toastr.error("Error uploading image"));
+            });
+
+            dropifyInput.on('dropify.afterClear', function (event) {
+                $(this).closest('.form-group').find('.image_names_hidden').val('');
             });
         });
     </script>

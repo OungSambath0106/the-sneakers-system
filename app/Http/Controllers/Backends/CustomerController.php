@@ -26,7 +26,7 @@ class CustomerController extends Controller
         $customers = Customer::when($request->start_date && $request->end_date, function ($query) use ($request) {
             $query->whereDate('created_at', '>=', $request->start_date)
                 ->whereDate('created_at', '<=', $request->end_date);
-        })
+            })
             ->latest('id')
             ->get();
 
@@ -87,14 +87,16 @@ class CustomerController extends Controller
             $customer->password = Hash::make($request['password']);
 
             if ($request->filled('image_names')) {
-                $customer->image = $request->image_names;
-                $directory = public_path('uploads/customers');
-                if (!\File::exists($directory)) {
-                    \File::makeDirectory($directory, 0777, true);
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $customerPath = public_path("uploads/customers/{$imageName}");
+
+                // Move image if exists & ensure directory creation
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/customers'), 0777, true);
+                    \File::move($tempPath, $customerPath);
+                    $customer->image = $imageName;
                 }
-
-                $image = \File::move(public_path('uploads/temp/' . $request->image_names), public_path('uploads/customers/'. $request->image_names));
-
             }
 
             $customer->save();
@@ -185,14 +187,21 @@ class CustomerController extends Controller
             }
 
             if ($request->filled('image_names')) {
-                $customer->image = $request->image_names;
-                $directory = public_path('uploads/customers');
-                if (!\File::exists($directory)) {
-                    \File::makeDirectory($directory, 0777, true);
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $customerPath = public_path("uploads/customers/{$imageName}");
+
+                // Check if the customer already has an image, then delete it
+                if ($customer->image && \File::exists(public_path("uploads/customers/{$customer->image}"))) {
+                    \File::delete(public_path("uploads/customers/{$customer->image}"));
                 }
 
-                $image = \File::move(public_path('uploads/temp/' . $request->image_names), public_path('uploads/customers/'. $request->image_names));
-
+                // Move the new file from temp to the final customers directory
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/customers'), 0777, true);
+                    \File::move($tempPath, $customerPath);
+                    $customer->image = $imageName;
+                }
             }
 
             $customer->save();
@@ -272,5 +281,24 @@ class CustomerController extends Controller
         }
 
         return response()->json($output);
+    }
+
+    public function deleteImage(Request $request)
+    {
+        $customer = Customer::find($request->customer_id);
+        if ($customer && $customer->image) {
+            $imagePath = public_path('uploads/customers/' . $customer->image);
+
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            $customer->image = null;
+            $customer->save();
+
+            return response()->json(['success' => true, 'message' => 'Image deleted']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'customer or image not found']);
     }
 }
