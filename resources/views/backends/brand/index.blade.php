@@ -55,6 +55,7 @@
         </div>
     </div>
     <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
+    @include('backends.brand.partial.delete_brand_modal')
 @endsection
 @push('js')
     <script>

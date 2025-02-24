@@ -44,8 +44,6 @@
     </div>
 </div>
 @include('backends.brand.partial.delete_brand_image_modal')
-{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> --}}
 <script>
     $(document).ready(function () {
         $('.dropify').dropify();
@@ -94,7 +92,7 @@
         $('.btn-confirm-modal').click(function () {
             if (brandId) {
                 $.ajax({
-                    url: "{{ route('admin.brand.delete.image') }}",
+                    url: "{{ route('admin.brand.delete_image') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",

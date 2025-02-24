@@ -42,8 +42,7 @@
                             <form action="{{ route('admin.brand.destroy', $brand->id) }}" class="d-inline-block form-delete-{{ $brand->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" data-id="{{ $brand->id }}"
-                                    data-href="{{ route('admin.brand.destroy', $brand->id) }}" class="btn btn-danger btn-sm btn-delete" title="Delete">
+                                <button type="button" data-id="{{ $brand->id }}"  data-href="{{ route('admin.brand.destroy', $brand->id) }}" class="btn btn-danger btn-sm btn-delete" title="Delete">
                                     <i class="fa fa-trash-alt"></i> {{ __('Delete') }}
                                 </button>
                             </form>

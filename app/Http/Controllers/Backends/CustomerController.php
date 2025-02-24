@@ -296,9 +296,9 @@ class CustomerController extends Controller
             $customer->image = null;
             $customer->save();
 
-            return response()->json(['success' => true, 'message' => 'Image deleted']);
+            return response()->json(['success' => 1, 'msg' => 'Image deleted']);
         }
 
-        return response()->json(['success' => false, 'message' => 'customer or image not found']);
+        return response()->json(['success' => 0, 'msg' => 'customer or image not found']);
     }
 }

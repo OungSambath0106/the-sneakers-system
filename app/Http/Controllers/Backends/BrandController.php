@@ -60,8 +60,17 @@ class BrandController extends Controller
             $brand->name = $request->name;
             $brand->created_by = auth()->user()->id;
 
-            if ($request->hasFile('image')) {
-                $brand->image = ImageManager::upload('uploads/brand/', $request->image);
+            if ($request->filled('image_names')) {
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $brandPath = public_path("uploads/brand/{$imageName}");
+
+                // Move image if exists & ensure directory creation
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/brand'), 0777, true);
+                    \File::move($tempPath, $brandPath);
+                    $brand->image = $imageName;
+                }
             }
 
             $brand->save();
@@ -69,7 +78,7 @@ class BrandController extends Controller
 
             $output = [
                 'success' => 1,
-                'msg' => __('Create successfully'),
+                'msg' => __('Created successfully'),
             ];
         } catch (Exception $e) {
             dd($e);
@@ -133,19 +142,31 @@ class BrandController extends Controller
 
             $brand = Brand::findOrFail($id);
             $brand->name = $request->name;
-            if ($request->hasFile('image')) {
-                if ($brand->image && file_exists(public_path('uploads/brand/' . $brand->image))) {
-                    unlink(public_path('uploads/brand/' . $brand->image));
+
+            if ($request->filled('image_names')) {
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $brandPath = public_path("uploads/brand/{$imageName}");
+
+                // Check if the brand already has an image, then delete it
+                if ($brand->image && \File::exists(public_path("uploads/brand/{$brand->image}"))) {
+                    \File::delete(public_path("uploads/brand/{$brand->image}"));
                 }
 
-                $brand->image = ImageManager::update('uploads/brand/', null, $request->image);
+                // Move the new file from temp to the final brand directory
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/brand'), 0777, true);
+                    \File::move($tempPath, $brandPath);
+                    $brand->image = $imageName;
+                }
             }
+
             $brand->save();
             DB::commit();
 
             $output = [
                 'success' => 1,
-                'msg' => __('Create successfully'),
+                'msg' => __('Updated successfully'),
             ];
         } catch (Exception $e) {
             DB::rollBack();
@@ -166,26 +187,23 @@ class BrandController extends Controller
         try {
             DB::beginTransaction();
             $brand = Brand::findOrFail($id);
-            $translation = Translation::where('translationable_type', 'App\Models\Brand')
-                ->where('translationable_id', $brand->id);
 
-            $translation->delete();
             $brand->delete();
-
             $brands = Brand::latest('id')->paginate(10);
             $view = view('backends.brand._table', compact('brands'))->render();
 
             DB::commit();
             $output = [
-                'status' => 1,
-                'view' => $view,
+                'success' => 1,
+                'view'  => $view,
                 'msg' => __('Deleted successfully')
             ];
         } catch (Exception $e) {
             DB::rollBack();
+
             $output = [
-                'status' => 0,
-                'msg' => __('Something went wrong')
+                'success' => 0,
+                'msg' => __('Something when wrong')
             ];
         }
 
@@ -205,10 +223,10 @@ class BrandController extends Controller
             $brand->image = null;
             $brand->save();
 
-            return response()->json(['success' => true, 'message' => 'Image deleted']);
+            return response()->json(['success' => 1, 'msg' => 'Image deleted']);
         }
 
-        return response()->json(['success' => false, 'message' => 'User or image not found']);
+        return response()->json(['success' => 0, 'msg' => 'Brand or image not found']);
     }
 
     public function updateStatus(Request $request)
