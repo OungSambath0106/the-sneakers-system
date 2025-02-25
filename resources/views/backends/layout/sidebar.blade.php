@@ -42,7 +42,7 @@
                                 {{ __('User Management') }}
                                 <i class="right fas fa-angle-left"></i>
                             </p>
-                        </a>
+                        </a>    
                         <ul class="nav nav-treeview">
                             @if (auth()->user()->can('user.view'))
                                 <li class="nav-item">

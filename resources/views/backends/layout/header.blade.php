@@ -52,10 +52,7 @@
             <a href="#" class="nav-link dropdown-toggle pr-0" data-toggle="dropdown" aria-expanded="false">
                 <img style="border:2.7px solid white;" src="
                 @if (auth()->user()->image && file_exists(public_path('uploads/users/' . auth()->user()->image))) {{ asset('uploads/users/' . auth()->user()->image) }}
-                @else
-                 {{ asset('uploads/default-profile.png') }} @endif"
-                    class="user-image img-circle elevation-2 " alt="User Image">
-                {{-- <span class="d-none d-md-inline">veha</span> --}}
+                @else {{ asset('uploads/default-profile.png') }} @endif" class="user-image img-circle elevation-2 " alt="User Image">
             </a>
             <div class="dropdown-menu dropdown-menu-right p-2 mt-1">
                 <div class="form-group p-2 mb-0">

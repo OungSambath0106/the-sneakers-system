@@ -12,9 +12,6 @@
         @else
             {{ asset('uploads/image/default.png') }}
         @endif">
-    <!-- Google Font: Source Sans Pro -->
-    {{-- <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined">
@@ -36,30 +33,19 @@
     {{-- <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}"> --}}
     {{-- summernote --}}
     <link rel="stylesheet" href="{{ asset('backend/plugins/summernote/summernote-bs4.min.css') }}">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">
-
-
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" />
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
     <link rel="stylesheet" href="{{ asset('backend/sweetalert2/css/sweetalert2.min.css') }}">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.css"
         type="text/css" media="screen" />
-
     <link rel="stylesheet" href="{{ asset('backend/custom/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/css/checkboxes.min.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
-
-    <!-- Dropify CSS -->
-    {{-- <link rel="stylesheet" href="{{ asset('dist/css/demo.css') }}"> --}}
-    {{-- <link rel="stylesheet" href="{{ asset('dist/css/dropify.min.css') }}"> --}}
     <link rel="stylesheet" type="text/css" href="https://jeremyfagis.github.io/dropify/dist/css/dropify.min.css">
-
     @stack('css')
 </head>
 <style>
@@ -154,10 +140,6 @@
     }
 </style>
 <style>
-    body {
-
-    }
-
     .text-sm .btn {
         font-size: 12px !important;
     }
