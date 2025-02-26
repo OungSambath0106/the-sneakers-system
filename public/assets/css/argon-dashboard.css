@@ -23643,7 +23643,7 @@ hr.horizontal.gray-light {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.16);
 }
 
-.navbar .navbar-brand {
+.bg-white .navbar .navbar-brand {
   color: #344767;
   font-size: 0.875rem;
 }
@@ -28261,6 +28261,31 @@ pre[class*=language-] {
   .ps {
     overflow: auto !important;
   }
+}
+
+.light-mode-icon path {
+    fill: #fff;
+}
+
+.dark-mode-icon path {
+    fill: #344767;
+}
+
+.button-control-theme {
+    background-color: #fff;
+    border: none;
+}
+
+.dark-version .button-control-theme {
+    background-color: #344767;
+}
+
+.bg-white .icon-aside {
+    color: #344767;
+}
+
+.bg-default .icon-aside {
+    color: #fff;
 }
 
 /*# sourceMappingURL=dashboard-free.css.map */

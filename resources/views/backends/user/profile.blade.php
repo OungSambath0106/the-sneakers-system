@@ -1,4 +1,4 @@
-@extends('backends.master')
+@extends('backends.layouts.admin')
 @section('contents')
     <section class="content">
         <div class="container-fluid">
@@ -176,7 +176,7 @@
             $('.btn-confirm-modal').click(function () {
                 if (userId) {
                     $.ajax({
-                        url: "{{ route('admin.user.delete.image') }}",
+                        url: "{{ route('admin.user.delete_image') }}",
                         type: "POST",
                         data: {
                             _token: "{{ csrf_token() }}",

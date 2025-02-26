@@ -559,7 +559,7 @@
         </div>
     </div>
     <div class="row mt-4">
-        <div class="col-lg-7 mb-lg-0 mb-4">
+        <div class="col-lg-7 mb-lg-0">
             <div class="card">
                 <div class="card-header pb-0 p-3">
                     <h6 class="mb-0">{{ __('Best Selling Products') }}</h6>
@@ -633,7 +633,7 @@
         </div>
     </div>
     <div class="row mt-4">
-        <div class="col-lg-5">
+        <div class="col-lg-5 mb-sm-4">
             <div class="card z-index-2 h-100">
                 <div class="card-header pb-0 p-3">
                     <h6 class="mb-0">{{ __('New Customers') }}</h6>
