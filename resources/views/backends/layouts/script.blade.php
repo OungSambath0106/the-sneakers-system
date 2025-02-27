@@ -50,6 +50,49 @@
 {{ Session::has('message') }}
 
 
+<script src="https://cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js"></script>
+<script>
+    function toggleTheme() {
+        let darkMode = document.body.classList.toggle("dark-version");
+        document.getElementById("light-icon").classList.toggle("d-none", !darkMode);
+        document.getElementById("dark-icon").classList.toggle("d-none", darkMode);
+
+        let aside = document.querySelector("aside");
+
+        if (darkMode) {
+            $.cookie("dark-version" , 1 , { expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000) }, '/');
+            aside.classList.add("bg-default");
+            aside.classList.remove("bg-white");
+        } else {
+            $.cookie("dark-version" , 0 , { expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000) }, '/');
+            aside.classList.add("bg-white");
+            aside.classList.remove("bg-default");
+        }
+
+        localStorage.setItem("theme", darkMode ? "dark" : "light");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let theme = localStorage.getItem("theme") || "light";
+        let darkMode = theme === "dark";
+
+        document.body.classList.toggle("dark-version", darkMode);
+        document.getElementById("light-icon").classList.toggle("d-none", !darkMode);
+        document.getElementById("dark-icon").classList.toggle("d-none", darkMode);
+
+        let aside = document.querySelector("aside");
+
+        if (darkMode) {
+            $.cookie("dark-version" , 1 , { expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000) }, '/');
+            aside.classList.add("bg-default");
+            aside.classList.remove("bg-white");
+        } else {
+            $.cookie("dark-version" , 0 , { expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000) }, '/');
+            aside.classList.add("bg-white");
+            aside.classList.remove("bg-default");
+        }
+    });
+</script>
 <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
 <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
@@ -495,5 +538,55 @@
             });
         });
     }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("sidebar-search");
+        const suggestionsBox = document.getElementById("search-suggestions");
+        const menuLinks = Array.from(document.querySelectorAll(".navbar-nav .nav-link"))
+            .map(link => ({
+                name: link.innerText.trim(),
+                url: link.href
+            }));
+
+        searchInput.addEventListener("input", function () {
+            const query = searchInput.value.toLowerCase();
+            suggestionsBox.innerHTML = "";
+
+            if (query.length === 0) {
+                suggestionsBox.style.display = "none";
+                return;
+            }
+
+            const filteredLinks = menuLinks.filter(item => item.name.toLowerCase().includes(query));
+            if (filteredLinks.length > 0) {
+                suggestionsBox.style.display = "block";
+                filteredLinks.forEach(item => {
+                    const suggestionItem = document.createElement("a");
+                    suggestionItem.classList.add("list-group-item", "list-group-item-action");
+                    suggestionItem.innerText = item.name;
+                    suggestionItem.href = item.url;
+                    suggestionItem.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        window.location.href = item.url;
+                    });
+
+                    suggestionsBox.appendChild(suggestionItem);
+                });
+            } else {
+                const noResultItem = document.createElement("div");
+                noResultItem.classList.add("list-group-item", "text-danger", "text-center");
+                noResultItem.innerText = "Menu not found";
+                suggestionsBox.appendChild(noResultItem);
+                suggestionsBox.style.display = "block";
+            }
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!searchInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
+                suggestionsBox.style.display = "none";
+            }
+        });
+    });
 </script>
 @stack('js')

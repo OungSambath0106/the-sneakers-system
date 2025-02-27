@@ -53,9 +53,9 @@
             const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
             const output = await compressor.compress([...e.target.files], {
                 size: 0.05,
-                quality: 0.7,
-                maxWidth: 512,
-                maxHeight: 512
+                quality: 1.0,
+                maxWidth: 1024,
+                maxHeight: 1024
             });
 
             const compressedFile = Compress.convertBase64ToFile(output[0].data, output[0].ext);

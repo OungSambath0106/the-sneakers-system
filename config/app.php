@@ -138,6 +138,11 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    // default theme
+    'theme' => 0,
+
+    'dark-version' => 0,
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

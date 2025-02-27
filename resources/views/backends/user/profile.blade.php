@@ -1,4 +1,7 @@
 @extends('backends.layouts.admin')
+@section('page_title')
+    User Profile
+@endsection
 @section('contents')
     <section class="content">
         <div class="container-fluid">

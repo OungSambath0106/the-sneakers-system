@@ -1,6 +1,6 @@
 @extends('backends.layouts.admin')
 @section('page_title')
-    Admin Dashboard
+    Dashboard
 @endsection
 @push('css')
     <style>

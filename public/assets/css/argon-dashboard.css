@@ -28288,4 +28288,31 @@ pre[class*=language-] {
     color: #fff;
 }
 
+.sidebar-search-menu {
+    border-top-right-radius: 0.5rem !important;
+    border-bottom-right-radius: 0.5rem !important;
+}
+
+.search-menu-suggestions {
+    top: 100%;
+    z-index: 1000;
+    border-top-left-radius: 0.5rem !important;
+    border-bottom-left-radius: 0.5rem !important;
+    background: #fff;
+    color: #344767;
+}
+
+.dark-version .search-menu-suggestions {
+    background: #344767;
+    color: #fff;
+}
+
+.nav.nav-treeview {
+    padding-top: 0.25rem;
+}
+
+.dark-version .text-secondary.btn-delete {
+    color: #fff !important;
+}
+
 /*# sourceMappingURL=dashboard-free.css.map */

@@ -55,6 +55,17 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, $ability) {
             return $user->hasRole('admin') ? true : null;
         });
+
+        if (!request()->hasCookie('dark-version')) {
+            config(['app.dark-version' => config('app.theme')]);
+        } else {
+            if (request()->cookie('dark-version') == 1) {
+                config(['app.dark-version' => 1]);
+            } else {
+                config(['app.dark-version' => 0]);
+            }
+        }
+
         Paginator::useBootstrap();
         Schema::defaultStringLength(191);
         Paginator::useBootstrap();

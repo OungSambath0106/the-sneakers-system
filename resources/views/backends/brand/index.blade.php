@@ -1,4 +1,4 @@
-@extends('backends.master')
+@extends('backends.layouts.admin')
 @section('page_title', __('Brand'))
 @push('css')
     <style>
@@ -10,6 +10,7 @@
         .tab-pane {
             margin-top: 20px
         }
+
         .ckbx-style-9 input[type=checkbox]:checked+label:before {
             background: #3d95d0 !important;
             box-shadow: inset 0 1px 1px rgba(84, 116, 152, 0.5) !important;
@@ -21,7 +22,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12 mt-4">
+                {{-- <div class="col-md-12 mt-4">
                     <fieldset class="border fieldset-table px-3 mb-4">
                         <legend class="w-auto mb-0 pb-0 title-table text-uppercase">{{ __('Brand List') }}</legend>
                         <div class="card-header pt-2 px-0">
@@ -38,6 +39,26 @@
                         </div>
                         @include('backends.brand._table')
                     </fieldset>
+                </div> --}}
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header pb-0">
+                            <h5 class="pb-1">Authors table</h5>
+                        </div>
+                        <div class="card-body px-3 pt-0 pb-2">
+                            <div class="d-flex mx-0 align-items-center mb-2" style="justify-content: space-between">
+                                <div id="dataTableButtons" class="col-md-10 pe-4" style="justify-content: space-between"></div>
+                                @if (auth()->user()->can('brand.create'))
+                                    <a class="btn bg-gradient-dark btn-modal col-md-2 btn-sm mb-0" href="#" data-href="{{ route('admin.brand.create') }}"
+                                        data-toggle="modal" data-container=".modal_form">
+                                        <i class="fas fa-plus-circle"></i>
+                                        {{ __('Add New') }}
+                                    </a>
+                                @endif
+                            </div>
+                            @include('backends.brand._table')
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -46,7 +67,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body text-center position-relative">
-                    {{-- <button type="button" class="close position-absolute" style="right: 3px; top: 0; color: red;" data-dismiss="modal" aria-label="Close">
+                    {{-- <button type="button" class="close position-absolute" style="right: 3px; top: 0; color: red;"
+                        data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button> --}}
                     <img id="modalImage" src="" alt="User Image" class="img-fluid rounded">
@@ -64,7 +86,7 @@
         }
     </script>
     <script>
-        $('.btn_add').click(function(e) {
+        $('.btn_add').click(function (e) {
             var tbody = $('.tbody');
             var numRows = tbody.find("tr").length;
             $.ajax({
@@ -74,14 +96,14 @@
                     "key": numRows
                 },
                 dataType: "json",
-                success: function(response) {
+                success: function (response) {
                     $(tbody).append(response.tr);
                 }
             });
         });
 
-        $(document).on('click', '.btn-edit', function() {
-            $("div.modal_form").load($(this).data('href'), function() {
+        $(document).on('click', '.btn-edit', function () {
+            $("div.modal_form").load($(this).data('href'), function () {
 
                 $(this).modal('show');
 

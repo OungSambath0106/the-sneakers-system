@@ -3,13 +3,59 @@
     <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" style="color: #fff !important;"
-                        href="javascript:;">Pages</a></li>
-                <li class="breadcrumb-item text-sm text-white active" style="color: #fff !important;"
-                    aria-current="page">Dashboard</li>
+                <li class="breadcrumb-item text-sm">
+                    <a class="opacity-5 text-white" style="color: #fff !important;" href="{{ route('admin.dashboard') }}">
+                        Pages
+                    </a>
+                </li>
+        
+                {{-- Parent Menu Detection --}}
+                @if (request()->routeIs('admin.brand*') || request()->routeIs('admin.product*'))
+                    <li class="breadcrumb-item text-sm text-white">
+                        <a href="#" class="opacity-5 text-white" style="color: #fff !important;">Product Management</a>
+                    </li>
+                @elseif (request()->routeIs('admin.baner-slider*') || request()->routeIs('admin.shoes-slider*'))
+                    <li class="breadcrumb-item text-sm text-white">
+                        <a href="#" class="opacity-5 text-white" style="color: #fff !important;">Banner Slider</a>
+                    </li>
+                @elseif (request()->routeIs('admin.user*') || request()->routeIs('admin.customer*') || request()->routeIs('admin.roles*'))
+                    <li class="breadcrumb-item text-sm text-white">
+                        <a href="#" class="opacity-5 text-white" style="color: #fff !important;">User Management</a>
+                    </li>
+                @endif
+        
+                {{-- Submenu Detection --}}
+                @if (request()->routeIs('admin.brand*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Brand</li>
+                @elseif (request()->routeIs('admin.product*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Product</li>
+                @elseif (request()->routeIs('admin.baner-slider*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Banner</li>
+                @elseif (request()->routeIs('admin.shoes-slider*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Shoes Slider</li>
+                @elseif (request()->routeIs('admin.user*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Users</li>
+                @elseif (request()->routeIs('admin.customer*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Customers</li>
+                @elseif (request()->routeIs('admin.roles*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Roles</li>
+                @elseif (request()->routeIs('admin.promotion*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Promotion</li>
+                @elseif (request()->routeIs('admin.order*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Transaction Report</li>
+                @elseif (request()->routeIs('admin.setting*'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Settings</li>
+                @elseif (request()->routeIs('admin.show_info'))
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Profile</li>
+                @else
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Dashboard</li>
+                @endif
             </ol>
-            <h6 class="font-weight-bolder text-white mb-0">Dashboard</h6>
-        </nav>
+        
+            <h6 class="font-weight-bolder text-white mb-0">
+                @yield('page_title', 'Dashboard')
+            </h6>
+        </nav>                
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                 <li class="d-flex align-items-center pe-md-4">
@@ -28,9 +74,6 @@
                             </svg>
                         </span>
                         <span id="dark-icon">
-                            {{-- <svg class="dark-mode-icon" width="24" height="24" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20.6001 13.6396C19.6978 13.9132 18.7405 14.0603 17.7488 14.0603C12.3308 14.0603 7.93868 9.66818 7.93868 4.25018C7.93868 3.25896 8.08569 2.30208 8.35909 1.40015C4.33166 2.62153 1.40015 6.36319 1.40015 10.7895C1.40015 16.2075 5.7923 20.5997 11.2103 20.5997C15.6371 20.5997 19.379 17.6676 20.6001 13.6396Z" stroke="" stroke-width="2" stroke-linejoin="round"/>
-                            </svg> --}}
                             <svg class="dark-mode-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M11.1853 7.65104C11.2511 7.51469 11.2255 7.35183 11.121 7.24229C11.0165 7.13274 10.855 7.09947 10.7157 7.15877C8.77708 7.98413 7.66864 10.1496 8.07792 12.2785C8.55187 14.7436 10.9345 16.3578 13.3997 15.8839C15.2564 15.5269 16.5865 14.1238 16.9501 12.3848C16.9811 12.2365 16.9168 12.0846 16.7888 12.0035C16.6609 11.9224 16.496 11.9293 16.3752 12.0207C15.9727 12.325 15.533 12.5143 14.9885 12.619C13.1163 12.9789 11.3068 11.753 10.9469 9.88088C10.7982 9.10719 10.8805 8.28248 11.1853 7.65104ZM8.79157 12.1413C8.50406 10.6458 9.1019 9.14398 10.2252 8.28109C10.1184 8.84785 10.1241 9.45021 10.2333 10.0181C10.669 12.2844 12.8594 13.7684 15.1257 13.3326C15.4203 13.276 15.6946 13.1968 15.9535 13.0912C15.4598 14.1417 14.5019 14.932 13.2625 15.1702C11.1914 15.5684 9.18975 14.2123 8.79157 12.1413Z" fill=""/>
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M12.75 5.57138V4.5C12.75 4.086 12.414 3.75 12 3.75C11.586 3.75 11.25 4.086 11.25 4.5V5.57138C11.25 5.98538 11.586 6.32138 12 6.32138C12.414 6.32138 12.75 5.98538 12.75 5.57138Z" fill=""/>
@@ -45,9 +88,10 @@
                         </span>
                     </button>
                 </li>
-                <div class="input-group">
+                <div class="input-group ition-relative">
                     <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-                    <input type="text" class="form-control" placeholder="Type here...">
+                    <input type="text" class="form-control sidebar-search-menu" id="sidebar-search" placeholder="Search menu...">
+                    <div id="search-suggestions" class="list-group position-absolute w-100 search-menu-suggestions"></div>
                 </div>
             </div>
             <li class="nav-item dropdown">
@@ -92,42 +136,4 @@
         </li>
     </div>
 </nav>
-<script>
-    function toggleTheme() {
-        let darkMode = document.body.classList.toggle("dark-version");
-        document.getElementById("light-icon").classList.toggle("d-none", !darkMode);
-        document.getElementById("dark-icon").classList.toggle("d-none", darkMode);
-
-        let aside = document.querySelector("aside");
-
-        if (darkMode) {
-            aside.classList.add("bg-default");
-            aside.classList.remove("bg-white");
-        } else {
-            aside.classList.add("bg-white");
-            aside.classList.remove("bg-default");
-        }
-
-        localStorage.setItem("theme", darkMode ? "dark" : "light");
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        let theme = localStorage.getItem("theme") || "light";
-        let darkMode = theme === "dark";
-
-        document.body.classList.toggle("dark-version", darkMode);
-        document.getElementById("light-icon").classList.toggle("d-none", !darkMode);
-        document.getElementById("dark-icon").classList.toggle("d-none", darkMode);
-
-        let aside = document.querySelector("aside");
-
-        if (darkMode) {
-            aside.classList.add("bg-default");
-            aside.classList.remove("bg-white");
-        } else {
-            aside.classList.add("bg-white");
-            aside.classList.remove("bg-default");
-        }
-    });
-</script>
 

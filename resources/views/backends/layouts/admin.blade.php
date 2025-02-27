@@ -3,7 +3,7 @@
 
 @include('backends.layouts.head')
 
-<body class="g-sidenav-show   bg-gray-100">
+<body class="g-sidenav-show bg-gray-100 {{ (config('app.dark-version') == 1 ? 'dark-version' : '') }}">
     <div class="min-height-300 bg-dark position-absolute w-100"></div>
 
     @include('backends.layouts.sidebar')
