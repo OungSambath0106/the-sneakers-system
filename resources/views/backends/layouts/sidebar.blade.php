@@ -19,7 +19,7 @@
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link @if (request()->routeIs('admin.dashboard')) active @endif" href="{{ route('admin.dashboard') }}">
+                <a class="nav-link mx-0 @if (request()->routeIs('admin.dashboard')) active @endif" href="{{ route('admin.dashboard') }}">
                     <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="ni ni-tv-2 icon-aside text-sm opacity-10"></i>
                     </div>
@@ -28,11 +28,12 @@
             </li>
             @if (auth()->user()->can('brand.view') || auth()->user()->can('product.view'))
                 <li class="nav-item @if (request()->routeIs('admin.brand*', 'admin.product*')) menu-is-opening menu-open @endif">
-                    <a class="nav-link @if (request()->routeIs('admin.brand*', 'admin.product*')) active @endif" href="#">
+                    <a class="nav-link mx-0 justify-content-between @if (request()->routeIs('admin.brand*', 'admin.product*')) active @endif" href="#">
                         <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="ni ni-tv-2 icon-aside text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1"> {{ __('Product Management') }} </span>
+                        <i class="menu-arrow fa-solid fa-chevron-down ms-auto transition-icon"></i>
                     </a>
                     <ul class="nav nav-treeview">
                         @if (auth()->user()->can('brand.view'))
@@ -61,11 +62,12 @@
             @endif
             @if (auth()->user()->can('banner.view') || auth()->user()->can('shoes-slider.view'))
                 <li class="nav-item @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) menu-is-opening menu-open @endif">
-                    <a class="nav-link @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) active @endif" href="#">
+                    <a class="nav-link mx-0 justify-content-between @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) active @endif" href="#">
                         <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="ni ni-tv-2 icon-aside text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1"> {{ __('Banner Slider') }} </span>
+                        <i class="menu-arrow fa-solid fa-chevron-down ms-auto transition-icon"></i>
                     </a>
                     <ul class="nav nav-treeview">
                         @if (auth()->user()->can('banner.view'))
@@ -94,7 +96,7 @@
             @endif
             @if (auth()->user()->can('promotion.view'))
                 <li class="nav-item">
-                    <a class="nav-link @if (request()->routeIs('admin.promotion*')) active @endif" href="{{ route('admin.promotion.index') }}">
+                    <a class="nav-link mx-0 @if (request()->routeIs('admin.promotion*')) active @endif" href="{{ route('admin.promotion.index') }}">
                         <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="ni ni-tv-2 icon-aside text-sm opacity-10"></i>
                         </div>
@@ -104,7 +106,7 @@
             @endif
             @if (auth()->user()->can('order.view'))
                 <li class="nav-item">
-                    <a class="nav-link @if (request()->routeIs('admin.order*')) active @endif" href="{{ route('admin.order.index') }}">
+                    <a class="nav-link mx-0 @if (request()->routeIs('admin.order*')) active @endif" href="{{ route('admin.order.index') }}">
                         <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="ni ni-tv-2 icon-aside text-sm opacity-10"></i>
                         </div>
@@ -114,11 +116,12 @@
             @endif
             @if (auth()->user()->can('user.view') || auth()->user()->can('role.view') || auth()->user()->can('customer.view'))
                 <li class="nav-item @if (request()->routeIs('admin.user*', 'admin.customer*', 'admin.roles*')) menu-is-opening menu-open @endif">
-                    <a class="nav-link @if (request()->routeIs('admin.user*', 'admin.customer*', 'admin.roles*')) active @endif" href="#">
+                    <a class="nav-link mx-0 justify-content-between @if (request()->routeIs('admin.user*', 'admin.customer*', 'admin.roles*')) active @endif" href="#">
                         <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="ni ni-tv-2 icon-aside text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1"> {{ __('User Management') }} </span>
+                        <i class="menu-arrow fa-solid fa-chevron-down ms-auto transition-icon"></i>
                     </a>
                     <ul class="nav nav-treeview">
                         @if (auth()->user()->can('user.view'))
@@ -158,7 +161,7 @@
             @endif
             @if (auth()->user()->can('setting.view'))
                 <li class="nav-item">
-                    <a class="nav-link @if (request()->routeIs('admin.setting*')) active @endif" href="{{ route('admin.setting.index') }}">
+                    <a class="nav-link mx-0 @if (request()->routeIs('admin.setting*')) active @endif" href="{{ route('admin.setting.index') }}">
                         <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="ni ni-tv-2 icon-aside text-sm opacity-10"></i>
                         </div>
@@ -171,7 +174,7 @@
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Account pages</h6>
             </li>
             <li class="nav-item">
-                <a class="nav-link " href="{{ route('admin.show_info', auth()->user()->id) }}">
+                <a class="nav-link mx-0" href="{{ route('admin.show_info', auth()->user()->id) }}">
                     <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="ni ni-single-02 icon-aside text-sm opacity-10"></i>
                     </div>
@@ -179,11 +182,11 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link " href="{{ route('logout') }}">
+                <a class="nav-link mx-0" href="{{ route('logout') }}">
                     <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="ni ni-user-run icon-aside text-sm opacity-10"></i>
+                        <i class="fas fa-sign-out-alt icon-aside text-lg opacity-10 text-danger pt-2"></i>
                     </div>
-                    <span class="nav-link-text ms-1">{{ __('Log out') }}</span>
+                    <span class="nav-link-text ms-1 text-danger">{{ __('Log out') }}</span>
                 </a>
             </li>
         </ul>

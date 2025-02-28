@@ -46,32 +46,58 @@
 @include('backends.brand.partial.delete_brand_image_modal')
 <script>
     $(document).ready(function () {
-        $('.dropify').dropify();
+        var dropifyInput = $('.dropify').dropify();
         const compressor = new window.Compress();
         const maxSize = 51200;
 
         $('.custom-file-input').change(async function (e) {
             const fileInput = $(this);
             const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
-            const output = await compressor.compress([...e.target.files], {
-                size: 0.05,
-                quality: 1.0,
-                maxWidth: 1024,
-                maxHeight: 1024
-            });
-            const compressedFile = Compress.convertBase64ToFile(output[0].data, output[0].ext);
-            if (compressedFile.size > maxSize) return toastr.error("The image size exceeds 50KB. Please choose a smaller file.");
 
+            const file = e.target.files[0];
             const formData = new FormData();
-            formData.append('image', compressedFile);
-            $.post({
-                url: "{{ route('save_temp_file') }}",
-                data: formData,
-                processData: false,
-                contentType: false
-            }).done(response => {
-                response.status === 1 ? imageNamesHidden.val(response.temp_files) : toastr.error(response.msg);
-            }).fail(() => toastr.error("Error uploading image"));
+
+            try {
+                const options = {
+                    maxSizeMB: 0.05,
+                    maxWidthOrHeight: 1024,
+                    useWebWorker: true,
+                    fileType: file.type
+                };
+
+                const compressedFile = await imageCompression(file, options);
+
+                if (compressedFile.size > 51200) {
+                    return toastr.error("The image size exceeds 50KB. Please choose a smaller file.");
+                }
+
+                formData.append('image', compressedFile);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                $.post({
+                    url: "{{ route('save_temp_file') }}",
+                    data: formData,
+                    processData: false,
+                    contentType: false
+                }).done(response => {
+                    if (response.status === 1) {
+                        imageNamesHidden.val(response.temp_files);
+                    } else {
+                        toastr.error(response.msg);
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
+                    console.log(jqXHR.responseText);
+                });
+
+            } catch (error) {
+                toastr.error("Image compression failed.");
+                console.error(error);
+            }
+        });
+
+        dropifyInput.on('dropify.afterClear', function (event) {
+            $(this).closest('.form-group').find('.image_names_hidden').val('');
         });
     });
 </script>

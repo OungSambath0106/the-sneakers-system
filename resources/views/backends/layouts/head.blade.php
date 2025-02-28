@@ -211,6 +211,27 @@
     :root {
         --system-font: 'Montserrat', sans-serif, 'Hanuman';
     }
+    .nav-treeview {
+        /* display: none; */
+        overflow: hidden;
+    }
+    .menu-open > .nav-treeview {
+        display: block;
+    }
+        
+    .nav-item .nav-link {
+        margin-bottom: 0.25rem !important;
+    }
+
+    .transition-icon {
+        transition: transform 0.3s ease;
+        padding-inline: 8px;
+    }
+
+    .nav-item.menu-open .menu-arrow {
+        transform: rotate(-180deg);
+    }
+
 </style>
 <style>
     .text-sm .btn {

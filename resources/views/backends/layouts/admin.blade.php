@@ -22,7 +22,7 @@
 
     </main>
 
-    @include('backends.layouts.setting_configuration')
+    {{-- @include('backends.layouts.setting_configuration') --}}
 
     <!--   Core JS Files   -->
     @include('backends.layouts.script')

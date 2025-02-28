@@ -29078,8 +29078,8 @@ pre[class*="language-"] {
 .ps .ps__rail-y:focus,
 .ps .ps__rail-x.ps--clicking,
 .ps .ps__rail-y.ps--clicking {
-    background-color: #eee;
     opacity: 0.9;
+    cursor: pointer;
 }
 
 /*
@@ -29120,7 +29120,7 @@ pre[class*="language-"] {
 .ps__rail-y:focus > .ps__thumb-y,
 .ps__rail-y.ps--clicking .ps__thumb-y {
     background-color: #999;
-    width: 11px;
+    width: 8px;
 }
 
 /* MS supports */
@@ -29178,10 +29178,6 @@ pre[class*="language-"] {
 .dark-version .search-menu-suggestions {
     background: #344767;
     color: #fff;
-}
-
-.nav.nav-treeview {
-    padding-top: 0.25rem;
 }
 
 .dark-version .text-secondary.btn-delete {
@@ -29386,48 +29382,48 @@ pre[class*="language-"] {
     color: #fff;
 }
 
-@media (max-width: 883px) { 
+@media (max-width: 883px) {
     .dataTableButtons-left-side {
         flex: 0 0 auto;
         width: 85%;
     }
-    
+
     .add-new-button-right-side {
         flex: 0 0 auto;
         width: 15%;
         padding: .5rem 1.25rem;
     }
 }
-@media (max-width: 777px) { 
+@media (max-width: 777px) {
     .dataTableButtons-left-side {
         flex: 0 0 auto;
         width: 80%;
     }
-    
+
     .add-new-button-right-side {
         flex: 0 0 auto;
         width: 20%;
         padding: .5rem 1.25rem;
     }
 }
-@media (max-width: 602px) { 
+@media (max-width: 602px) {
     .dataTableButtons-left-side {
         flex: 0 0 auto;
         width: 76%;
     }
-    
+
     .add-new-button-right-side {
         flex: 0 0 auto;
         width: 24%;
         padding: .5rem 1.25rem;
     }
 }
-@media (max-width: 556px) { 
+@media (max-width: 556px) {
     .navbar.navbar-main .container-fluid {
         padding-inline: 0px !important;
     }
 }
-@media (max-width: 516px) { 
+@media (max-width: 516px) {
     .dataTableButtons-container {
         display: flex;
         flex-direction: column;
@@ -29437,7 +29433,7 @@ pre[class*="language-"] {
         flex: 0 0 auto;
         width: 100%;
     }
-    
+
     .add-new-button-right-side {
         flex: 0 0 auto;
         width: 50%;

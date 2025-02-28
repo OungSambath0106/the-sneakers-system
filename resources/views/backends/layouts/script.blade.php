@@ -51,6 +51,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
 <script>
     function toggleTheme() {
         let darkMode = document.body.classList.toggle("dark-version");
@@ -588,5 +589,109 @@
             }
         });
     });
+</script>
+<script>
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     // Find all nav items with submenus
+    //     document.querySelectorAll('.nav-item').forEach(function(navItem) {
+    //         let navLink = navItem.querySelector('.nav-link');
+    //         let subMenu = navItem.querySelector('.nav-treeview');
+
+    //         if (subMenu) {
+    //             // Only handle click for parent with dropdown
+    //             navLink.addEventListener('click', function(e) {
+    //                 e.preventDefault(); // Don't navigate, only toggle
+    //                 navItem.classList.toggle('menu-open');
+
+    //                 // Toggle visibility of submenu
+    //                 if (navItem.classList.contains('menu-open')) {
+    //                     subMenu.style.display = 'block';
+    //                 } else {
+    //                     subMenu.style.display = 'none';
+    //                 }
+    //             });
+    //         }
+    //     });
+    // });
+    document.addEventListener("DOMContentLoaded", function() {
+        const SPEED = 300; // Animation speed in milliseconds (adjust as needed)
+
+        document.querySelectorAll('.nav-item').forEach(function(navItem) {
+            let navLink = navItem.querySelector('.nav-link');
+            let subMenu = navItem.querySelector('.nav-treeview');
+            let arrowIcon = navItem.querySelector('.menu-arrow');
+
+            if (subMenu) {
+                // Set initial state for menus
+                if (navItem.classList.contains('menu-open')) {
+                    subMenu.style.display = 'block';
+                    subMenu.style.height = subMenu.scrollHeight + 'px';
+                    if (arrowIcon) arrowIcon.style.transform = 'rotate(-180deg)';
+                } else {
+                    subMenu.style.display = 'none';
+                    subMenu.style.height = '0';
+                    if (arrowIcon) arrowIcon.style.transform = 'rotate(0deg)';
+                }
+
+                navLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    if (navItem.classList.contains('menu-open')) {
+                        closeMenu(navItem, subMenu, arrowIcon);
+                    } else {
+                        document.querySelectorAll('.nav-item.menu-open').forEach(function(openItem) {
+                            let openSubMenu = openItem.querySelector('.nav-treeview');
+                            let openArrow = openItem.querySelector('.menu-arrow');
+                            if (openSubMenu && openItem !== navItem) {
+                                closeMenu(openItem, openSubMenu, openArrow);
+                            }
+                        });
+
+                        openMenu(navItem, subMenu, arrowIcon);
+                    }
+                });
+            }
+        });
+
+        function openMenu(navItem, subMenu, arrowIcon) {
+            navItem.classList.add('menu-is-opening');
+            subMenu.style.display = 'block';
+            subMenu.style.height = '0';
+            setTimeout(() => {
+                subMenu.style.transition = `height ${SPEED}ms ease`;
+                subMenu.style.height = subMenu.scrollHeight + 'px';
+            }, 10);
+
+            setTimeout(() => {
+                subMenu.style.height = 'auto';
+                navItem.classList.add('menu-open');
+                navItem.classList.remove('menu-is-opening');
+            }, SPEED);
+
+            if (arrowIcon) {
+                arrowIcon.style.transform = 'rotate(-180deg)';
+            }
+        }
+
+        function closeMenu(navItem, subMenu, arrowIcon) {
+            navItem.classList.remove('menu-open');
+            subMenu.style.transition = `height ${SPEED}ms ease`;
+            subMenu.style.height = subMenu.scrollHeight + 'px';
+
+            setTimeout(() => {
+                subMenu.style.height = '0';
+            }, 10);
+
+            setTimeout(() => {
+                subMenu.style.display = 'none';
+                subMenu.style.height = '0';
+            }, SPEED);
+
+            if (arrowIcon) {
+                arrowIcon.style.transform = 'rotate(0deg)';
+            }
+        }
+    });
+
 </script>
 @stack('js')
