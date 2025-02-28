@@ -4,7 +4,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">{{ __('Add Brand') }}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
             </button>
         </div>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-primary submit float-right">{{__('Save')}}</button>
+                        <button type="submit" class="btn bg-gradient-dark submit float-right">{{__('Save')}}</button>
                     </div>
                 </div>
             </div>
@@ -65,6 +65,7 @@
             }
             const formData = new FormData();
             formData.append('image', compressedFile);
+            formData.append('_token', '{{ csrf_token() }}');
 
             $.post({
                 url: "{{ route('save_temp_file') }}",
@@ -77,7 +78,10 @@
                 } else {
                     toastr.error(response.msg);
                 }
-            }).fail(() => toastr.error("Error uploading image"));
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
+                console.log(jqXHR.responseText);  // For debugging
+            });
         });
 
         dropifyInput.on('dropify.afterClear', function (event) {

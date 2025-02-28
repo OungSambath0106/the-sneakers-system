@@ -22,34 +22,16 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                {{-- <div class="col-md-12 mt-4">
-                    <fieldset class="border fieldset-table px-3 mb-4">
-                        <legend class="w-auto mb-0 pb-0 title-table text-uppercase">{{ __('Brand List') }}</legend>
-                        <div class="card-header pt-2 px-0">
-                            <div class="row mx-0 align-items-center" style="justify-content: space-between">
-                                <div id="dataTableButtons" class="col-md-10" style="justify-content: space-between"></div>
-                                @if (auth()->user()->can('brand.create'))
-                                    <a class="btn btn-primary btn-modal" href="#" data-href="{{ route('admin.brand.create') }}"
-                                        data-toggle="modal" data-container=".modal_form">
-                                        <i class="fas fa-plus-circle"></i>
-                                        {{ __('Add New') }}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                        @include('backends.brand._table')
-                    </fieldset>
-                </div> --}}
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h5 class="pb-1">Authors table</h5>
+                            <h5 class="pb-1">{{ __('Brands table') }}</h5>
                         </div>
                         <div class="card-body px-3 pt-0 pb-2">
-                            <div class="d-flex mx-0 align-items-center mb-2" style="justify-content: space-between">
-                                <div id="dataTableButtons" class="col-md-10 pe-4" style="justify-content: space-between"></div>
+                            <div class="dataTableButtons-container d-flex mx-0 align-items-center pb-2" style="justify-content: space-between">
+                                <div id="dataTableButtons" class="dataTableButtons-left-side pe-3" style="justify-content: space-between"></div>
                                 @if (auth()->user()->can('brand.create'))
-                                    <a class="btn bg-gradient-dark btn-modal col-md-2 btn-sm mb-0" href="#" data-href="{{ route('admin.brand.create') }}"
+                                    <a class="btn bg-gradient-dark btn-modal add-new-button-right-side btn-sm mb-0" href="#" data-href="{{ route('admin.brand.create') }}"
                                         data-toggle="modal" data-container=".modal_form">
                                         <i class="fas fa-plus-circle"></i>
                                         {{ __('Add New') }}
@@ -67,10 +49,6 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body text-center position-relative">
-                    {{-- <button type="button" class="close position-absolute" style="right: 3px; top: 0; color: red;"
-                        data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button> --}}
                     <img id="modalImage" src="" alt="User Image" class="img-fluid rounded">
                 </div>
             </div>

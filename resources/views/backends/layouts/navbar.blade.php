@@ -58,7 +58,7 @@
         </nav>                
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-                <li class="d-flex align-items-center pe-md-4">
+                <li class="d-flex align-items-center pe-md-4 pe-sm-2">
                     <button class="icon icon-shape text-center rounded-circle m-0 button-control-theme" onclick="toggleTheme()" aria-label="Toggle color mode">
                         <span id="light-icon" class="d-none">
                             <svg class="light-mode-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -124,16 +124,16 @@
                             style="color: #fff !important;"> {{ Auth::user()->name }} </span></h6>
                 </li>
             </ul>
+            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
+                    <div class="sidenav-toggler-inner">
+                        <i class="sidenav-toggler-line bg-white"></i>
+                        <i class="sidenav-toggler-line bg-white"></i>
+                        <i class="sidenav-toggler-line bg-white"></i>
+                    </div>
+                </a>
+            </li>
         </div>
-        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-            <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
-                <div class="sidenav-toggler-inner">
-                    <i class="sidenav-toggler-line bg-white"></i>
-                    <i class="sidenav-toggler-line bg-white"></i>
-                    <i class="sidenav-toggler-line bg-white"></i>
-                </div>
-            </a>
-        </li>
     </div>
 </nav>
 

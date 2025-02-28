@@ -14,7 +14,7 @@
                 </div>
                 <div class="button">
                     <div class="d-flex justify-content-center col-12 button-footer" style="gap: 10px">
-                        <button type="button" class="btn btn-outline-primary col-6 btn-cancel-modal" style="padding-block: .75rem; border-radius: 10px;" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-outline-primary col-6 btn-cancel-modal" style="padding-block: .75rem; border-radius: 10px;" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-danger col-6 btn-confirm-modal" style="padding-block: .75rem; border-radius: 10px;">Yes, I'm sure</button>
                     </div>
                 </div>

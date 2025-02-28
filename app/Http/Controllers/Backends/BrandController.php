@@ -188,6 +188,14 @@ class BrandController extends Controller
             DB::beginTransaction();
             $brand = Brand::findOrFail($id);
 
+            if ($brand->image) {
+                $imagePath = public_path('uploads/brand/' . $brand->image);
+    
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
             $brand->delete();
             $brands = Brand::latest('id')->paginate(10);
             $view = view('backends.brand._table', compact('brands'))->render();

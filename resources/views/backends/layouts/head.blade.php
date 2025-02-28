@@ -220,16 +220,52 @@
     .dropdown-item {
         cursor: pointer;
     }
+    .dark-version .dropify-wrapper .dropify-preview {
+        background: rgb(17, 28, 68);
+    }
+    .swal2-popup.swal2-toast.swal2-show {
+        width: 80% !important;
+        display: flex !important;
+    }
+    .dark-version .swal2-popup.swal2-toast.swal2-show {
+        background: rgb(17, 28, 68);
+    }
+    .dark-version .swal2-icon.swal2-icon-show .swal2-success-circular-line-left {
+        background-color: rgb(17, 28, 68) !important;
+    }
+    .dark-version .swal2-icon.swal2-icon-show .swal2-success-fix {
+        background-color: rgb(17, 28, 68) !important;
+    }
+    .dark-version .swal2-icon.swal2-icon-show .swal2-success-circular-line-right {
+        background-color: rgb(17, 28, 68) !important;
+    }
 </style>
 <style>
+    .dt-buttons {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        scroll-behavior: smooth; /* Optional for smooth scrolling */
+        -webkit-overflow-scrolling: touch; /* For iOS smooth scroll */
+        scrollbar-width: none; /* For Firefox */
+        -ms-overflow-style: none;  /* For IE and Edge */
+    }
+
+    /* Hide scrollbar for Webkit browsers */
+    .dt-buttons::-webkit-scrollbar {
+        display: none;
+    }
+
+    .dt-button {
+        flex-shrink: 0; /* Prevent buttons from shrinking */
+        margin-right: 8px; /* Optional spacing */
+    }
+
     #dataTableButtons {
         display: flex;
         gap: 15px;
         align-items: center;
-    }
-
-    #dataTableButtons .dt-buttons {
-        display: flex;
     }
 
     #dataTableButtons .dt-buttons .dt-button {
@@ -238,7 +274,7 @@
         border-radius: 0;
         background: #A1E9C9;
         color: #229865;
-        padding: .3rem .65rem;
+        padding: .3rem .5rem;
         font-size: 10px;
     }
 
@@ -248,7 +284,7 @@
         border-radius: 5px;
         padding: 5px 10px;
         font-size: 14px;
-        width: 200px;
+        width: 100%;
     }
 
     #dataTableButtons input[type="search"]:focus,
