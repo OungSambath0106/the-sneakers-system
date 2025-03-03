@@ -33,8 +33,11 @@
                     <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image" accept="image/png, image/jpeg">
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <button type="submit" class="btn bg-gradient-dark submit float-right">{{__('Save')}}</button>
+                    <div class="col-md-12 text-end py-2">
+                        <button type="submit" class="btn bg-gradient-primary btn-sm submit float-right mb-0">
+                            <i class="fa fa-save pe-1"></i>
+                            {{__('Save')}}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -46,7 +49,6 @@
     $(document).ready(function () {
         var dropifyInput = $('.dropify').dropify();
         const compressor = new window.Compress();
-        const maxSize = 51200;
 
         $('.custom-file-input').change(async function (e) {
             const fileInput = $(this);
@@ -58,16 +60,13 @@
             try {
                 const options = {
                     maxSizeMB: 0.05,
+                    quality: 1.0,
                     maxWidthOrHeight: 1024,
                     useWebWorker: true,
                     fileType: file.type
                 };
 
                 const compressedFile = await imageCompression(file, options);
-
-                if (compressedFile.size > 51200) {
-                    return toastr.error("The image size exceeds 50KB. Please choose a smaller file.");
-                }
 
                 formData.append('image', compressedFile);
                 formData.append('_token', '{{ csrf_token() }}');

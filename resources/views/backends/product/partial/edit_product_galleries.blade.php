@@ -8,7 +8,7 @@
         }
 
         .image-box {
-            width: 11.73rem;
+            /* width: 11.73rem; */
             border: 1px solid #ccc;
             border-radius: 1px;
             padding: 7px;
@@ -105,7 +105,7 @@
             <div class="upload-box custom-file m-0" id="upload-box" style="cursor: pointer; text-align: center;">
                 <div class="mt-3"><i class="fa-solid fa-plus fa-lg" style="color:#666666;font-size: 7rem !important;"></i></div>
                 <div>{{ __('Drop files or click to upload') }}</div>
-                <input type="hidden" name="image_names" class="product_image_names_hidden">
+                <input type="hidden" name="image_names" class="image_names_hidden">
                 <input value="" type="file" class="custom-file-input" name="gallery[]" id="fileUpload"
                     accept="image/png, image/jpeg" style="display: none;" multiple>
             </div>

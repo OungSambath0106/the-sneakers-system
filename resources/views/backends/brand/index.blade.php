@@ -24,19 +24,19 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card mb-4">
-                        <div class="card-header pb-0">
-                            <h5 class="pb-1">{{ __('Brands table') }}</h5>
+                        <div class="card-header d-flex justify-content-between pb-0">
+                            <h5 class="pb-1">{{ __('Brands Table') }}</h5>
+                            @if (auth()->user()->can('brand.create'))
+                                <a class="btn bg-gradient-primary btn-modal add-new-button-right-side btn-xs" href="#" data-href="{{ route('admin.brand.create') }}"
+                                    data-toggle="modal" data-container=".modal_form">
+                                    <i class="fas fa-plus-circle"></i>
+                                    {{ __('Add New') }}
+                                </a>
+                            @endif
                         </div>
                         <div class="card-body px-3 pt-0 pb-2">
-                            <div class="dataTableButtons-container d-flex mx-0 align-items-center pb-2" style="justify-content: space-between">
-                                <div id="dataTableButtons" class="dataTableButtons-left-side pe-3" style="justify-content: space-between"></div>
-                                @if (auth()->user()->can('brand.create'))
-                                    <a class="btn bg-gradient-dark btn-modal add-new-button-right-side btn-sm mb-0" href="#" data-href="{{ route('admin.brand.create') }}"
-                                        data-toggle="modal" data-container=".modal_form">
-                                        <i class="fas fa-plus-circle"></i>
-                                        {{ __('Add New') }}
-                                    </a>
-                                @endif
+                            <div class="dataTableButtons-container d-flex mx-0 align-items-center pb-2">
+                                <div id="dataTableButtons" class="dataTableButtons-left-side col-md-12" style="justify-content: space-between"></div>
                             </div>
                             @include('backends.brand._table')
                         </div>

@@ -11,7 +11,7 @@
  Target Server Version : 80300 (8.3.0)
  File Encoding         : 65001
 
- Date: 24/02/2025 20:01:09
+ Date: 03/03/2025 09:18:02
 */
 
 SET NAMES utf8mb4;
@@ -52,26 +52,26 @@ CREATE TABLE `brands`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 77 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of brands
 -- ----------------------------
-INSERT INTO `brands` VALUES (5, 'Vans', '2025-01-24-67939427b6c4b.png', 1, 1, '2024-11-09 07:03:41', '2025-02-16 21:30:46');
-INSERT INTO `brands` VALUES (6, 'Nike', '2025-01-24-6793943b4e998.png', 1, 1, '2025-01-24 13:23:07', '2025-01-24 13:23:07');
-INSERT INTO `brands` VALUES (7, 'Adidas', '2025-01-24-6793946390b11.png', 1, 1, '2025-01-24 13:23:47', '2025-01-24 13:23:47');
-INSERT INTO `brands` VALUES (8, 'PUMA', '2025-01-24-679394da9845f.png', 1, 1, '2025-01-24 13:25:46', '2025-02-19 19:09:30');
+INSERT INTO `brands` VALUES (5, 'Vans', '2025-01-24-67939427b6c4b.png', 1, 1, '2024-11-09 07:03:41', '2025-02-28 13:36:08');
+INSERT INTO `brands` VALUES (6, 'Nike', '2025-01-24-6793943b4e998.png', 1, 1, '2025-01-24 13:23:07', '2025-02-28 13:37:43');
+INSERT INTO `brands` VALUES (7, 'Adidas', '2025-03-01-67c30a1c48535.png', 1, 1, '2025-01-24 13:23:47', '2025-03-01 20:22:36');
+INSERT INTO `brands` VALUES (8, 'PUMA', '2025-01-24-679394da9845f.png', 1, 1, '2025-01-24 13:25:46', '2025-02-28 13:37:51');
 INSERT INTO `brands` VALUES (9, 'New Balance', '2025-01-24-679395166b1e2.png', 1, 1, '2025-01-24 13:26:46', '2025-02-20 20:42:35');
-INSERT INTO `brands` VALUES (10, 'The North Face', '2025-01-24-6793953bec5b8.png', 1, 1, '2025-01-24 13:27:23', '2025-01-24 13:27:23');
+INSERT INTO `brands` VALUES (10, 'The North Face', '2025-01-24-6793953bec5b8.png', 1, 1, '2025-01-24 13:27:23', '2025-02-28 13:47:50');
 INSERT INTO `brands` VALUES (11, 'Converse', '2025-01-24-679395542d53f.png', 1, 1, '2025-01-24 13:27:48', '2025-01-24 13:27:48');
 INSERT INTO `brands` VALUES (12, 'Columbia', '2025-01-24-67939566a56c8.png', 1, 1, '2025-01-24 13:28:06', '2025-01-24 13:28:06');
-INSERT INTO `brands` VALUES (13, 'Umbro', '2025-01-24-6793957080080.png', 1, 1, '2025-01-24 13:28:16', '2025-01-24 13:28:16');
+INSERT INTO `brands` VALUES (13, 'Umbro', '2025-01-24-6793957080080.png', 1, 1, '2025-01-24 13:28:16', '2025-02-28 13:47:50');
 INSERT INTO `brands` VALUES (14, 'Reebok', '2025-01-24-6793958009af7.png', 1, 1, '2025-01-24 13:28:32', '2025-01-24 13:28:32');
 INSERT INTO `brands` VALUES (15, 'Under Armour', '2025-01-24-679395a384ed5.png', 1, 1, '2025-01-24 13:29:07', '2025-01-24 13:29:07');
 INSERT INTO `brands` VALUES (16, 'Sketchers', '2025-01-24-679395bdacca3.png', 1, 1, '2025-01-24 13:29:33', '2025-01-31 20:01:48');
-INSERT INTO `brands` VALUES (17, 'GUCCI', '2025-01-24-679395d200037.png', 1, 1, '2025-01-24 13:29:54', '2025-01-24 13:29:54');
-INSERT INTO `brands` VALUES (18, 'Louis Vuitton', '2025-01-24-6793960bb6e55.png', 1, 1, '2025-01-24 13:30:51', '2025-02-16 16:16:15');
-INSERT INTO `brands` VALUES (22, 'a', NULL, 1, 1, '2025-02-20 20:42:33', '2025-02-20 20:47:02');
+INSERT INTO `brands` VALUES (17, 'GUCCI', '2025-01-24-679395d200037.png', 1, 1, '2025-01-24 13:29:54', '2025-02-27 16:53:37');
+INSERT INTO `brands` VALUES (18, 'Louis Vuitton', '2025-01-24-6793960bb6e55.png', 1, 1, '2025-01-24 13:30:51', '2025-02-27 16:51:46');
+INSERT INTO `brands` VALUES (76, 'a', '2025-03-02-67c422b6a81f0.png', 1, 1, '2025-03-02 16:19:17', '2025-03-02 16:19:55');
 
 -- ----------------------------
 -- Table structure for business_settings
@@ -343,6 +343,8 @@ INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 12);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 13);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 14);
 INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 15);
+INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 16);
+INSERT INTO `model_has_roles` VALUES (7, 'App\\Models\\User', 17);
 
 -- ----------------------------
 -- Table structure for oauth_access_tokens
@@ -487,7 +489,7 @@ CREATE TABLE `order_details`  (
   CONSTRAINT `order_details_brand_id_foreign` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `order_details_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `order_details_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of order_details
@@ -518,7 +520,7 @@ CREATE TABLE `orders`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `orders_customer_id_foreign`(`customer_id` ASC) USING BTREE,
   CONSTRAINT `orders_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of orders
@@ -622,7 +624,7 @@ CREATE TABLE `product_galleries`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of product_galleries
@@ -665,6 +667,17 @@ INSERT INTO `product_galleries` VALUES (35, 43, '[\"2025-01-31-679cb89c0f6fc.png
 INSERT INTO `product_galleries` VALUES (36, 44, '[\"2025-02-14-67af698333082.png\"]', '2025-02-14 23:04:33', '2025-02-14 23:04:33');
 INSERT INTO `product_galleries` VALUES (37, 45, '[\"2025-02-14-67af6a5ab4383.png\"]', '2025-02-14 23:08:06', '2025-02-14 23:08:06');
 INSERT INTO `product_galleries` VALUES (38, 46, '[\"2025-02-15-67af788e67f59.png\"]', '2025-02-15 00:08:35', '2025-02-15 00:08:35');
+INSERT INTO `product_galleries` VALUES (39, 51, '[\"2025-03-01-67c2fe7d29d02.png\"]', '2025-03-01 19:33:05', '2025-03-01 19:33:05');
+INSERT INTO `product_galleries` VALUES (40, 52, '[\"2025-03-01-67c303997385b.png\"]', '2025-03-01 19:55:09', '2025-03-01 19:55:09');
+INSERT INTO `product_galleries` VALUES (41, 53, '[\"2025-03-01-67c304049cdb0.png\"]', '2025-03-01 19:56:40', '2025-03-01 19:56:40');
+INSERT INTO `product_galleries` VALUES (42, 54, '[\"2025-03-01-67c304afe8f37.png\"]', '2025-03-01 19:59:31', '2025-03-01 19:59:31');
+INSERT INTO `product_galleries` VALUES (43, 56, '[\"2025-03-01-67c308ce00250.png\",\"2025-03-01-67c308d537e8e.png\"]', '2025-03-01 20:17:43', '2025-03-01 20:17:43');
+INSERT INTO `product_galleries` VALUES (44, 57, '[\"2025-03-01-67c30a9a7baf1.png\",\"2025-03-01-67c30a9a7bd24.png\"]', '2025-03-01 20:24:46', '2025-03-01 20:24:46');
+INSERT INTO `product_galleries` VALUES (45, 58, '[\"2025-03-02-67c34a3be7899.png\"]', '2025-03-01 21:52:29', '2025-03-02 00:58:35');
+INSERT INTO `product_galleries` VALUES (46, 59, '[\"2025-03-02-67c42454b495c.png\"]', '2025-03-02 00:59:36', '2025-03-02 16:26:49');
+INSERT INTO `product_galleries` VALUES (47, 60, '[\"2025-03-02-67c4241d2be6d.png\",\"2025-03-02-67c4241d2c0a7.png\"]', '2025-03-02 15:48:14', '2025-03-02 16:26:03');
+INSERT INTO `product_galleries` VALUES (48, 61, '[]', '2025-03-02 16:29:06', '2025-03-02 16:30:30');
+INSERT INTO `product_galleries` VALUES (49, 62, '[]', '2025-03-02 16:32:13', '2025-03-02 16:34:16');
 
 -- ----------------------------
 -- Table structure for products
@@ -687,7 +700,7 @@ CREATE TABLE `products`  (
   `recommended` tinyint(1) NOT NULL DEFAULT 0,
   `popular` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 47 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 63 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of products
@@ -726,10 +739,21 @@ INSERT INTO `products` VALUES (39, 'CONS x Bobby Dekeyzer One Star Academy Pro',
 INSERT INTO `products` VALUES (40, 'CONS AS-1 Pro', 'Only from CONS, a cupsole skate shoe as visionary as its namesake—Alexis Sablone.', 11, 1, NULL, '2025-01-31 11:44:22', '2025-01-31 11:44:22', '[{\"product_size\":\"38\",\"product_price\":\"85.00\",\"product_qty\":\"20\"}]', 1, '4', '0', 1, 0, 0);
 INSERT INTO `products` VALUES (41, 'Pro Blaze Classic Leather & Suede', 'Meet retro sport style with an elevated twist. AKA this Pro Blaze Classic.', 11, 1, NULL, '2025-01-31 11:45:55', '2025-01-31 11:45:55', '[{\"product_size\":\"37\",\"product_price\":\"85.00\",\"product_qty\":\"25\"}]', 1, '4', '0', 1, 0, 0);
 INSERT INTO `products` VALUES (42, 'CONS Fastbreak Pro Leather & Nylon', 'The \'83 hardwood icon recalibrated by CONS for your skateboard', 11, 1, NULL, '2025-01-31 11:47:17', '2025-01-31 11:47:17', '[{\"product_size\":\"40\",\"product_price\":\"80.00\",\"product_qty\":\"30\"}]', 1, '4', '0', 1, 0, 0);
-INSERT INTO `products` VALUES (43, 'Chuck Taylor All Star Malden Street', 'Dress like you shred in mid-top Chucks with skate-inspired materials and details.', 11, 1, NULL, '2025-01-31 11:48:47', '2025-01-31 11:48:47', '[{\"product_size\":\"39\",\"product_price\":\"70.00\",\"product_qty\":\"40\"}]', 1, '4', '0', 1, 0, 0);
+INSERT INTO `products` VALUES (43, 'Chuck Taylor All Star Malden Street', 'Dress like you shred in mid-top Chucks with skate-inspired materials and details.', 11, 1, NULL, '2025-01-31 11:48:47', '2025-02-28 09:40:38', '[{\"product_size\":\"39\",\"product_price\":\"70.00\",\"product_qty\":\"40\"}]', 1, '4', '0', 1, 0, 0);
 INSERT INTO `products` VALUES (44, 'demo', 'demo', 6, 1, '2025-02-15 00:06:54', '2025-02-14 23:04:33', '2025-02-15 00:06:54', '[{\"product_size\":null,\"product_price\":\"0.00\",\"product_qty\":null}]', 1, '1', '0', 0, 0, 0);
 INSERT INTO `products` VALUES (45, 'heh', 'rh', 9, 1, '2025-02-15 00:06:50', '2025-02-14 23:08:06', '2025-02-15 00:06:50', '[{\"product_size\":null,\"product_price\":\"0.00\",\"product_qty\":null}]', 1, '4', '0', 0, 0, 0);
 INSERT INTO `products` VALUES (46, 'g', 's', 6, 1, '2025-02-15 00:08:45', '2025-02-15 00:08:35', '2025-02-15 00:08:45', '[{\"product_size\":null,\"product_price\":\"0.00\",\"product_qty\":null}]', 1, '3', '0', 0, 0, 0);
+INSERT INTO `products` VALUES (51, 'a', 'a', 5, 1, '2025-03-02 00:14:26', '2025-03-01 19:33:05', '2025-03-02 00:14:26', '[{\"product_size\":\"11\",\"product_price\":\"22.00\",\"product_qty\":\"33\"}]', 1, '2', '0', 1, 1, 0);
+INSERT INTO `products` VALUES (52, 'a', 'aa', 5, 1, '2025-03-02 00:14:18', '2025-03-01 19:55:09', '2025-03-02 00:14:18', '[{\"product_size\":\"66\",\"product_price\":\"55.00\",\"product_qty\":\"44\"}]', 1, '2', '0', 1, 0, 1);
+INSERT INTO `products` VALUES (53, 'a1', 'a1', 7, 1, '2025-03-02 00:14:16', '2025-03-01 19:56:40', '2025-03-02 00:14:16', '[{\"product_size\":\"56\",\"product_price\":\"43.00\",\"product_qty\":\"46\"}]', 1, '2', '0', 1, 1, 0);
+INSERT INTO `products` VALUES (54, 'a2', 'a2', 6, 1, '2025-03-02 00:14:13', '2025-03-01 19:59:31', '2025-03-02 00:14:13', '[{\"product_size\":\"45\",\"product_price\":\"34.00\",\"product_qty\":\"224\"}]', 1, '3', '0', 1, 1, 0);
+INSERT INTO `products` VALUES (56, 'he', 'hr', 6, 1, '2025-03-02 00:14:09', '2025-03-01 20:17:42', '2025-03-02 00:14:09', '[{\"product_size\":\"23\",\"product_price\":\"454.00\",\"product_qty\":\"23\"}]', 1, '4', '0', 1, 1, 0);
+INSERT INTO `products` VALUES (57, 'fdg', 'dfg', 8, 1, '2025-03-02 00:14:02', '2025-03-01 20:24:46', '2025-03-02 00:14:02', '[{\"product_size\":\"32\",\"product_price\":\"435.00\",\"product_qty\":\"23\"}]', 1, '5', '0', 1, 0, 1);
+INSERT INTO `products` VALUES (58, 'Adidas', 'haha', 7, 1, '2025-03-02 16:32:50', '2025-03-01 21:52:29', '2025-03-02 16:32:50', '[{\"product_size\":\"44\",\"product_price\":\"444.00\",\"product_qty\":\"4\"}]', 1, '4', '0', 0, 1, 0);
+INSERT INTO `products` VALUES (59, 'ggg', 'gg', 6, 1, '2025-03-02 16:33:18', '2025-03-02 00:59:36', '2025-03-02 16:33:18', '[{\"product_size\":\"4\",\"product_price\":\"44.00\",\"product_qty\":\"43\"}]', 1, '5', '0', 0, 1, 0);
+INSERT INTO `products` VALUES (60, 'aa', 'aa', 6, 1, '2025-03-02 16:31:27', '2025-03-02 15:48:14', '2025-03-02 16:31:27', '[{\"product_size\":\"32\",\"product_price\":\"342.00\",\"product_qty\":\"22\"}]', 1, '4', '0', 0, 0, 1);
+INSERT INTO `products` VALUES (61, 'a1', 'aaa', 6, 1, '2025-03-02 16:31:19', '2025-03-02 16:29:06', '2025-03-02 16:31:19', '[{\"product_size\":\"342\",\"product_price\":\"44.00\",\"product_qty\":\"3\"}]', 1, '3', '0', 1, 0, 0);
+INSERT INTO `products` VALUES (62, 'a', 'aa', 6, 1, NULL, '2025-03-02 16:32:13', '2025-03-02 16:32:13', '[{\"product_size\":\"45\",\"product_price\":\"21.00\",\"product_qty\":\"34\"}]', 1, '5', '0', 0, 0, 1);
 
 -- ----------------------------
 -- Table structure for promotion_brand
@@ -746,7 +770,7 @@ CREATE TABLE `promotion_brand`  (
   INDEX `promotion_brand_brand_id_foreign`(`brand_id` ASC) USING BTREE,
   CONSTRAINT `promotion_brand_brand_id_foreign` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `promotion_brand_promotion_id_foreign` FOREIGN KEY (`promotion_id`) REFERENCES `promotions` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of promotion_brand
@@ -976,12 +1000,12 @@ CREATE TABLE `users`  (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `user_id` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'superadmin', 'admin@gmail.com', NULL, '$2y$10$78nrUBLUIqOO0lWLNWCCde1Njlk4Vdq90Bh6SaevJFCIDJr0xGe5K', 'iZ7GTdbDvehA8RApYTVVG5C8RcrBZLR5ICIdxwVPcINaXGojsMekZqiuAzrp', '2023-09-07 10:11:02', '2025-02-18 00:34:14', 'Admin', 'Super', 'male', '010679106', '010679106', '2025-02-18-67b37315a25bd.png', NULL, NULL);
+INSERT INTO `users` VALUES (1, 'superadmin', 'admin@gmail.com', NULL, '$2y$10$78nrUBLUIqOO0lWLNWCCde1Njlk4Vdq90Bh6SaevJFCIDJr0xGe5K', 'YKl1ORPJ5X8BJH81L4xOko8N8Qcq580wHYhxTTaA5Q8bNbYX7KhWmAaoyeSy', '2023-09-07 10:11:02', '2025-02-18 00:34:14', 'Admin', 'Super', 'male', '010679106', '010679106', '2025-02-18-67b37315a25bd.png', NULL, NULL);
 INSERT INTO `users` VALUES (2, 'smith08', 'jonhsmith123@gmail.com', NULL, '$2y$10$ImOK/eWOnQQo/lvs4pY6Ruf3kWitZkYxMeiwgxwMbR7CtRtyRg0k.', NULL, '2024-02-05 07:28:03', '2025-02-16 15:55:55', 'Jonh', 'Smith', 'male', '0957878709', '0957878709', NULL, '2025-02-16 15:55:55', NULL);
 INSERT INTO `users` VALUES (3, 'testing@gmail.com', 'testing@gmail.com', NULL, '$2y$10$3pqP3Us2mVcWsdgfY8l1..WTkIhMpDhmOHMjpe1GOsuAi6NpJmmI2', NULL, '2024-02-20 08:59:20', '2025-01-30 20:21:17', 'user', 'test', 'male', '0877777888', '0877767767', '2025-01-05-677aa530a6721.png', NULL, NULL);
 INSERT INTO `users` VALUES (4, 'Demo1', 'demo1@gmail.com', NULL, '$2y$10$NwNNquGVHlo4Jmj/xaDSg.R7yFQczwm3/6lZBRnqb65tLtuOuYJfy', NULL, '2025-02-13 19:19:00', '2025-02-16 17:05:23', 'Demo', '1', 'male', '123456', '123', NULL, '2025-02-16 17:05:23', NULL);
@@ -996,5 +1020,7 @@ INSERT INTO `users` VALUES (12, NULL, 'demo8@gmail.com', NULL, '$2y$10$FNuUAWoDx
 INSERT INTO `users` VALUES (13, NULL, 'demo9@gmail.com', NULL, '$2y$10$8rWUI5M0SC/x39D0IXRTguKbmXQCxgDppA6zW0JWlVQtNZJR4VGvW', NULL, '2025-02-17 00:02:06', '2025-02-17 00:02:06', 'demo', '9', 'male', '6436543', '365466', '2025-02-17-67b21a0752275.png', NULL, NULL);
 INSERT INTO `users` VALUES (14, NULL, 'demo10@gmail.com', NULL, '$2y$10$9weQKSerzv/VfqdSLBJ8zeZVtAgoz0FSaGiIF5nNeS6c7e4Eb2gy2', NULL, '2025-02-17 00:11:07', '2025-02-17 19:39:15', 'Demo', '11', 'female', '345678', '1234567', '2025-02-17-67b2291fda145.png', NULL, NULL);
 INSERT INTO `users` VALUES (15, NULL, 'zoro@gmail.com', NULL, '$2y$10$ODzFYqvoXfs6UibscCLsde4WbzkfNesxjSeRqrto6hN9X3elCePA6', NULL, '2025-02-17 23:52:10', '2025-02-17 23:52:10', 'Zo', 'Ro', 'male', '73264', '83468', '2025-02-17-67b36938b022b.png', NULL, NULL);
+INSERT INTO `users` VALUES (16, NULL, 'demo111@gmail.com', NULL, '$2y$10$UjTphgzhDOxOaRnDb7RFHunan.xu8AxXzibkfKFRLFNyVPafWul4u', NULL, '2025-02-28 21:39:37', '2025-02-28 21:39:37', 'Demo', '111', 'male', '0123456789', '0123456789', '2025-02-28-67c1caa772f4d.png', NULL, NULL);
+INSERT INTO `users` VALUES (17, NULL, 'goku@gmail.com', NULL, '$2y$10$bfHIP4WcZiC82EqPoMkAN.UY4LfC9BDGb3PSuNR.ReLLpR33BdXVy', NULL, '2025-02-28 21:40:28', '2025-02-28 21:40:28', 'dg', 'wte', 'female', '23453', '235', '2025-02-28-67c1cacc3539b.png', NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

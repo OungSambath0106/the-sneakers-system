@@ -27,7 +27,7 @@ class ProductController extends Controller
                     })
                     ->with('productgallery')
                     ->latest('id')
-                    ->paginate(10);
+                    ->get();
 
         $product_instock = $products->map(function ($product) {
             $productInfo = $product->product_info;
@@ -56,12 +56,8 @@ class ProductController extends Controller
     {
         $brands = Brand::all();
         $products = Product::with('brand')->get();
-        $language = BusinessSetting::where('type', 'language')->first();
-        $language = $language->value ?? null;
-        $default_lang = 'en';
-        $default_lang = json_decode($language, true)[0]['code'];
 
-        return view('backends.product.create', compact('products', 'brands', 'language', 'default_lang'));
+        return view('backends.product.create', compact('products', 'brands'));
     }
 
     /**
@@ -74,7 +70,7 @@ class ProductController extends Controller
             'brand_id' => 'required',
         ]);
 
-        if (is_null($request->name[array_search('en', $request->lang)])) {
+        if (is_null($request->name)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'name',
@@ -82,7 +78,7 @@ class ProductController extends Controller
                 );
             });
         }
-        if (is_null($request->description[array_search('en', $request->lang)])) {
+        if (is_null($request->description)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'description',
@@ -99,12 +95,11 @@ class ProductController extends Controller
         }
 
         try {
-            // dd($request->all());
             DB::beginTransaction();
 
             $pro = new Product;
-            $pro->name = $request->name[array_search('en', $request->lang)];
-            $pro->description = $request->description[array_search('en', $request->lang)];
+            $pro->name = $request->name;
+            $pro->description = $request->description;
             $pro->brand_id = $request->brand_id;
             $pro->rating = $request->rating;
             $pro->created_by = auth()->user()->id;
@@ -128,9 +123,9 @@ class ProductController extends Controller
             $productid = $pro->id;
             $product_gallery = new ProductGallery();
             $product_gallery->product_id = $productid;
+
             if ($request->filled('image_names')) {
                 $imageDetails = json_decode($request->input('image_names'), true);
-                // $imageDetails = explode(' ', $request->input('image_names'));
                 $product_data = [];
                 foreach ($imageDetails as $detail) {
                     $directory = public_path('uploads/products');
@@ -143,29 +138,6 @@ class ProductController extends Controller
                     $product_gallery->save();
                 }
             }
-
-            $data = [];
-            foreach ($request->lang as $index => $key) {
-                if ($request->name[$index] && $key != 'en') {
-                    array_push($data, array(
-                        'translationable_type' => 'App\Models\Product',
-                        'translationable_id' => $pro->id,
-                        'locale' => $key,
-                        'key' => 'name',
-                        'value' => $request->name[$index],
-                    ));
-                }
-                if ($request->description[$index] && $key != 'en') {
-                    array_push($data, array(
-                        'translationable_type' => 'App\Models\Product',
-                        'translationable_id' => $pro->id,
-                        'locale' => $key,
-                        'key' => 'description',
-                        'value' => $request->description[$index],
-                    ));
-                }
-            }
-            Translation::insert($data);
 
             DB::commit();
             $output = [
@@ -198,14 +170,9 @@ class ProductController extends Controller
     public function edit($id)
     {
         $brands = Brand::all();
-        $product = Product::withoutGlobalScopes()->with('translations', 'brand', 'productgallery')->findOrFail($id);
+        $product = Product::withoutGlobalScopes()->with('brand', 'productgallery')->findOrFail($id);
 
-        $language = BusinessSetting::where('type', 'language')->first();
-        $language = $language->value ?? null;
-        $default_lang = 'en';
-        $default_lang = json_decode($language, true)[0]['code'];
-
-        return view('backends.product.edit', compact('product', 'brands', 'default_lang', 'language'));
+        return view('backends.product.edit', compact('product', 'brands'));
     }
 
     /**
@@ -218,8 +185,7 @@ class ProductController extends Controller
             'brand_id' => 'required',
         ]);
 
-        // dd($validator);
-        if (is_null($request->name[array_search('en', $request->lang)])) {
+        if (is_null($request->name)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'name',
@@ -227,7 +193,7 @@ class ProductController extends Controller
                 );
             });
         }
-        if (is_null($request->description[array_search('en', $request->lang)])) {
+        if (is_null($request->description)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'description',
@@ -244,13 +210,12 @@ class ProductController extends Controller
         }
 
         try {
-
-            // dd($request -> all());
+            // dd($request->all());
             DB::beginTransaction();
 
             $product = Product::findOrFail($id);
-            $product->name = $request->name[array_search('en', $request->lang)];
-            $product->description = $request->description[array_search('en', $request->lang)];
+            $product->name = $request->name;
+            $product->description = $request->description;
             $product->brand_id = $request->brand_id;
             $product->rating = $request->rating;
             $product->new_arrival = $request->has('new-arrival') ? 1 : 0;
@@ -270,51 +235,48 @@ class ProductController extends Controller
 
             $product->save();
 
-            $product_gallery = ProductGallery::where('product_id',$product->id)->first();
-            $productgallery = $product_gallery->images??[];
-            $imageNameToUpdate = $request->input('image_names');
-            $newImage = json_decode($imageNameToUpdate, true);
-            $product_data = [];
-            if (is_array($newImage)) {
-                foreach ($newImage as $detail) {
-                    $directory = public_path('uploads/products');
-                    if (!\File::exists($directory)) {
-                        \File::makeDirectory($directory, 0777, true);
-                    }
-                    $moved_image = \File::move(public_path('uploads/temp/' . $detail), $directory . '/' . $detail);
-                    $product_data[] = $detail;
-                }
-            }
-            $merge = array_merge($productgallery, $product_data);
-            $product_gallery->images = $merge;
-            $product_gallery->save();
+            $product_gallery = ProductGallery::where('product_id', $product->id)->first();
 
-            $data = [];
-            foreach ($request->lang as $index => $key) {
-                if ($request->name[$index] && $key != 'en') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Product',
-                            'translationable_id' => $product->id,
-                            'locale' => $key,
-                            'key' => 'name'
-                        ],
-                        ['value' => $request->name[$index]]
-                    );
+            if (!$product_gallery) {
+                // If no gallery exists, create a new one
+                $product_gallery = new ProductGallery();
+                $product_gallery->product_id = $product->id;
+                $product_gallery->images = [];
+            }
+
+            $existingImages = $product_gallery->images ?? [];
+
+            // Handle new images from the hidden input
+            $imageNames = $request->input('image_names', '');
+
+            // Convert space-separated string to array
+            $newImages = $imageNames ? explode(' ', trim($imageNames)) : [];
+
+            $product_data = [];
+
+            foreach ($newImages as $newImage) {
+                if (!empty($newImage)) {
+                    $sourcePath = public_path('uploads/temp/' . $newImage);
+                    $destinationPath = public_path('uploads/products/' . $newImage);
+
+                    // Ensure destination directory exists
+                    if (!\File::exists(public_path('uploads/products'))) {
+                        \File::makeDirectory(public_path('uploads/products'), 0777, true);
+                    }
+
+                    // Move file from temp to products folder
+                    if (\File::exists($sourcePath)) {
+                        \File::move($sourcePath, $destinationPath);
+                        $product_data[] = $newImage;
+                    }
                 }
             }
-            foreach ($request->lang as $index => $key) {
-                if (isset($request->description[$index]) && $key != 'en') {
-                    Translation::updateOrInsert(
-                        ['translationable_type' => 'App\Models\Product',
-                            'translationable_id' => $product->id,
-                            'locale' => $key,
-                            'key' => 'description'],
-                        ['value' => $request->description[$index]]
-                    );
-                }
-            }
-            Translation::insert($data);
+
+            // Merge existing images with newly uploaded ones
+            $mergedImages = array_merge($existingImages, $product_data);
+
+            $product_gallery->images = $mergedImages;
+            $product_gallery->save();
 
             DB::commit();
             $output = [

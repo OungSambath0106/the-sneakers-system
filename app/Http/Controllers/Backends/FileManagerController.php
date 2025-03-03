@@ -18,15 +18,7 @@ class FileManagerController extends Controller
         }
 
         foreach ($files as $file) {
-            // Validate file size (Before processing, should be under 50KB)
-            if ($file->getSize() > 51200) { // 50KB in bytes
-                return response()->json([
-                    'status' => 0,
-                    'msg' => __('The image exceeds the 50KB size limit.')
-                ]);
-            }
 
-            // Compress and Upload Image
             $temp = ImageManager::upload_temp($file);
             if ($temp['status'] == 0) {
                 return response()->json([

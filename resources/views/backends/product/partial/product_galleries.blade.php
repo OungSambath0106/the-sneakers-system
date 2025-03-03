@@ -6,7 +6,7 @@
             gap: 10px;
         }
         .image-box {
-            width: 11.73rem;
+            /* width: 11.73rem; */
             border: 1px solid #ccc;
             border-radius: 1px;
             padding: 7px;

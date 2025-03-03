@@ -165,6 +165,13 @@
     .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
         color: #FFF !important;
     }
+
+    .upload-box.custom-file {
+        border-radius: 10px;
+    }
+    .image-grid .image-box {
+        border-radius: 10px;
+    }
 </style>
 <style type="text/css">
     .pagination {
@@ -218,7 +225,7 @@
     .menu-open > .nav-treeview {
         display: block;
     }
-        
+
     .nav-item .nav-link {
         margin-bottom: 0.25rem !important;
     }

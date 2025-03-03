@@ -3511,6 +3511,15 @@ textarea.form-control-lg {
     border-radius: 0.5rem;
 }
 
+.dark-version .input-group-text {
+    color: #fff;
+}
+
+.dark-version textarea.form-control {
+    background: transparent !important;
+    color: #fff;
+}
+
 .input-group-lg > .form-control,
 .input-group-lg > .form-select,
 .input-group-lg > .input-group-text,
@@ -29332,17 +29341,6 @@ pre[class*="language-"] {
     box-shadow: var(--circle-checked-shadow);
 }
 
-.dataTableButtons-left-side {
-    flex: 0 0 auto;
-    width: 87%;
-}
-
-.add-new-button-right-side {
-    flex: 0 0 auto;
-    width: 13%;
-    padding: .5rem 1.25rem;
-}
-
 .dark-version .modal-content {
     background: rgb(17, 28, 68);
 }
@@ -29381,42 +29379,37 @@ pre[class*="language-"] {
     background: rgb(17, 28, 68);
     color: #fff;
 }
-
-@media (max-width: 883px) {
-    .dataTableButtons-left-side {
-        flex: 0 0 auto;
-        width: 85%;
-    }
-
-    .add-new-button-right-side {
-        flex: 0 0 auto;
-        width: 15%;
-        padding: .5rem 1.25rem;
-    }
+.select2-container--default .select2-selection--single, select.form-control-sm~.select2-container--default .select2-selection--single {
+    height: 38px !important;
+    padding: .46875rem .75rem !important;
+    border-radius: 8px !important;
 }
-@media (max-width: 777px) {
-    .dataTableButtons-left-side {
-        flex: 0 0 auto;
-        width: 80%;
-    }
-
-    .add-new-button-right-side {
-        flex: 0 0 auto;
-        width: 20%;
-        padding: .5rem 1.25rem;
-    }
+.select2-selection__rendered {
+    padding-left: 0px !important;
 }
-@media (max-width: 602px) {
-    .dataTableButtons-left-side {
-        flex: 0 0 auto;
-        width: 76%;
-    }
-
-    .add-new-button-right-side {
-        flex: 0 0 auto;
-        width: 24%;
-        padding: .5rem 1.25rem;
-    }
+.select2-container--default .select2-selection--single .select2-selection__rendered, select.form-control-sm~.select2-container--default .select2-selection--single .select2-selection__rendered {
+    margin-top: -3px !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    margin-left: -8px !important;
+}
+.dark-version .select2-dropdown {
+    background: rgb(17, 28, 68) !important;
+}
+.dark-version .select2-container--default .select2-results__option[aria-selected=true] {
+    color: rgb(17, 28, 68) !important;
+}
+.dark-version .select2-container--default .select2-selection--single {
+    background: rgb(17, 28, 68) !important;
+}
+.dark-version .select2-selection__rendered {
+    color: #fff !important;
+}
+.dark-version .data-not-available {
+    background: rgb(5, 17, 57) !important;
 }
 @media (max-width: 556px) {
     .navbar.navbar-main .container-fluid {
@@ -29427,18 +29420,6 @@ pre[class*="language-"] {
     .dataTableButtons-container {
         display: flex;
         flex-direction: column;
-    }
-
-    .dataTableButtons-left-side {
-        flex: 0 0 auto;
-        width: 100%;
-    }
-
-    .add-new-button-right-side {
-        flex: 0 0 auto;
-        width: 50%;
-        padding: .5rem 1.25rem;
-        align-self: end;
     }
 
     #bookingTable_length label {

@@ -1,114 +1,102 @@
-<div class="card-body p-0 table-wrapper">
-    <table class="table" id="myTable">
+<div class="table-wrapper p-0">
+    <table id="bookingTable" class="table align-items-center table-responsive mb-0">
         <thead>
             <tr>
-                <th>#</th>
-                <th>{{ __('Images') }}</th>
-                <th class="">{{ __('Name') }}</th>
-                <th>{{ __('Brand') }}</th>
-                <th>{{ __('Sale') }}</th>
-                <th>{{ __('In Stock') }}</th>
-                <th>{{ __('Created By') }}</th>
-                <th>{{ __('Status') }}</th>
-                <th>{{ __('Action') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('#') }} </th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7"> {{ __('Name') }} </th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7"> {{ __('Brand') }} </th>
+                <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('Sale') }} </th>
+                <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('In Stock') }} </th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7"> {{ __('Created By') }} </th>
+                <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('Status') }} </th>
+                <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('Action') }} </th>
             </tr>
         </thead>
         <tbody>
             @forelse ($products as $product)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
                     <td>
-                        @if ($product->productgallery && count($product->productgallery->images) > 0)
-                            <div class="custom-carousel carousel-{{ $product->id }}" data-product-id="{{ $product->id }}" data-current-index="0">
-                                @foreach ($product->productgallery->images as $index => $image)
-                                    <img src="{{ file_exists(public_path('uploads/products/' . $image)) ? asset('uploads/products/' . $image) : asset('uploads/default.png') }}"
-                                        alt="Product Image" class="carousel-image profile_img_table"
-                                        style="display: {{ $index == 0 ? 'block' : 'none' }};">
-                                @endforeach
-                            </div>
-                        @else
-                            <img src="{{ !empty($product->image[0]) && file_exists(public_path('uploads/products/' . $product->image[0])) ? asset('uploads/products/' . $product->images[0]) : asset('uploads/default.png') }}"
-                                alt="Product Image" class="profile_img_table">
-                        @endif
+                        <p class="text-sm font-weight-bold mb-0">{{ $loop->iteration }}</p>
                     </td>
-                    <td>
-                        <span class="ml-2">
-                            {{ $product->name ?? 'Null' }}
-                        </span>
-                    </td>
-                    <td>{{ $product->brand->name ?? 'Null' }}</td>
-                    <td>{{ $product->count_product_sale ?? '0' }}</td>
-                    <td>{{ $product->total_qty ?? '0' }}</td>
-                    <td>{{ $product->createdBy->name ?? 'Null' }}</td>
-                    <td>
-                        <div class="ckbx-style-9 mt-2">
-                            <input type="checkbox" class="status"
-                                id="status_{{ $product->id }}" data-id="{{ $product->id }}"
-                                {{ $product->status == 1 ? 'checked' : '' }} name="status">
-                            <label for="status_{{ $product->id }}"></label>
+                    <td data-order="{{ strtolower($product->name) }}">
+                        <div class="d-flex">
+                            @if ($product->productgallery && count($product->productgallery->images) > 0)
+                                <div class="custom-carousel carousel-{{ $product->id }}" data-product-id="{{ $product->id }}" data-current-index="0">
+                                    @foreach ($product->productgallery->images as $index => $image)
+                                        <img src="{{ file_exists(public_path('uploads/products/' . $image)) ? asset('uploads/products/' . $image) : asset('uploads/default.png') }}"
+                                            alt="Product Image" class="avatar avatar-md me-3" style="object-fit: contain; cursor: pointer;"
+                                            data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
+                                    @endforeach
+                                </div>
+                            @else
+                                <img src="{{ !empty($product->image[0]) && file_exists(public_path('uploads/products/' . $product->image[0])) ? asset('uploads/products/' . $product->images[0]) : asset('uploads/default.png') }}"
+                                    alt="Product Image" class="avatar avatar-sm me-3">
+                            @endif
+                            <p class="mb-0 text-sm font-weight-bold align-content-center"> {{ $product->name ?? 'Null' }} </p>
                         </div>
                     </td>
                     <td>
+                        <p class="text-sm font-weight-bold mb-0">{{ $product->brand->name ?? 'Null' }}</p>
+                    </td>
+                    <td>
+                        <p class="text-sm text-center font-weight-bold mb-0">{{ $product->count_product_sale ?? '0' }}</p>
+                    </td>
+                    <td>
+                        <p class="text-sm text-center font-weight-bold mb-0">{{ $product->total_qty ?? '0' }}</p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0">{{ $product->createdBy->name ?? 'Null' }}</p>
+                    </td>
+                    <td class="align-middle text-center text-sm" style="justify-items: center;">
+                        <label for="status_{{ $product->id }}" class="switch">
+                            <input type="checkbox" class="status"
+                            id="status_{{ $product->id }}" data-id="{{ $product->id }}"
+                            {{ $product->status == 1 ? 'checked' : '' }} name="status">
+                            <div class="slider">
+                                <div class="circle">
+                                    <svg class="cross" xml:space="preserve" style="enable-background:new 0 0 512 512" viewBox="0 0 365.696 365.696" y="0" x="0" height="6" width="6" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                        <g>
+                                            <path data-original="#000000" fill="currentColor" d="M243.188 182.86 356.32 69.726c12.5-12.5 12.5-32.766 0-45.247L341.238 9.398c-12.504-12.503-32.77-12.503-45.25 0L182.86 122.528 69.727 9.374c-12.5-12.5-32.766-12.5-45.247 0L9.375 24.457c-12.5 12.504-12.5 32.77 0 45.25l113.152 113.152L9.398 295.99c-12.503 12.503-12.503 32.769 0 45.25L24.48 356.32c12.5 12.5 32.766 12.5 45.247 0l113.132-113.132L295.99 356.32c12.503 12.5 32.769 12.5 45.25 0l15.081-15.082c12.5-12.504 12.5-32.77 0-45.25zm0 0"></path>
+                                        </g>
+                                    </svg>
+                                    <svg class="checkmark" xml:space="preserve" style="enable-background:new 0 0 512 512" viewBox="0 0 24 24" y="0" x="0" height="10" width="10" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                        <g>
+                                            <path class="" data-original="#000000" fill="currentColor" d="M9.707 19.121a.997.997 0 0 1-1.414 0l-5.646-5.647a1.5 1.5 0 0 1 0-2.121l.707-.707a1.5 1.5 0 0 1 2.121 0L9 14.171l9.525-9.525a1.5 1.5 0 0 1 2.121 0l.707.707a1.5 1.5 0 0 1 0 2.121z"></path>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </label>
+                    </td>
+                    <td class="align-middle text-center">
                         @if (auth()->user()->can('product.edit'))
-                            <a href="{{ route('admin.product.edit', $product->id) }}"
-                                class="btn btn-info btn-sm btn-edit">
-                                <i class="fas fa-pencil-alt"></i>
+                            <a href="{{ route('admin.product.edit', $product->id) }}" class="text-secondary font-weight-bold text-xs btn-modal btn-edit pe-1">
                                 {{ __('Edit') }}
                             </a>
                         @endif
+
                         @if (auth()->user()->can('product.delete'))
-                            <form action="{{ route('admin.product.destroy', $product->id) }}"
-                                class="d-inline-block form-delete-{{ $product->id }}">
+                            <form action="{{ route('admin.product.destroy', $product->id) }}" class="d-inline-block form-delete-{{ $product->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" data-id="{{ $product->id }}"
-                                    data-href="{{ route('admin.product.destroy', $product->id) }}"
-                                    class="btn btn-danger btn-sm btn-delete">
+                                <button type="button" data-id="{{ $product->id }}" data-href="{{ route('admin.product.destroy', $product->id) }}" class="text-secondary font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
                                     <i class="fa fa-trash-alt"></i>
-                                    {{ __('Delete') }}
                                 </button>
                             </form>
                         @endif
 
+                        @if (!auth()->user()->can('product.edit') && !auth()->user()->can('product.delete'))
+                            <span class="text-muted">No Actions</span>
+                        @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" class="text-center" style="background-color: ghostwhite">{{ __('Products are not available.') }}</td>
+                    <td colspan="{{ auth()->user()->can('product.edit') || auth()->user()->can('product.delete') ? 8 : 7 }}" class="text-center data-not-available" style="background-color: ghostwhite">
+                        {{ __('Products are not available.') }}
+                    </td>
                 </tr>
             @endforelse
         </tbody>
     </table>
-
-    <div class="row">
-        <div class="col-12 d-flex flex-row flex-wrap">
-            <div class="row" style="width: -webkit-fill-available;">
-                <div class="col-12 col-sm-6 text-center text-sm-left pl-3" style="margin-block: 20px">
-                    {{ __('Showing') }} {{ $products->firstItem() }} {{ __('to') }} {{ $products->lastItem() }}
-                    {{ __('of') }} {{ $products->total() }} {{ __('entries') }}
-                </div>
-                <div class="col-12 col-sm-6 pagination-nav pr-3"> {{ $products->links() }}</div>
-            </div>
-        </div>
-    </div>
-
-
 </div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const carousels = document.querySelectorAll(".custom-carousel");
-
-        carousels.forEach(carousel => {
-            const images = carousel.querySelectorAll(".carousel-image");
-            let currentIndex = 0;
-
-            carousel.addEventListener("click", function () {
-                images[currentIndex].style.display = "none";
-
-                currentIndex = (currentIndex + 1) % images.length;
-
-                images[currentIndex].style.display = "block";
-            });
-        });
-    });
-</script>

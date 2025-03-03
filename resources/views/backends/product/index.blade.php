@@ -1,5 +1,5 @@
-@extends('backends.master')
-
+@extends('backends.layouts.admin')
+@section('page_title', __('Product'))
 @push('css')
     <style>
         .preview {
@@ -10,15 +10,7 @@
         .tab-pane {
             margin-top: 20px
         }
-        .custom-carousel {
-            position: relative;
-            cursor: pointer;
-        }
-        .carousel-image {
-            width: auto;
-            min-height: 55px;
-            object-fit: cover;
-        }
+
         .ckbx-style-9 input[type=checkbox]:checked+label:before {
             background: #3d95d0 !important;
             box-shadow: inset 0 1px 1px rgba(84, 116, 152, 0.5) !important;
@@ -26,79 +18,52 @@
     </style>
 @endpush
 @section('contents')
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h3>{{ __('Product') }}</h3>
-                </div>
-                <div class="col-sm-6" style="text-align: right">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card">
-                        <!-- /.card-header -->
-                        <div class="card-header">
-                            <div class="row align-items-center">
-                                <div class="col-sm-6">
-                                    <h3 class="card-title"> <i class="fa fa-filter" aria-hidden="true"></i>
-                                        {{ __('Filter') }}</h3>
-                                </div>
-                            </div>
+                    <div class="card mb-4">
+                        <div class="card-header pb-0">
+                            <h5 class="pb-1">
+                                <i class="fa fa-filter" aria-hidden="true"></i>
+                                {{ __('Filter') }}
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="tab-content" id="custom-content-below-tabContent">
-                                        <div class="col-sm-6 filter">
-                                            <select name="brand_id" id="brand_id" class="form-control select2">
-                                                <option value="" class="form-control"
-                                                    {{ !request()->filled('brands') ? 'selected' : '' }}>
-                                                    {{ __('All Brand') }}
-                                                </option>
-                                                @foreach ($brands as $brand)
-                                                    <option value="{{ $brand->id }}" class="form-control"
-                                                        {{ $brand->id == request('brand_id') ? 'selected' : '' }}>
-                                                        {{ $brand->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+                            <div class="d-flex col-12">
+                                <div class="col-sm-6 filter tab-content" id="custom-content-below-tabContent">
+                                    <select name="brand_id" id="brand_id" class="form-control select2">
+                                        <option value="" class="form-control"
+                                            {{ !request()->filled('brands') ? 'selected' : '' }}>
+                                            {{ __('All Brand') }}
+                                        </option>
+                                        @foreach ($brands as $brand)
+                                            <option value="{{ $brand->id }}" class="form-control"
+                                                {{ $brand->id == request('brand_id') ? 'selected' : '' }}>
+                                                {{ $brand->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="row align-items-center">
-                                <div class="col-sm-6">
-                                    <h3 class="card-title">{{ __('Product List') }}</h3>
-                                </div>
-                                {{-- <span class="badge bg-warning total-count">{{ $grades->total() }}</span> --}}
-                                <div class="col-sm-6">
-                                    @if (auth()->user()->can('product.create'))
-                                        <a class="btn btn-primary float-right" href="{{ route('admin.product.create') }}">
-                                            <i class=" fa fa-plus-circle"></i>
-                                            {{ __('Add New') }}
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between pb-0">
+                            <h5 class="pb-1">{{ __('Products Table') }}</h5>
+                            @if (auth()->user()->can('product.create'))
+                                <a class="btn bg-gradient-primary add-new-button-right-side btn-xs" href="{{ route('admin.product.create') }}">
+                                    <i class="fas fa-plus-circle"></i>
+                                    {{ __('Add New') }}
+                                </a>
+                            @endif
                         </div>
-                        <!-- /.card-header -->
-
-                        {{-- table --}}
-                        @include('backends.product._table')
-
+                        <div class="card-body px-3 pt-0 pb-2">
+                            <div class="dataTableButtons-container d-flex mx-0 align-items-center pb-2">
+                                <div id="dataTableButtons" class="dataTableButtons-left-side col-md-12" style="justify-content: space-between"></div>
+                            </div>
+                            @include('backends.product._table')
+                        </div>
                     </div>
                 </div>
             </div>
@@ -192,28 +157,35 @@
     </script>
     <script>
         $(document).ready(function() {
-            $(document).on('change', '#brand_id', function(e) {
-                e.preventDefault();
-                var brand_id = $('#brand_id').val();
-                $.ajax({
-                    type: "GET",
-                    url: '{{ route('admin.product.index') }}',
-                    data: {
-                        'brand_id': brand_id
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        console.log(response);
-                        if (response.view) {
-                            $('.table-wrapper').replaceWith(response.view);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                    }
-                });
-            });
             $('#brand_id').select2();
+        });
+
+        $(document).on('change', '#brand_id', function(e) {
+            e.preventDefault();
+
+            var brand_id = $('#brand_id').val();
+
+            if ($.fn.DataTable.isDataTable('#bookingTable')) {
+                $('#bookingTable').DataTable().destroy();
+            }
+
+            $.ajax({
+                type: "GET",
+                url: '{{ route('admin.product.index') }}',
+                data: {
+                    'brand_id': brand_id
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response.view) {
+                        $('.table-wrapper').html(response.view);
+                        initDataTable();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
         });
     </script>
 @endpush
