@@ -8,7 +8,7 @@
                         Pages
                     </a>
                 </li>
-        
+
                 {{-- Parent Menu Detection --}}
                 @if (request()->routeIs('admin.brand*') || request()->routeIs('admin.product*'))
                     <li class="breadcrumb-item text-sm text-white">
@@ -23,7 +23,7 @@
                         <a href="#" class="opacity-5 text-white" style="color: #fff !important;">User Management</a>
                     </li>
                 @endif
-        
+
                 {{-- Submenu Detection --}}
                 @if (request()->routeIs('admin.brand*'))
                     <li class="breadcrumb-item text-sm text-white active" aria-current="page">Brand</li>
@@ -51,11 +51,11 @@
                     <li class="breadcrumb-item text-sm text-white active" aria-current="page">Dashboard</li>
                 @endif
             </ol>
-        
+
             <h6 class="font-weight-bolder text-white mb-0">
                 @yield('page_title', 'Dashboard')
             </h6>
-        </nav>                
+        </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                 <li class="d-flex align-items-center pe-md-4 pe-sm-2">
@@ -88,11 +88,6 @@
                         </span>
                     </button>
                 </li>
-                <div class="input-group ition-relative">
-                    <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-                    <input type="text" class="form-control sidebar-search-menu" id="sidebar-search" placeholder="Search menu...">
-                    <div id="search-suggestions" class="list-group position-absolute w-100 search-menu-suggestions"></div>
-                </div>
             </div>
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">

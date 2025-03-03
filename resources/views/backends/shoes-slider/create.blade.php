@@ -1,4 +1,4 @@
-@extends('backends.master')
+@extends('backends.layouts.admin')
 @section('contents')
     <!-- Content Wrapper. Contains page content -->
     <section class="content-header">
@@ -80,23 +80,9 @@
                                 <div class="row">
 
                                     <div class="form-group col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputFile">{{ __('Image') }}</label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="hidden" name="image" class="image_names_hidden">
-                                                    <input type="file" class="custom-file-input" id="exampleInputFile"
-                                                        name="image" accept="image/png, image/jpeg">
-                                                    <label class="custom-file-label"
-                                                        for="exampleInputFile">{{ __('Choose file') }}</label>
-                                                </div>
-                                            </div>
-                                            <div class="preview preview-multiple text-center border rounded mt-2"
-                                                style="height: 150px">
-                                                <img src="{{ asset('uploads/image/default.png') }}" alt=""
-                                                    height="100%">
-                                            </div>
-                                        </div>
+                                        <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs"> {{ __('Recommend size 512 x 512 px') }} </span> </label>
+                                        <input type="hidden" name="image_names" class="image_names_hidden">
+                                        <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image" accept="image/png, image/jpeg">
                                     </div>
 
                                 </div>
@@ -121,14 +107,14 @@
 
 @push('js')
     <script>
-        $('.custom-file-input').change(function(e) {
-            var reader = new FileReader();
-            var preview = $(this).closest('.form-group').find('.preview img');
-            reader.onload = function(e) {
-                preview.attr('src', e.target.result).show();
-            }
-            reader.readAsDataURL(this.files[0]);
-        });
+        // $('.custom-file-input').change(function(e) {
+        //     var reader = new FileReader();
+        //     var preview = $(this).closest('.form-group').find('.preview img');
+        //     reader.onload = function(e) {
+        //         preview.attr('src', e.target.result).show();
+        //     }
+        //     reader.readAsDataURL(this.files[0]);
+        // });
 
         $(document).on('click', '.nav-tabs .nav-link', function(e) {
             if ($(this).data('lang') != 'en') {

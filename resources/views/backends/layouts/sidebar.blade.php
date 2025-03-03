@@ -16,7 +16,12 @@
         </a>
     </div>
     <hr class="horizontal dark mt-0">
-    <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
+    <div class="input-group ition-relative p-2 pt-0">
+        <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+        <input type="text" class="form-control sidebar-search-menu" id="sidebar-search" placeholder="Search menu...">
+        <div id="search-suggestions" class="list-group position-absolute w-100 search-menu-suggestions"></div>
+    </div>
+    <div class="collapse navbar-collapse pt-1  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link mx-0 @if (request()->routeIs('admin.dashboard')) active @endif" href="{{ route('admin.dashboard') }}">
