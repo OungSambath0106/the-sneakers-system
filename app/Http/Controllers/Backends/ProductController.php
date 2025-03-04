@@ -95,6 +95,7 @@ class ProductController extends Controller
         }
 
         try {
+            // dd($request->all());
             DB::beginTransaction();
 
             $pro = new Product;
@@ -232,39 +233,29 @@ class ProductController extends Controller
                 }
                 $product->product_info =$products_info;
             }
-
             $product->save();
 
             $product_gallery = ProductGallery::where('product_id', $product->id)->first();
-
             if (!$product_gallery) {
-                // If no gallery exists, create a new one
                 $product_gallery = new ProductGallery();
                 $product_gallery->product_id = $product->id;
                 $product_gallery->images = [];
             }
 
             $existingImages = $product_gallery->images ?? [];
-
-            // Handle new images from the hidden input
             $imageNames = $request->input('image_names', '');
-
-            // Convert space-separated string to array
             $newImages = $imageNames ? explode(' ', trim($imageNames)) : [];
 
             $product_data = [];
-
             foreach ($newImages as $newImage) {
                 if (!empty($newImage)) {
                     $sourcePath = public_path('uploads/temp/' . $newImage);
                     $destinationPath = public_path('uploads/products/' . $newImage);
 
-                    // Ensure destination directory exists
                     if (!\File::exists(public_path('uploads/products'))) {
                         \File::makeDirectory(public_path('uploads/products'), 0777, true);
                     }
 
-                    // Move file from temp to products folder
                     if (\File::exists($sourcePath)) {
                         \File::move($sourcePath, $destinationPath);
                         $product_data[] = $newImage;
@@ -272,7 +263,6 @@ class ProductController extends Controller
                 }
             }
 
-            // Merge existing images with newly uploaded ones
             $mergedImages = array_merge($existingImages, $product_data);
 
             $product_gallery->images = $mergedImages;
@@ -303,9 +293,18 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             $product = Product::findOrFail($id);
+
             $translation = Translation::where('translationable_type', 'App\Models\Product')
-                ->where('translationable_id', $product->id);
+                            ->where('translationable_id', $product->id);
             $translation->delete();
+
+            if ($product->image) {
+                $imagePath = public_path('uploads/products/' . $product->image);
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
             $product->delete();
 
             $products = Product::latest('id')->paginate(10);
@@ -313,15 +312,16 @@ class ProductController extends Controller
 
             DB::commit();
             $output = [
-                'status' => 1,
-                'view' => $view,
+                'success' => 1,
+                'view'  => $view,
                 'msg' => __('Deleted successfully')
             ];
         } catch (Exception $e) {
             DB::rollBack();
+
             $output = [
-                'status' => 0,
-                'msg' => __('Something went wrong')
+                'success' => 0,
+                'msg' => __('Something when wrong')
             ];
         }
 

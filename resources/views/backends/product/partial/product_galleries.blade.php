@@ -75,7 +75,7 @@
             <div class="upload-box custom-file m-0" id="upload-box" style="cursor: pointer; text-align: center;">
                 <div class="mt-3"><i class="fa-solid fa-plus fa-lg" style="color:#666666;font-size: 7rem !important;"></i></div>
                 <div>{{ __('Drop files or click to upload') }}</div>
-                <input type="hidden" name="image_names" class="image_names_hidden">
+                <input type="hidden" name="image_names" class="image_names_hidden" value="">
                 <input type="file" class="custom-file-input" name="gallery[]" id="fileUpload"
                     accept="image/png, image/jpeg" style="display: none;" multiple>
             </div>
@@ -91,17 +91,41 @@
         document.querySelector('.upload-box').addEventListener('click', function() {
             document.getElementById('fileUpload').click();
         });
+
         $(document).ready(function() {
+            const maxImages = 5;
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+
             $('#fileUpload').on('change', function(event) {
                 const files = event.target.files;
-                const imageGrid = $('.image-grid');
+                const currentImageCount = $('.image-box').length;
+
+                if (currentImageCount + files.length > maxImages) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'You can upload a maximum of ' + maxImages + ' images.'
+                    });
+                    return;
+                }
+
                 const uploadBox = $('#upload-box');
 
                 $.each(files, function(index, file) {
                     if (!file.type.startsWith('image/')) {
-                        alert('Please upload a valid image file.');
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Please upload a valid image file.'
+                        });
                         return;
                     }
+
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const imageBox = $(`
@@ -116,6 +140,7 @@
                         `);
                         uploadBox.before(imageBox);
                         simulateProgress(imageBox.find('.progress-bar'));
+
                         imageBox.find('.close-btn').on('click', function() {
                             imageBox.remove();
                         });
@@ -123,6 +148,7 @@
                     reader.readAsDataURL(file);
                 });
             });
+
             function simulateProgress(progressBar) {
                 let progress = 0;
                 progressBar.closest('.progress').show();
@@ -140,7 +166,7 @@
                 }, 300);
             }
 
-            $('form').on('submit', function() {
+            $('form').on('submit', function(event) {
                 const imageDetails = [];
                 const imageNames = $('.image_names_hidden').val().trim().split(' ');
 

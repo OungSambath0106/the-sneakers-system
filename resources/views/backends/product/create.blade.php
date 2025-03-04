@@ -259,7 +259,7 @@
             });
 
             $('.custom-file-input').on('click', function () {
-                $(this).closest('.form-group').find('.image_names_hidden').val('');
+                // $(this).closest('.form-group').find('.image_names_hidden').val('');
             });
         });
     </script>

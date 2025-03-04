@@ -21,15 +21,19 @@
                     <td data-order="{{ strtolower($product->name) }}">
                         <div class="d-flex">
                             @if ($product->productgallery && count($product->productgallery->images) > 0)
-                                <div class="custom-carousel carousel-{{ $product->id }}" data-product-id="{{ $product->id }}" data-current-index="0">
-                                    @foreach ($product->productgallery->images as $index => $image)
-                                        <img src="{{ file_exists(public_path('uploads/products/' . $image)) ? asset('uploads/products/' . $image) : asset('uploads/default.png') }}"
-                                            alt="Product Image" class="avatar avatar-md me-3" style="object-fit: contain; cursor: pointer;"
-                                            data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
-                                    @endforeach
-                                </div>
+                                @php
+                                    $firstImage = $product->productgallery->images[0];
+                                    $allImages = $product->productgallery->images;
+                                @endphp
+
+                                <img src="{{ file_exists(public_path('uploads/products/' . $firstImage)) ? asset('uploads/products/' . $firstImage) : asset('uploads/default.png') }}"
+                                    alt="Product Image" class="avatar avatar-md me-3"
+                                    style="object-fit: contain; cursor: pointer;"
+                                    onclick="openGalleryModal({{ $product->id }})">
+
+                                @include('backends.product.partial.modal_popup_image')
                             @else
-                                <img src="{{ !empty($product->image[0]) && file_exists(public_path('uploads/products/' . $product->image[0])) ? asset('uploads/products/' . $product->images[0]) : asset('uploads/default.png') }}"
+                                <img src="{{ !empty($product->image[0]) && file_exists(public_path('uploads/products/' . $product->image[0])) ? asset('uploads/products/' . $product->image[0]) : asset('uploads/default.png') }}"
                                     alt="Product Image" class="avatar avatar-sm me-3">
                             @endif
                             <p class="mb-0 text-sm font-weight-bold align-content-center"> {{ $product->name ?? 'Null' }} </p>

@@ -15,6 +15,18 @@
             background: #3d95d0 !important;
             box-shadow: inset 0 1px 1px rgba(84, 116, 152, 0.5) !important;
         }
+
+        .carousel-control-prev, .carousel-control-next {
+            width: unset !important;
+            height: 2rem !important;
+            align-self: center !important;
+        }
+        .carousel-control-prev {
+            left: -50px !important;
+        }
+        .carousel-control-next {
+            right: -50px !important;
+        }
     </style>
 @endpush
 @section('contents')
@@ -70,8 +82,17 @@
         </div>
     </section>
     <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
+    @include('backends.product.partial.delete_product_modal')
 @endsection
 @push('js')
+    <script>
+        function openGalleryModal(productId) {
+            let modal = new bootstrap.Modal(document.getElementById('imageGalleryModal-' + productId), {
+                keyboard: true
+            });
+            modal.show();
+        }
+    </script>
     <script>
         $('.btn_add').click(function(e) {
             var tbody = $('.tbody');
@@ -107,47 +128,54 @@
             reader.readAsDataURL(this.files[0]);
         });
 
-        $(document).on('click', '.btn-delete', function(e) {
+        $(document).on('click', '.btn-delete', function (e) {
             e.preventDefault();
 
-            const Confirmation = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false
-            });
+            let productId = $(this).data('id');
+            let deleteUrl = $(this).data('href');
 
-            Confirmation.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
+            $('#deleteProductModal').data('product-id', productId).data('delete-url', deleteUrl).modal('show');
+        });
 
-                    console.log(`.form-delete-${$(this).data('id')}`);
-                    var data = $(`.form-delete-${$(this).data('id')}`).serialize();
-                    // console.log(data);
-                    $.ajax({
-                        type: "post",
-                        url: $(this).data('href'),
-                        data: data,
-                        // dataType: "json",
-                        success: function(response) {
-                            console.log(response);
-                            if (response.status == 1) {
-                                $('.table-wrapper').replaceWith(response.view);
-                                toastr.success(response.msg);
-                            } else {
-                                toastr.error(response.msg)
+        $(document).on('click', '.btn-confirm-modal', function () {
+            let modal = $('#deleteProductModal');
+            let productId = modal.data('product-id');
+            let deleteUrl = modal.data('delete-url');
 
-                            }
+            let row = $(`.btn-delete[data-id="${productId}"]`).closest('tr');
+            let dataTable = $('#bookingTable').DataTable();
+
+            var data = $(`.form-delete-${productId}`).serialize();
+
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: data,
+                success: function (response) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
                         }
                     });
+                    if (response.success == 1) {
+                        dataTable.row(row).remove().draw(false);
+                        modal.modal('hide');
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.msg
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: response.msg
+                        });
+                    }
                 }
             });
         });

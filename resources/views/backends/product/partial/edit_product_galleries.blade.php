@@ -2,13 +2,13 @@
     <style>
         .image-grid {
             display: grid;
-            grid-template-columns: repeat(6, 0fr);
+            grid-template-columns: repeat(6, 1fr);
             gap: 10px;
             /* margin-top: 20px; */
         }
 
         .image-box {
-            /* width: 11.73rem; */
+            width: 11rem;
             border: 1px solid #ccc;
             border-radius: 1px;
             padding: 7px;
@@ -28,11 +28,9 @@
         }
 
         .image-box img {
-            width: 11rem;
-            height: auto;
-            object-fit: cover;
-            /* max-width: 100%; */
-            /* border-radius: 5px; */
+            width: 10rem;
+            height: 6rem;
+            object-fit: contain;
         }
 
         .image-box .description {
@@ -84,7 +82,6 @@
 <div class="col-md-12 px-0 pt-2">
     <div class="card p-2 mb-0" style="box-shadow:none !important;border:1px solid #E1E1E1 !important">
         <div class="image-grid">
-            {{-- @dd($product->productgallery) --}}
             <input type="hidden" name="product_id" class="product_id" value="{{ $product->id }}">
 
             @if (@$product->productgallery)
@@ -96,7 +93,7 @@
                         <div class="image-box" data-image-id="{{ $index }}">
                             <input type="hidden" name="name_images[]" value="{{ $image }}">
                             <img src="{{ asset('uploads/products/' . $image) }}"
-                                alt="product_image" height="150px">
+                                alt="product_image">
                             <button type="button" class="remove-image">&times;</button>
                         </div>
                     @endif
@@ -121,25 +118,49 @@
         });
 
         $(document).ready(function() {
+            const maxImages = 5;
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+
             $('#fileUpload').on('change', function(event) {
                 const files = event.target.files;
-                const imageGrid = $('.image-grid');
+                const currentImageCount = $('.image-box').length;
+
+                if (currentImageCount + files.length > maxImages) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'You can upload a maximum of ' + maxImages + ' images.',
+                    });
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1400);
+                    return;
+                }
+
                 const uploadBox = $('#upload-box');
 
                 $.each(files, function(index, file) {
                     if (!file.type.startsWith('image/')) {
-                        alert('Please upload a valid image file.');
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Please upload a valid image file.'
+                        });
                         return;
                     }
 
                     const reader = new FileReader();
-
                     reader.onload = function(e) {
                         console.log(file.name);
 
                         const imageBox = $(`
                             <div class="image-box">
-                                <img src="${e.target.result}" alt="Uploaded Image">
+                                <img src="${e.target.result}" alt="product_image">
                                 <button type="button" class="remove-image">&times;</button>
                                 <div class="progress" style="display: none;">
                                     <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
@@ -148,7 +169,6 @@
                             </div>
                         `);
 
-                        // imageGrid.append(imageBox);
                         uploadBox.before(imageBox);
                         simulateProgress(imageBox.find('.progress-bar'));
                         imageBox.find('.remove-image').on('click', function() {
@@ -172,8 +192,6 @@
                     if (progress >= 100) {
                         clearInterval(interval);
                         progressBar.closest('.progress').hide();
-
-                        // sendImageDetails();
                     }
                 }, 300);
             }
