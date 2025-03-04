@@ -31,6 +31,10 @@
                     <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs"> {{ __('Recommend size 512 x 512 px') }} </span> </label>
                     <input type="hidden" name="image_names" class="image_names_hidden">
                     <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image" accept="image/png, image/jpeg">
+                    <div class="progress mt-2" style="height: 20px; display: none;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                            aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-end py-2">
@@ -53,9 +57,14 @@
         $('.custom-file-input').change(async function (e) {
             const fileInput = $(this);
             const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
+            const progressBarContainer = fileInput.closest('.form-group').find('.progress');
+            const progressBar = progressBarContainer.find('.progress-bar');
 
             const file = e.target.files[0];
             const formData = new FormData();
+
+            progressBarContainer.show();
+            updateProgressBar(progressBar, 0);
 
             try {
                 const options = {
@@ -71,30 +80,60 @@
                 formData.append('image', compressedFile);
                 formData.append('_token', '{{ csrf_token() }}');
 
-                $.post({
-                    url: "{{ route('save_temp_file') }}",
-                    data: formData,
-                    processData: false,
-                    contentType: false
-                }).done(response => {
-                    if (response.status === 1) {
-                        imageNamesHidden.val(response.temp_files);
-                    } else {
-                        toastr.error(response.msg);
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
-                    console.log(jqXHR.responseText);
+                simulateProgress(progressBar, function () {
+                    $.ajax({
+                        url: "{{ route('save_temp_file') }}",
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.status === 1) {
+                                imageNamesHidden.val(response.temp_files);
+                            } else {
+                                toastr.error(response.msg);
+                            }
+                            progressBarContainer.hide();
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
+                            console.log(jqXHR.responseText);
+                            progressBarContainer.hide();
+                        }
+                    });
                 });
 
             } catch (error) {
                 toastr.error("Image compression failed.");
                 console.error(error);
+                progressBarContainer.hide();
             }
         });
 
         dropifyInput.on('dropify.afterClear', function (event) {
             $(this).closest('.form-group').find('.image_names_hidden').val('');
+            const progressBarContainer = $(this).closest('.form-group').find('.progress');
+            progressBarContainer.hide();
         });
+
+        function simulateProgress(progressBar, callback) {
+            let progress = 0;
+            const interval = setInterval(function () {
+                progress += 10;
+                updateProgressBar(progressBar, progress);
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    if (typeof callback === "function") {
+                        callback();
+                    }
+                }
+            }, 300);
+        }
+
+        function updateProgressBar(progressBar, value) {
+            progressBar.css('width', value + '%');
+            progressBar.text(value + '%');
+            progressBar.attr('aria-valuenow', value);
+        }
     });
 </script>

@@ -10,13 +10,13 @@
             </tr>
         </thead>
         <tbody>
-            @forelse ($brands as $brand)
+            @forelse ($banners as $banner)
                 <tr>
-                    <td data-order="{{ strtolower($brand->name) }}">
+                    <td data-order="{{ strtolower($banner->name) }}">
                         <div class="d-flex px-2 py-1">
                             <img src="
-                                @if ($brand->image && file_exists(public_path('uploads/brand/' . $brand->image)))
-                                    {{ asset('uploads/brand/'. $brand->image) }}
+                                @if ($banner->image && file_exists(public_path('uploads/banner-slider/' . $banner->image)))
+                                    {{ asset('uploads/banner-slider/'. $banner->image) }}
                                 @else
                                     {{ asset('uploads/defualt.png') }}
                                 @endif
@@ -24,17 +24,17 @@
                                 data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
                         </div>
                     </td>
-                    <td data-order="{{ strtolower($brand->name) }}">
-                        <p class="mb-0 text-sm font-weight-bold">{{ $brand->name }}</p>
+                    <td data-order="{{ strtolower($banner->name) }}">
+                        <p class="text-sm font-weight-bold mb-0">{{ $banner->name }}</p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0">{{ $brand->createdBy->name }}</p>
+                        <p class="text-sm font-weight-bold mb-0">{{ $banner->createdBy->name }}</p>
                     </td>
                     <td class="align-middle text-center text-sm" style="justify-items: center;">
-                        <label for="status_{{ $brand->id }}" class="switch">
+                        <label for="status_{{ $banner->id }}" class="switch">
                             <input type="checkbox" class="status"
-                            id="status_{{ $brand->id }}" data-id="{{ $brand->id }}"
-                            {{ $brand->status == 1 ? 'checked' : '' }} name="status">
+                            id="status_{{ $banner->id }}" data-id="{{ $banner->id }}"
+                            {{ $banner->status == 1 ? 'checked' : '' }} name="status">
                             <div class="slider">
                                 <div class="circle">
                                     <svg class="cross" xml:space="preserve" style="enable-background:new 0 0 512 512" viewBox="0 0 365.696 365.696" y="0" x="0" height="6" width="6" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -52,31 +52,31 @@
                         </label>
                     </td>
                     <td class="align-middle text-center">
-                        @if (auth()->user()->can('brand.edit'))
-                            <a href="#" data-href="{{ route('admin.brand.edit', $brand->id) }}"
+                        @if (auth()->user()->can('banner.edit'))
+                            <a href="#" data-href="{{ route('admin.banner-slider.edit', $banner->id) }}"
                                 class="text-secondary font-weight-bold text-xs btn-modal btn-edit pe-1" data-toggle="modal" data-container=".modal_form">
                                 {{ __('Edit') }}
                             </a>
                         @endif
 
-                        @if (auth()->user()->can('brand.delete'))
-                            <form action="{{ route('admin.brand.destroy', $brand->id) }}" class="d-inline-block form-delete-{{ $brand->id }}">
+                        @if (auth()->user()->can('banner.delete'))
+                            <form action="{{ route('admin.banner-slider.destroy', $banner->id) }}" class="d-inline-block form-delete-{{ $banner->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" data-id="{{ $brand->id }}" data-href="{{ route('admin.brand.destroy', $brand->id) }}" class="text-secondary font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
+                                <button type="button" data-id="{{ $banner->id }}" data-href="{{ route('admin.banner-slider.destroy', $banner->id) }}" class="text-secondary font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
                                     <i class="fa fa-trash-alt"></i>
                                 </button>
                             </form>
                         @endif
 
-                        @if (!auth()->user()->can('brand.edit') && !auth()->user()->can('brand.delete'))
+                        @if (!auth()->user()->can('banner.edit') && !auth()->user()->can('banner.delete'))
                             <span class="text-muted">No Actions</span>
                         @endif
                     </td>
                 </tr>
             @empty
-                <td colspan="{{ auth()->user()->can('brand.edit') || auth()->user()->can('brand.delete') ? 6 : 5 }}" class="text-center" style="background-color: ghostwhite">
-                    {{ __('Brands are not available.') }}
+                <td colspan="{{ auth()->user()->can('banner.edit') || auth()->user()->can('banner.delete') ? 6 : 5 }}" class="text-center" style="background-color: ghostwhite">
+                    {{ __('banners are not available.') }}
                 </td>
             @endforelse
         </tbody>

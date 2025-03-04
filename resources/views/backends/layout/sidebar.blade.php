@@ -42,7 +42,7 @@
                                 {{ __('User Management') }}
                                 <i class="right fas fa-angle-left"></i>
                             </p>
-                        </a>    
+                        </a>
                         <ul class="nav nav-treeview">
                             @if (auth()->user()->can('user.view'))
                                 <li class="nav-item">
@@ -119,8 +119,8 @@
                 @endif
 
                 @if (auth()->user()->can('banner.view') || auth()->user()->can('shoes-slider.view'))
-                    <li class="nav-item main-nav-item @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) menu-is-opening menu-open @endif">
-                        <a href="#" class="nav-link main-nav-link @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) active @endif">
+                    <li class="nav-item @if (request()->routeIs('admin.banner-slider*', 'admin.shoes-slider*')) menu-is-opening menu-open @endif">
+                        <a href="#" class="nav-link main-nav-link @if (request()->routeIs('admin.banenr-slider*', 'admin.shoes-slider*')) active @endif">
                             @include('svgs.slider')
                             <p>
                                 {{ __('Banner Slider') }}
@@ -130,8 +130,7 @@
                         <ul class="nav nav-treeview">
                             @if (auth()->user()->can('banner.view'))
                                 <li class="nav-item">
-                                    <a href="{{ route('admin.baner-slider.index') }}"
-                                        class="nav-link @if (request()->routeIs('admin.baner-slider*')) active @endif">
+                                    <a href="{{ route('admin.banner-slider.index') }}" class="nav-link @if (request()->routeIs('admin.banner-slider*')) active @endif">
                                         <i class="fa-solid fa-circle nav-icon"></i>
                                         <p>
                                             {{ __('Banner') }}

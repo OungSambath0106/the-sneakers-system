@@ -202,7 +202,7 @@
         $('.dropify').dropify();
     });
 </script>
-<script>
+{{-- <script>
     $(document).ready(function () {
         initDataTable();
     });
@@ -234,10 +234,14 @@
             }
 
             setTimeout(function () {
+                $.fn.dataTable.ext.search.length = 0;
+
                 let actionColumnIndex = -1;
                 let usernameColumnIndex = -1;
                 let emailColumnIndex = -1;
                 let statusColumnIndex = -1;
+
+                let ignoredColumns = [];
 
                 $('#bookingTable thead th').each(function (index) {
                     let columnText = $(this).text().trim().toLowerCase();
@@ -253,6 +257,28 @@
                     if (columnText.includes('status')) {
                         statusColumnIndex = index;
                     }
+                    if (columnText === 'image' || columnText === 'images') {
+                        ignoredColumns.push(index);
+                    }
+                });
+
+                // Custom search filter to ignore "image" and "images" columns
+                $.fn.dataTable.ext.search.push(function (settings, searchData, index, rowData, counter) {
+                    let searchTerm = $('#bookingTable_filter input').val().toLowerCase();
+
+                    if (!searchTerm) {
+                        return true;
+                    }
+
+                    for (let i = 0; i < searchData.length; i++) {
+                        if (ignoredColumns.includes(i)) {
+                            continue;
+                        }
+                        if (searchData[i].toLowerCase().includes(searchTerm)) {
+                            return true;
+                        }
+                    }
+                    return false;
                 });
 
                 // Custom sorting to ensure first names sort numerically
@@ -273,14 +299,15 @@
 
                 // Custom sorting for status (numeric)
                 $.fn.dataTable.ext.order['custom-status-asc'] = function (a, b) {
-                    return a - b; // 1 appears before 0
+                    return a - b;
                 };
                 $.fn.dataTable.ext.order['custom-status-desc'] = function (a, b) {
-                    return b - a; // 0 appears before 1
+                    return b - a;
                 };
 
                 var table = $('#bookingTable').DataTable({
                     responsive: true,
+                    searchDelay: 100,
                     dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
                     buttons: [
                         {
@@ -288,7 +315,7 @@
                             text: '<i class="fas fa-file-csv"></i> Export to CSV',
                             exportOptions: {
                                 columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' } // Export only current page
+                                modifier: { page: 'current' }
                             }
                         },
                         {
@@ -296,7 +323,7 @@
                             text: '<i class="fas fa-file-excel"></i> Export to Excel',
                             exportOptions: {
                                 columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' } // Export only current page
+                                modifier: { page: 'current' }
                             }
                         },
                         {
@@ -304,7 +331,7 @@
                             text: '<i class="fas fa-file-pdf"></i> Export to PDF',
                             exportOptions: {
                                 columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' } // Export only current page
+                                modifier: { page: 'current' }
                             }
                         },
                         {
@@ -312,7 +339,7 @@
                             text: '<i class="fas fa-print"></i> Print',
                             exportOptions: {
                                 columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' } // Print only current page
+                                modifier: { page: 'current' }
                             }
                         },
                         { extend: 'colvis', text: '<i class="fas fa-columns"></i> Column Visibility' }
@@ -352,6 +379,10 @@
                     pagingType: "full_numbers"
                 });
 
+                $('#bookingTable_filter input').off('keyup').on('keyup', function () {
+                    table.search(this.value).draw();
+                });
+
                 // Move elements correctly
                 if ($('#dataTableButtons').length) {
                     $('.dataTables_length').prependTo('#dataTableButtons');
@@ -372,7 +403,197 @@
             initDataTable();
         }, 500);
     }
+</script> --}}
+<script>
+    $(document).ready(function () {
+        initDataTable();
+    });
+
+    function initDataTable() {
+        if ($('#bookingTable').length && $('#dataTableButtons').length) {
+            if ($.fn.DataTable.isDataTable('#bookingTable')) {
+                $('#bookingTable').DataTable().clear().destroy();
+                $('#bookingTable').empty();
+            }
+
+            let thCount = $('#bookingTable thead th').length;
+            let tdCount = $('#bookingTable tbody tr:first td').length;
+
+            $('#bookingTable_wrapper .dataTables_info').remove();
+            $('#bookingTable_wrapper .dataTables_paginate').remove();
+            $('#dataTableButtons .dt-buttons').remove();
+            $('#dataTableButtons .dataTables_filter').remove();
+            $('#dataTableButtons .dataTables_length').remove();
+
+            if (thCount !== tdCount) {
+                console.error("Mismatch detected! Thead columns:", thCount, "Tbody columns:", tdCount);
+                return;
+            }
+
+            if ($('#bookingTable tbody tr').length === 0) {
+                console.warn("No data found in table. Skipping DataTables initialization.");
+                return;
+            }
+
+            setTimeout(function () {
+                // Clear old search filters (in case table was destroyed/rebuilt)
+                $.fn.dataTable.ext.search.length = 0;
+
+                let actionColumnIndex = -1;
+                let usernameColumnIndex = -1;
+                let emailColumnIndex = -1;
+                let statusColumnIndex = -1;
+
+                let ignoredColumns = [];
+
+                $('#bookingTable thead th').each(function (index) {
+                    let columnText = $(this).text().trim().toLowerCase();
+                    if (columnText.includes('action')) {
+                        actionColumnIndex = index;
+                    }
+                    if (columnText.includes('username') || columnText.includes('customer name')) {
+                        usernameColumnIndex = index;
+                    }
+                    if (columnText.includes('email')) {
+                        emailColumnIndex = index;
+                    }
+                    if (columnText.includes('status')) {
+                        statusColumnIndex = index;
+                    }
+                    if (columnText === 'image' || columnText === 'images') {
+                        ignoredColumns.push(index); // Mark "image" columns to ignore in search
+                    }
+                });
+
+                // 🔥 Custom global search: Ignore content in "image" and "images" columns
+                $.fn.dataTable.ext.search.push(function (settings, searchData, index, rowData, counter) {
+                    let searchTerm = $('#bookingTable_filter input').val().toLowerCase().trim();
+
+                    if (searchTerm === "") {
+                        return true; // If search is empty, show all rows
+                    }
+
+                    for (let i = 0; i < searchData.length; i++) {
+                        if (ignoredColumns.includes(i)) {
+                            continue; // Skip image/images columns
+                        }
+
+                        if (searchData[i].toLowerCase().includes(searchTerm)) {
+                            return true; // If any allowed column matches, show the row
+                        }
+                    }
+                    return false; // If nothing matches, hide the row
+                });
+
+                // Custom sorting
+                $.fn.dataTable.ext.type.order['custom-username-asc'] = function (a, b) {
+                    return a.localeCompare(b, undefined, { numeric: true });
+                };
+                $.fn.dataTable.ext.type.order['custom-username-desc'] = function (a, b) {
+                    return b.localeCompare(a, undefined, { numeric: true });
+                };
+
+                $.fn.dataTable.ext.type.order['custom-email-asc'] = function (a, b) {
+                    return a.localeCompare(b, undefined, { numeric: true });
+                };
+                $.fn.dataTable.ext.type.order['custom-email-desc'] = function (a, b) {
+                    return b.localeCompare(a, undefined, { numeric: true });
+                };
+
+                $.fn.dataTable.ext.order['custom-status-asc'] = function (a, b) {
+                    return a - b;
+                };
+                $.fn.dataTable.ext.order['custom-status-desc'] = function (a, b) {
+                    return b - a;
+                };
+
+                var table = $('#bookingTable').DataTable({
+                    responsive: true,
+                    searchDelay: 100,
+                    dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
+                    buttons: [
+                        {
+                            extend: 'csv',
+                            text: '<i class="fas fa-file-csv"></i> Export to CSV',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)',
+                                modifier: { page: 'current' }
+                            }
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)',
+                                modifier: { page: 'current' }
+                            }
+                        },
+                        {
+                            extend: 'pdf',
+                            text: '<i class="fas fa-file-pdf"></i> Export to PDF',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)',
+                                modifier: { page: 'current' }
+                            }
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fas fa-print"></i> Print',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child)',
+                                modifier: { page: 'current' }
+                            }
+                        },
+                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Column Visibility' }
+                    ],
+                    columnDefs: [
+                        { targets: actionColumnIndex, orderable: false },
+                        { targets: usernameColumnIndex, type: 'custom-username' },
+                        { targets: emailColumnIndex, type: 'custom-email' },
+                        { targets: statusColumnIndex, type: 'custom-status' }
+                    ],
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search...",
+                        paginate: {
+                            first: "<<",
+                            previous: "<",
+                            next: ">",
+                            last: ">>"
+                        },
+                        processing: "Loading...",
+                        aria: {
+                            sortAscending: " 🠕",
+                            sortDescending: " 🠗"
+                        }
+                    },
+                    pagingType: "full_numbers"
+                });
+
+                $('#bookingTable_filter input').off('keyup').on('keyup', function () {
+                    table.search(this.value).draw();
+                });
+
+                if ($('#dataTableButtons').length) {
+                    $('.dataTables_length').prependTo('#dataTableButtons');
+                    table.buttons().container().appendTo('#dataTableButtons');
+                    $('.dataTables_filter').appendTo('#dataTableButtons');
+                } else {
+                    console.error("Div #dataTableButtons not found.");
+                }
+            }, 100);
+        }
+    }
+
+    function refreshTable(response) {
+        $('#bookingTable').replaceWith(response.view);
+        toastr.success(response.msg);
+        setTimeout(function () {
+            initDataTable();
+        }, 500);
+    }
 </script>
+
 <!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>

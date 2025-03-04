@@ -1,5 +1,5 @@
 @extends('backends.layouts.admin')
-@section('page_title', __('Brand'))
+@section('page_title', __('Banner Slider'))
 @push('css')
     <style>
         .preview {
@@ -25,9 +25,9 @@
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header d-flex justify-content-between pb-0">
-                            <h5 class="pb-1">{{ __('Brands Table') }}</h5>
-                            @if (auth()->user()->can('brand.create'))
-                                <a class="btn bg-gradient-primary btn-modal add-new-button-right-side btn-xs" href="#" data-href="{{ route('admin.brand.create') }}"
+                            <h5 class="pb-1">{{ __('Banner Slider Table') }}</h5>
+                            @if (auth()->user()->can('banner.create'))
+                                <a class="btn bg-gradient-primary btn-modal add-new-button-right-side btn-xs" href="#" data-href="{{ route('admin.banner-slider.create') }}"
                                     data-toggle="modal" data-container=".modal_form">
                                     <i class="fas fa-plus-circle"></i>
                                     {{ __('Add New') }}
@@ -38,7 +38,7 @@
                             <div class="dataTableButtons-container d-flex mx-0 align-items-center pb-2">
                                 <div id="dataTableButtons" class="dataTableButtons-left-side col-md-12" style="justify-content: space-between"></div>
                             </div>
-                            @include('backends.brand._table')
+                            @include('backends.banner-slider._table')
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
         </div>
     </div>
     <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
-    @include('backends.brand.partial.delete_brand_modal')
+    @include('backends.banner-slider.partial.delete_banner_modal')
 @endsection
 @push('js')
     <script>
@@ -91,21 +91,21 @@
         $(document).on('click', '.btn-delete', function (e) {
             e.preventDefault();
 
-            let brandId = $(this).data('id');
+            let bannerId = $(this).data('id');
             let deleteUrl = $(this).data('href');
 
-            $('#deleteBrandModal').data('brand-id', brandId).data('delete-url', deleteUrl).modal('show');
+            $('#deleteBannerModal').data('brand-id', brandId).data('delete-url', deleteUrl).modal('show');
         });
 
         $(document).on('click', '.btn-confirm-modal', function () {
-            let modal = $('#deleteBrandModal');
-            let brandId = modal.data('brand-id');
+            let modal = $('#deleteBannerModal');
+            let bannerId = modal.data('banner-id');
             let deleteUrl = modal.data('delete-url');
 
-            let row = $(`.btn-delete[data-id="${brandId}"]`).closest('tr');
+            let row = $(`.btn-delete[data-id="${bannerId}"]`).closest('tr');
             let dataTable = $('#bookingTable').DataTable();
 
-            var data = $(`.form-delete-${brandId}`).serialize();
+            var data = $(`.form-delete-${bannerId}`).serialize();
 
             $.ajax({
                 type: "POST",
@@ -141,6 +141,6 @@
         });
 
         //for update status
-        initializeStatusInput("{{ route('admin.brand.update_status') }}");
+        initializeStatusInput("{{ route('admin.banner-slider.update_status') }}");
     </script>
 @endpush

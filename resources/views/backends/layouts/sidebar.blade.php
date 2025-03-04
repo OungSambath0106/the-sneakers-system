@@ -66,8 +66,8 @@
                 </li>
             @endif
             @if (auth()->user()->can('banner.view') || auth()->user()->can('shoes-slider.view'))
-                <li class="nav-item @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) menu-is-opening menu-open @endif">
-                    <a class="nav-link mx-0 justify-content-between @if (request()->routeIs('admin.baner-slider*', 'admin.shoes-slider*')) active @endif" href="#">
+                <li class="nav-item @if (request()->routeIs('admin.banner-slider*', 'admin.shoes-slider*')) menu-is-opening menu-open @endif">
+                    <a class="nav-link mx-0 justify-content-between @if (request()->routeIs('admin.banner-slider*', 'admin.shoes-slider*')) active @endif" href="#">
                         <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="ni ni-tv-2 icon-aside text-sm opacity-10"></i>
                         </div>
@@ -77,7 +77,7 @@
                     <ul class="nav nav-treeview">
                         @if (auth()->user()->can('banner.view'))
                             <li class="nav-item">
-                                <a href="{{ route('admin.baner-slider.index') }}" class="nav-link @if (request()->routeIs('admin.baner-slider*')) active @endif">
+                                <a href="{{ route('admin.banner-slider.index') }}" class="nav-link @if (request()->routeIs('admin.banner-slider*')) active @endif">
                                     <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                                         <i class="fa-solid fa-circle nav-icon icon-aside text-sm opacity-10" style="top: 0;"></i>
                                     </div>
@@ -179,7 +179,7 @@
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Account pages</h6>
             </li>
             <li class="nav-item">
-                <a class="nav-link mx-0" href="{{ route('admin.show_info', auth()->user()->id) }}">
+                <a class="nav-link mx-0 @if (request()->routeIs('admin.show_info*')) active @endif" href="{{ route('admin.show_info', auth()->user()->id) }}">
                     <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="ni ni-single-02 icon-aside text-sm opacity-10"></i>
                     </div>

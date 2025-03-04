@@ -2,7 +2,7 @@
     <table id="bookingTable" class="table align-items-center table-responsive mb-0">
         <thead>
             <tr>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('#') }} </th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('Image') }} </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7"> {{ __('Name') }} </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7"> {{ __('Brand') }} </th>
                 <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('Sale') }} </th>
@@ -15,9 +15,6 @@
         <tbody>
             @forelse ($products as $product)
                 <tr>
-                    <td>
-                        <p class="text-sm font-weight-bold mb-0">{{ $loop->iteration }}</p>
-                    </td>
                     <td data-order="{{ strtolower($product->name) }}">
                         <div class="d-flex">
                             @if ($product->productgallery && count($product->productgallery->images) > 0)
@@ -36,8 +33,10 @@
                                 <img src="{{ !empty($product->image[0]) && file_exists(public_path('uploads/products/' . $product->image[0])) ? asset('uploads/products/' . $product->image[0]) : asset('uploads/default.png') }}"
                                     alt="Product Image" class="avatar avatar-sm me-3">
                             @endif
-                            <p class="mb-0 text-sm font-weight-bold align-content-center"> {{ $product->name ?? 'Null' }} </p>
                         </div>
+                    </td>
+                    <td data-order="{{ strtolower($product->name) }}">
+                        <p class="mb-0 text-sm font-weight-bold"> {{ $product->name ?? 'Null' }} </p>
                     </td>
                     <td>
                         <p class="text-sm font-weight-bold mb-0">{{ $product->brand->name ?? 'Null' }}</p>

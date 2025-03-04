@@ -25,8 +25,8 @@ class BanerController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $baners = Baner::latest('id')->paginate(10);
-        return view('backends.baner-slider.index', compact('baners'));
+        $banners = Baner::latest('id')->paginate(10);
+        return view('backends.banner-slider.index', compact('banners'));
     }
 
     /**
@@ -41,7 +41,7 @@ class BanerController extends Controller
         $default_lang = 'en';
         $default_lang = json_decode($language, true)[0]['code'];
 
-        return view('backends.baner-slider._create', compact('language', 'default_lang'));
+        return view('backends.banner-slider._create', compact('language', 'default_lang'));
     }
 
     /**
@@ -113,7 +113,7 @@ class BanerController extends Controller
             ];
         }
 
-        return redirect()->route('admin.baner-slider.index')->with($output);
+        return redirect()->route('admin.banner-slider.index')->with($output);
     }
 
     /**
@@ -142,7 +142,7 @@ class BanerController extends Controller
         $default_lang = 'en';
         $default_lang = json_decode($language, true)[0]['code'];
 
-        return view('backends.baner-slider._edit', compact('baner', 'language', 'default_lang'));
+        return view('backends.banner-slider._edit', compact('baner', 'language', 'default_lang'));
     }
 
     /**
@@ -213,7 +213,7 @@ class BanerController extends Controller
             ];
         }
 
-        return redirect()->route('admin.baner-slider.index')->with($output);
+        return redirect()->route('admin.banner-slider.index')->with($output);
     }
 
     /**
@@ -232,7 +232,7 @@ class BanerController extends Controller
             $translation->delete();
             $baner->delete();
 
-            $view = view('backends.baner-slider._table', ['baners' => Baner::latest()->paginate(10)])->render();
+            $view = view('backends.banner-slider._table', ['baners' => Baner::latest()->paginate(10)])->render();
 
             DB::commit();
 
