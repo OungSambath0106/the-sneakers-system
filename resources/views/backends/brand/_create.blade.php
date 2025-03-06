@@ -52,7 +52,6 @@
 <script>
     $(document).ready(function () {
         var dropifyInput = $('.dropify').dropify();
-        const compressor = new window.Compress();
 
         $('.custom-file-input').change(async function (e) {
             const fileInput = $(this);
@@ -67,15 +66,15 @@
             updateProgressBar(progressBar, 0);
 
             try {
+                const resizedFile = await resizeImage(file, 512, 512);
+
                 const options = {
                     maxSizeMB: 0.05,
                     quality: 1.0,
-                    maxWidthOrHeight: 1024,
                     useWebWorker: true,
                     fileType: file.type
                 };
-
-                const compressedFile = await imageCompression(file, options);
+                const compressedFile = await imageCompression(resizedFile, options);
 
                 formData.append('image', compressedFile);
                 formData.append('_token', '{{ csrf_token() }}');
@@ -104,7 +103,7 @@
                 });
 
             } catch (error) {
-                toastr.error("Image compression failed.");
+                toastr.error("Image processing failed.");
                 console.error(error);
                 progressBarContainer.hide();
             }
@@ -134,6 +133,30 @@
             progressBar.css('width', value + '%');
             progressBar.text(value + '%');
             progressBar.attr('aria-valuenow', value);
+        }
+
+        async function resizeImage(file, targetWidth, targetHeight) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = targetWidth;
+                        canvas.height = targetHeight;
+                        const ctx = canvas.getContext('2d');
+
+                        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                        canvas.toBlob((blob) => {
+                            resolve(new File([blob], file.name, { type: file.type }));
+                        }, file.type);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
         }
     });
 </script>

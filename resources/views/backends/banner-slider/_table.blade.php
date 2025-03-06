@@ -20,7 +20,7 @@
                                 @else
                                     {{ asset('uploads/defualt.png') }}
                                 @endif
-                                " alt="" class="avatar avatar-sm me-3" style="object-fit: contain; cursor: pointer;"
+                                " alt="" class="avatar avatar-banner" style="object-fit: contain; cursor: pointer;"
                                 data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
                         </div>
                     </td>

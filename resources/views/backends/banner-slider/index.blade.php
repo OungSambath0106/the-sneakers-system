@@ -94,7 +94,7 @@
             let bannerId = $(this).data('id');
             let deleteUrl = $(this).data('href');
 
-            $('#deleteBannerModal').data('brand-id', brandId).data('delete-url', deleteUrl).modal('show');
+            $('#deleteBannerModal').data('banner-id', bannerId).data('delete-url', deleteUrl).modal('show');
         });
 
         $(document).on('click', '.btn-confirm-modal', function () {

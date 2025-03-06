@@ -108,6 +108,7 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         // Route Baner-Slider
         Route::post('banner-slider/update_status', [BanerController::class, 'updateStatus'])->name('banner-slider.update_status');
         Route::resource('banner-slider', BanerController::class);
+        Route::post('banner-slider/delete-image', [BanerController::class, 'deleteImage'])->name('banner-slider.delete_image');
 
         //Route for onboard
         Route::resource('shoes-slider', ShoesSliderController::class);

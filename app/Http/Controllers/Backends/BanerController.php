@@ -56,7 +56,7 @@ class BanerController extends Controller
             'name' => 'required',
         ]);
 
-        if (is_null($request->name[array_search('en', $request->lang)])) {
+        if (is_null($request->name)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'name',
@@ -76,31 +76,24 @@ class BanerController extends Controller
             DB::beginTransaction();
 
             $baner = new Baner;
-            $baner->name = $request->name[array_search('en', $request->lang)];
+            $baner->name = $request->name;
 
-            if ($request->hasFile('image')) {
-                $baner->image = ImageManager::upload('uploads/baner-slider/', $request->image);
+            if ($request->filled('image_names')) {
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $banerPath = public_path("uploads/banner-slider/{$imageName}");
+
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/banner-slider'), 0777, true);
+                    \File::move($tempPath, $banerPath);
+                    $baner->image = $imageName;
+                }
             }
 
             $baner->created_by = auth()->user()->id;
             $baner->save();
 
-            $data = [];
-            foreach ($request->lang as $index => $key) {
-                if ($request->name[$index] && $key != 'en') {
-                    array_push($data, array(
-                        'translationable_type' => 'App\Models\Baner',
-                        'translationable_id' => $baner->id,
-                        'locale' => $key,
-                        'key' => 'name',
-                        'value' => $request->name[$index],
-                    ));
-                }
-            }
-            Translation::insert($data);
-
             DB::commit();
-
             $output = [
                 'success' => 1,
                 'msg' => __('Create successfully'),
@@ -158,7 +151,7 @@ class BanerController extends Controller
             'name' => 'required',
         ]);
 
-        if (is_null($request->name[array_search('en', $request->lang)])) {
+        if (is_null($request->name)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'name',
@@ -178,32 +171,30 @@ class BanerController extends Controller
             DB::beginTransaction();
 
             $baner = Baner::findOrFail($id);
-            $baner->name = $request->name[array_search('en', $request->lang)];
+            $baner->name = $request->name;
 
-            if ($request->hasFile('image')) {
-                $baner->image = ImageManager::update('uploads/baner-slider/', $baner->image, $request->image);
-            }
+            if ($request->filled('image_names')) {
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $banerPath = public_path("uploads/banner-slider/{$imageName}");
 
-            $baner->created_by = auth()->user()->id;
-            $baner->save();
+                if ($baner->image && \File::exists(public_path("uploads/banner-slider/{$baner->image}"))) {
+                    \File::delete(public_path("uploads/banner-slider/{$baner->image}"));
+                }
 
-            foreach ($request->lang as $index => $key) {
-                if ($request->name[$index] && $key != 'en') {
-                    Translation::updateOrInsert(
-                        ['translationable_type' => 'App\Models\Baner',
-                            'translationable_id' => $baner->id,
-                            'locale' => $key,
-                            'key' => 'name'],
-                        ['value' => $request->name[$index]]
-                    );
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/banner-slider'), 0777, true);
+                    \File::move($tempPath, $banerPath);
+                    $baner->image = $imageName;
                 }
             }
 
-            DB::commit();
+            $baner->save();
 
+            DB::commit();
             $output = [
                 'success' => 1,
-                'msg' => __('Create successfully'),
+                'msg' => __('Updated successfully'),
             ];
         } catch (Exception $e) {
             DB::rollBack();
@@ -227,28 +218,54 @@ class BanerController extends Controller
         try {
             DB::beginTransaction();
             $baner = Baner::findOrFail($id);
-            $translation = Translation::where('translationable_type', 'App\Models\Baner')
-                ->where('translationable_id', $baner->id);
-            $translation->delete();
-            $baner->delete();
 
-            $view = view('backends.banner-slider._table', ['baners' => Baner::latest()->paginate(10)])->render();
+            if ($baner->image) {
+                $imagePath = public_path('uploads/banner-slider/' . $baner->image);
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
+            $baner->delete();
+            $view = view('backends.banner-slider._table', ['banners' => Baner::latest()->paginate(10)])->render();
 
             DB::commit();
-
-            return response()->json([
-                'status' => 1,
-                'view' => $view,
+            $output = [
+                'success' => 1,
+                'view'  => $view,
                 'msg' => __('Deleted successfully')
-            ]);
+            ];
         } catch (Exception $e) {
+            dd($e);
             DB::rollBack();
 
-            return response()->json([
-                'status' => 0,
-                'msg' => __('Something went wrong')
-            ]);
+            $output = [
+                'success' => 0,
+                'msg' => __('Something when wrong')
+            ];
         }
+
+        return response()->json($output);
+    }
+
+    public function deleteImage(Request $request)
+    {
+        $baner = Baner::find($request->baner_id);
+        if ($baner && $baner->image) {
+            $imagePath = public_path('uploads/banner-slider/' . $baner->image);
+
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            $baner->image = null;
+            $baner->save();
+
+            return response()->json(['success' => 1, 'msg' => 'Image deleted']);
+        }
+
+        return response()->json(['success' => 0, 'msg' => 'Banner or image not found']);
     }
 
     public function updateStatus(Request $request)

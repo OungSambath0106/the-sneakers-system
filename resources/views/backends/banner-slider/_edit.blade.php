@@ -1,151 +1,239 @@
-@extends('backends.master')
-@section('contents')
-    <!-- Content Wrapper. Contains page content -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>{{ __('Edit Banner Slider') }}</h1>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <!-- left column -->
-                <div class="col-md-12">
-                    <form method="POST" action="{{ route('admin.baner-slider.update', $baner->id) }}"
-                        enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <!-- general form elements -->
-                        <div class="card card-primary">
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
-                                            {{-- @dump($languages) --}}
-                                            @foreach (json_decode($language, true) as $lang)
-                                                @if ($lang['status'] == 1)
-                                                    <li class="nav-item">
-                                                        <a class="nav-link text-capitalize {{ $lang['code'] == $default_lang ? 'active' : '' }}"
-                                                            id="lang_{{ $lang['code'] }}-tab" data-toggle="pill"
-                                                            href="#lang_{{ $lang['code'] }}" data-lang="{{ $lang['code'] }}"
-                                                            role="tab" aria-controls="lang_{{ $lang['code'] }}"
-                                                            aria-selected="false">{{ \App\helpers\AppHelper::get_language_name($lang['code']) . '(' . strtoupper($lang['code']) . ')' }}</a>
-                                                    </li>
-                                                @endif
-                                            @endforeach
-
-                                        </ul>
-                                        <div class="tab-content" id="custom-content-below-tabContent">
-                                            @foreach (json_decode($language, true) as $lang)
-                                                @if ($lang['status'] == 1)
-                                                    <?php
-                                                    if (count($baner['translations'])) {
-                                                        $translate = [];
-                                                        foreach ($baner['translations'] as $t) {
-                                                            if ($t->locale == $lang['code'] && $t->key == 'name') {
-                                                                $translate[$lang['code']]['name'] = $t->value;
-                                                            }
-                                                        }
-                                                    }
-                                                    ?>
-                                                    <div class="tab-pane fade {{ $lang['code'] == $default_lang ? 'show active' : '' }} mt-3"
-                                                        id="lang_{{ $lang['code'] }}" role="tabpanel"
-                                                        aria-labelledby="lang_{{ $lang['code'] }}-tab">
-                                                        <div class="form-group">
-                                                            <input type="hidden" name="lang[]"
-                                                                value="{{ $lang['code'] }}">
-                                                            <label
-                                                                for="name_{{ $lang['code'] }}">{{ __('Name') }}({{ strtoupper($lang['code']) }})</label>
-                                                            <input type="name" id="name_{{ $lang['code'] }}"
-                                                                class="form-control @error('name') is-invalid @enderror"
-                                                                name="name[]" placeholder="{{ __('Enter Name') }}"
-                                                                value="{{ $translate[$lang['code']]['name'] ?? $baner['name'] }}">
-
-                                                            @error('name')
-                                                                <span class="invalid-feedback" role="alert">
-                                                                    <strong>{{ $message }}</strong>
-                                                                </span>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            @endforeach
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card no_translate_wrapper">
-                            <div class="card-header">
-                                <h3 class="card-title">{{ __('General Info') }}</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-
-                                    <div class="form-group col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputFile">{{ __('Image') }}</label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="hidden" name="image" class="image_names_hidden">
-                                                    <input type="file" class="custom-file-input" id="exampleInputFile"
-                                                        name="image" accept="image/png, image/jpeg">
-                                                    <label class="custom-file-label"
-                                                        for="exampleInputFile">{{ __('Choose file') }}</label>
-                                                </div>
-                                            </div>
-                                            <div class="preview preview-multiple text-center border rounded mt-2"
-                                                style="height: 150px">
-                                                <img src="{{ asset('uploads/baner-slider/' . $baner->image) }}" alt=""
-                                                    height="100%">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 form-group">
-                                <button type="submit" class="btn btn-primary float-right">
-                                    <i class="fa fa-save"></i>
-                                    {{ __('Save') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-@endsection
-
-@push('js')
-    <script>
-        $('.custom-file-input').change(function(e) {
-            var reader = new FileReader();
-            var preview = $(this).closest('.form-group').find('.preview img');
-            reader.onload = function(e) {
-                preview.attr('src', e.target.result).show();
-            }
-            reader.readAsDataURL(this.files[0]);
-        });
-
-        $(document).on('click', '.nav-tabs .nav-link', function(e) {
-            if ($(this).data('lang') != 'en') {
-                $('.no_translate_wrapper').addClass('d-none');
-            } else {
-                $('.no_translate_wrapper').removeClass('d-none');
-            }
-        });
-    </script>
+@push('css')
 @endpush
+<div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{ __('Update Banner Slider') }}</h5>
+            <button type="button" class="close btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <form action="{{ route('admin.banner-slider.update', $baner->id) }}" enctype="multipart/form-data"
+            class="submit-form" method="post">
+            <div class="modal-body">
+                @csrf
+                @method('PUT')
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="required_label" for="name">{{ __('Name') }}</label>
+                            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ $baner['name'] }}">
+                            @error('name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-12 px-0">
+                    <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs">{{ __('Recommend size 1080 x 500 px') }}</span> </label>
+                    <input type="hidden" name="image_names" class="image_names_hidden">
+                    <input type="file"
+                            id="dropifyInput"
+                            class="dropify custom-file-input"
+                            name="image"
+                            data-default-file="{{ getBannerImageUrl($baner) }}"
+                            accept="image/png, image/jpeg, image/webp">
+                    <div class="progress mt-2" style="height: 20px; display: none;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                            aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-end py-2">
+                        <button type="submit" class="btn bg-gradient-primary btn-sm submit float-right mb-0">
+                            <i class="fa fa-save pe-1"></i>
+                            {{__('Save')}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@include('backends.banner-slider.partial.delete_banner_image_modal')
+<script>
+    $(document).ready(function () {
+    var dropifyInstance = $('#dropifyInput').dropify();
+
+    dropifyInstance.on('dropify.afterInit', function(event, element) {
+        var previewImage = element.wrapper.find('.dropify-render img');
+        if (previewImage.length > 0) {
+            var defaultFile = "{{ getBannerImageUrl($baner) }}";
+            if (defaultFile.endsWith('.webp')) {
+                previewImage.attr('src', defaultFile);
+            }
+        }
+    });
+});
+</script>
+<script>
+    $(document).ready(function () {
+        var dropifyInput = $('.dropify').dropify();
+
+        $('.custom-file-input').change(async function (e) {
+            const fileInput = $(this);
+            const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
+            const progressBarContainer = fileInput.closest('.form-group').find('.progress');
+            const progressBar = progressBarContainer.find('.progress-bar');
+
+            const file = e.target.files[0];
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+            if (!allowedTypes.includes(file.type)) {
+                toastr.error('Only JPG, JPEG, and PNG files are allowed.');
+                return;
+            }
+
+            const formData = new FormData();
+            progressBarContainer.show();
+            updateProgressBar(progressBar, 0);
+
+            try {
+                // Resize and convert to WebP
+                const webpFile = await resizeAndConvertToWebP(file, 1080, 500);
+
+                formData.append('image', webpFile);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                simulateProgress(progressBar, function () {
+                    $.ajax({
+                        url: "{{ route('save_temp_file') }}",
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.status === 1) {
+                                imageNamesHidden.val(response.temp_files);
+                            } else {
+                                toastr.error(response.msg);
+                            }
+                            progressBarContainer.hide();
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
+                            console.log(jqXHR.responseText);
+                            progressBarContainer.hide();
+                        }
+                    });
+                });
+
+            } catch (error) {
+                toastr.error("Image processing failed.");
+                console.error(error);
+                progressBarContainer.hide();
+            }
+        });
+
+        dropifyInput.on('dropify.afterClear', function (event) {
+            $(this).closest('.form-group').find('.image_names_hidden').val('');
+            const progressBarContainer = $(this).closest('.form-group').find('.progress');
+            progressBarContainer.hide();
+        });
+
+        function simulateProgress(progressBar, callback) {
+            let progress = 0;
+            const interval = setInterval(function () {
+                progress += 10;
+                updateProgressBar(progressBar, progress);
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    if (typeof callback === "function") {
+                        callback();
+                    }
+                }
+            }, 300);
+        }
+
+        function updateProgressBar(progressBar, value) {
+            progressBar.css('width', value + '%');
+            progressBar.text(value + '%');
+            progressBar.attr('aria-valuenow', value);
+        }
+
+        async function resizeAndConvertToWebP(file, targetWidth, targetHeight) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = targetWidth;
+                        canvas.height = targetHeight;
+                        const ctx = canvas.getContext('2d');
+
+                        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                const webpFile = new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), { type: 'image/webp' });
+                                resolve(webpFile);
+                            } else {
+                                reject(new Error('Failed to create WebP blob.'));
+                            }
+                        }, 'image/webp', 1.0);
+                    };
+                    img.onerror = reject;
+                    img.src = event.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        var dropifyInstance = $('#dropifyInput').dropify();
+        var banerId = "{{ isset($baner) ? $baner->id : null }}";
+        var deleteConfirmed = false;
+
+        dropifyInstance.on('dropify.beforeClear', function (event, element) {
+            if (!deleteConfirmed) {
+                $('#deleteImageModal').modal('show');
+                return false;
+            }
+            deleteConfirmed = false;
+        });
+
+        $('.btn-confirm-modal').click(function () {
+            if (banerId) {
+                $.ajax({
+                    url: "{{ route('admin.banner-slider.delete_image') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        baner_id: banerId
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            deleteConfirmed = true;
+
+                            removeDropifyPreview();
+                        } else {
+                            console.log("Error deleting image.");
+                        }
+                    },
+                    error: function () {
+                        console.log("Request failed.");
+                    }
+                });
+            }
+            $('#deleteImageModal').modal('hide');
+        });
+
+        $('.btn-cancel-modal').click(function () {
+            $('#deleteImageModal').modal('hide');
+        });
+
+        function removeDropifyPreview() {
+            var dropifyInput = $('#dropifyInput');
+            dropifyInput.closest('.dropify-wrapper').find('.dropify-render img').remove();
+            dropifyInput.closest('.dropify-wrapper').find('.dropify-preview').css('display', 'none');
+            dropifyInput.val('');
+        }
+    });
+</script>

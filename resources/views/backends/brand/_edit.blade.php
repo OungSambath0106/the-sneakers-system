@@ -72,7 +72,7 @@
                 const options = {
                     maxSizeMB: 0.05,
                     quality: 1.0,
-                    maxWidthOrHeight: 1024,
+                    maxWidthOrHeight: 512,
                     useWebWorker: true,
                     fileType: file.type
                 };
