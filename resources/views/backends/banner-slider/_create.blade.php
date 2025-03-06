@@ -31,9 +31,8 @@
                     <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs"> {{ __('Recommend size 1080 x 500 px') }} </span> </label>
                     <input type="hidden" name="image_names" class="image_names_hidden">
                     <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image" accept="image/png, image/jpeg">
-                    <div class="progress mt-2" style="height: 20px; display: none;">
-                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div class="progress mt-2" style="height: 10px; display: none;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
                     </div>
                 </div>
                 <div class="row">
@@ -154,7 +153,7 @@
                             } else {
                                 reject(new Error('Failed to create WebP blob.'));
                             }
-                        }, 'image/webp', 1.0);
+                        }, 'image/webp', 0.8); // Quality 0.8 can be adjusted
                     };
                     img.onerror = reject;
                     img.src = event.target.result;

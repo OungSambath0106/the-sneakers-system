@@ -33,9 +33,8 @@
                             data-default-file="{{ isset($brand) && $brand->image && file_exists(public_path('uploads/brand/' . $brand->image))
                             ? asset('uploads/brand/' . $brand->image)
                             : '' }}" accept="image/png, image/jpeg">
-                    <div class="progress mt-2" style="height: 20px; display: none;">
-                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div class="progress mt-2" style="height: 10px; display: none;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
                     </div>
                 </div>
                 <div class="row">
@@ -54,7 +53,6 @@
 <script>
     $(document).ready(function () {
         var dropifyInput = $('.dropify').dropify();
-        const compressor = new window.Compress();
 
         $('.custom-file-input').change(async function (e) {
             const fileInput = $(this);
@@ -63,23 +61,22 @@
             const progressBar = progressBarContainer.find('.progress-bar');
 
             const file = e.target.files[0];
-            const formData = new FormData();
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
+            if (!allowedTypes.includes(file.type)) {
+                toastr.error('Only JPG, JPEG, and PNG files are allowed.');
+                return;
+            }
+
+            const formData = new FormData();
             progressBarContainer.show();
             updateProgressBar(progressBar, 0);
 
             try {
-                const options = {
-                    maxSizeMB: 0.05,
-                    quality: 1.0,
-                    maxWidthOrHeight: 512,
-                    useWebWorker: true,
-                    fileType: file.type
-                };
+                // Resize and convert to WebP
+                const webpFile = await resizeAndConvertToWebP(file, 512, 512);
 
-                const compressedFile = await imageCompression(file, options);
-
-                formData.append('image', compressedFile);
+                formData.append('image', webpFile);
                 formData.append('_token', '{{ csrf_token() }}');
 
                 simulateProgress(progressBar, function () {
@@ -106,7 +103,7 @@
                 });
 
             } catch (error) {
-                toastr.error("Image compression failed.");
+                toastr.error("Image processing failed.");
                 console.error(error);
                 progressBarContainer.hide();
             }
@@ -137,9 +134,38 @@
             progressBar.text(value + '%');
             progressBar.attr('aria-valuenow', value);
         }
+
+        async function resizeAndConvertToWebP(file, targetWidth, targetHeight) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = targetWidth;
+                        canvas.height = targetHeight;
+                        const ctx = canvas.getContext('2d');
+
+                        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                const webpFile = new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), { type: 'image/webp' });
+                                resolve(webpFile);
+                            } else {
+                                reject(new Error('Failed to create WebP blob.'));
+                            }
+                        }, 'image/webp', 0.8); // Quality 0.8 can be adjusted
+                    };
+                    img.onerror = reject;
+                    img.src = event.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
     });
 </script>
-
 <script>
     $(document).ready(function () {
         var dropifyInstance = $('#dropifyInput').dropify();

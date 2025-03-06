@@ -37,7 +37,7 @@
                     <div class="card mb-4">
                         <div class="card-header pb-0">
                             <h5 class="pb-1">
-                                <i class="f0a fa-filter" aria-hidden="true"></i>
+                                <i class="fa fa-filter" aria-hidden="true"></i>
                                 {{ __('Filter') }}
                             </h5>
                         </div>

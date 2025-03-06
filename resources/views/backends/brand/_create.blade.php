@@ -31,9 +31,8 @@
                     <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs"> {{ __('Recommend size 512 x 512 px') }} </span> </label>
                     <input type="hidden" name="image_names" class="image_names_hidden">
                     <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image" accept="image/png, image/jpeg">
-                    <div class="progress mt-2" style="height: 20px; display: none;">
-                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div class="progress mt-2" style="height: 10px; display: none;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
                     </div>
                 </div>
                 <div class="row">
@@ -60,23 +59,22 @@
             const progressBar = progressBarContainer.find('.progress-bar');
 
             const file = e.target.files[0];
-            const formData = new FormData();
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
+            if (!allowedTypes.includes(file.type)) {
+                toastr.error('Only JPG, JPEG, and PNG files are allowed.');
+                return;
+            }
+
+            const formData = new FormData();
             progressBarContainer.show();
             updateProgressBar(progressBar, 0);
 
             try {
-                const resizedFile = await resizeImage(file, 512, 512);
+                // Resize and convert to WebP
+                const webpFile = await resizeAndConvertToWebP(file, 512, 512);
 
-                const options = {
-                    maxSizeMB: 0.05,
-                    quality: 1.0,
-                    useWebWorker: true,
-                    fileType: file.type
-                };
-                const compressedFile = await imageCompression(resizedFile, options);
-
-                formData.append('image', compressedFile);
+                formData.append('image', webpFile);
                 formData.append('_token', '{{ csrf_token() }}');
 
                 simulateProgress(progressBar, function () {
@@ -135,7 +133,7 @@
             progressBar.attr('aria-valuenow', value);
         }
 
-        async function resizeImage(file, targetWidth, targetHeight) {
+        async function resizeAndConvertToWebP(file, targetWidth, targetHeight) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = function (event) {
@@ -149,9 +147,15 @@
                         ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
 
                         canvas.toBlob((blob) => {
-                            resolve(new File([blob], file.name, { type: file.type }));
-                        }, file.type);
+                            if (blob) {
+                                const webpFile = new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), { type: 'image/webp' });
+                                resolve(webpFile);
+                            } else {
+                                reject(new Error('Failed to create WebP blob.'));
+                            }
+                        }, 'image/webp', 0.8); // Quality 0.8 can be adjusted
                     };
+                    img.onerror = reject;
                     img.src = event.target.result;
                 };
                 reader.onerror = reject;
