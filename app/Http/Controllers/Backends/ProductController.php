@@ -292,18 +292,20 @@ class ProductController extends Controller
     {
         try {
             DB::beginTransaction();
+
             $product = Product::findOrFail($id);
+            $productImages = ProductGallery::where('product_id', $id)->get();
 
-            $translation = Translation::where('translationable_type', 'App\Models\Product')
-                            ->where('translationable_id', $product->id);
-            $translation->delete();
-
-            if ($product->image) {
-                $imagePath = public_path('uploads/products/' . $product->image);
-
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
+            foreach ($productImages as $image) {
+                if ($image->images) {
+                    foreach ($image->images as $img) {
+                        $imagePath = public_path('uploads/products/' . $img);
+                        if (file_exists($imagePath)) {
+                            unlink($imagePath);
+                        }
+                    }
                 }
+                $image->delete();
             }
             $product->delete();
 
@@ -321,7 +323,7 @@ class ProductController extends Controller
 
             $output = [
                 'success' => 0,
-                'msg' => __('Something when wrong')
+                'msg' => __('Something went wrong')
             ];
         }
 

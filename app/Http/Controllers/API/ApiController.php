@@ -142,7 +142,7 @@ class ApiController extends Controller
             ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
-            ->select('id', 'name', 'rating', 'product_info');
+            ->select('id', 'name','brand_id', 'rating', 'product_info');
 
         $products = $query->paginate(10);
 
@@ -181,7 +181,7 @@ class ApiController extends Controller
             ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
-            ->select('id', 'name', 'rating', 'product_info');
+            ->select('id', 'name', 'brand_id', 'rating', 'product_info');
 
         $products = $query->paginate(10);
 
@@ -220,7 +220,7 @@ class ApiController extends Controller
             ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
-            ->select('id', 'name', 'rating', 'product_info');
+            ->select('id', 'name', 'brand_id', 'rating', 'product_info');
 
         $products = $query->paginate(10);
 
@@ -259,7 +259,7 @@ class ApiController extends Controller
             ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
-            ->select('id', 'name', 'rating', 'product_info');
+            ->select('id', 'name', 'brand_id', 'rating', 'product_info');
 
         $products = $query->paginate(10);
 
@@ -302,7 +302,7 @@ class ApiController extends Controller
             ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
-            ->select('id', 'name', 'rating', 'product_info');
+            ->select('id', 'name', 'brand_id', 'rating', 'product_info');
 
         $products = $query->paginate(10);
 
@@ -349,7 +349,7 @@ class ApiController extends Controller
             ->with(['productgallery' => function ($query) {
                 $query->select('id', 'product_id', 'images');
             }])
-            ->select('id', 'name', 'rating', 'product_info');
+            ->select('id', 'name', 'brand_id', 'rating', 'product_info');
 
         $products = $query->paginate(10);
 

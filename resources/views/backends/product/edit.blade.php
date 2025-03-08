@@ -226,59 +226,123 @@
 
 @push('js')
     <script>
-        $(document).ready(function () {
-            const maxWidthOrHeight = 1024;
+        class ImageUploader {
+            constructor(maxWidthOrHeight, csrfToken, uploadUrl) {
+                this.maxWidthOrHeight = maxWidthOrHeight;
+                this.csrfToken = csrfToken;
+                this.uploadUrl = uploadUrl;
+            }
 
-            $('.custom-file-input').change(async function (e) {
-                const fileInput = $(this);
+            async handleFileUpload(inputElement) {
+                const fileInput = $(inputElement);
                 const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
                 const container = fileInput.closest('.form-group').find('.preview');
 
-                const files = e.target.files;
+                const files = fileInput[0].files;
                 if (files.length === 0) return;
 
                 const formData = new FormData();
-                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('_token', this.csrfToken);
 
                 let uploadedFileNames = imageNamesHidden.val() ? imageNamesHidden.val().split(' ') : [];
 
                 for (const file of files) {
                     try {
-                        let processedFile = file;
-
-                            const options = {
-                                maxSizeMB: 0.05,
-                                quality: 1.0,
-                                maxWidthOrHeight: maxWidthOrHeight,
-                                useWebWorker: true,
-                                fileType: file.type
-                            };
-                            processedFile = await imageCompression(file, options);
-
-
-                        formData.append('images[]', processedFile);
+                        const compressedFile = await this.compressAndConvertToWebP(file);
+                        formData.append('images[]', compressedFile);
                     } catch (error) {
-                        toastr.error("Image compression failed for " + file.name);
-                        console.error("Compression error:", error);
+                        toastr.error(`Image processing failed for ${file.name}`);
+                        console.error("Processing error:", error);
                         return;
                     }
                 }
 
+                this.uploadImages(formData, uploadedFileNames, container, imageNamesHidden);
+            }
+
+            async compressAndConvertToWebP(file) {
+                const options = {
+                    maxSizeMB: 0.05,
+                    quality: 0.7,
+                    maxWidthOrHeight: this.maxWidthOrHeight,
+                    useWebWorker: true,
+                };
+
+                // Compress the image (using imageCompression lib, as in your code)
+                const compressedFile = await imageCompression(file, options);
+
+                // Convert the compressed image to webp
+                const webpFile = await this.convertToWebP(compressedFile);
+                return webpFile;
+            }
+
+            async convertToWebP(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+
+                            const { width, height } = this.getScaledDimensions(img);
+                            canvas.width = width;
+                            canvas.height = height;
+
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    const webpFile = new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), {
+                                        type: 'image/webp'
+                                    });
+                                    resolve(webpFile);
+                                } else {
+                                    reject(new Error('WebP conversion failed'));
+                                }
+                            }, 'image/webp', 0.8);
+                        };
+                        img.onerror = reject;
+                        img.src = event.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            getScaledDimensions(img) {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > this.maxWidthOrHeight || height > this.maxWidthOrHeight) {
+                    if (width > height) {
+                        height *= this.maxWidthOrHeight / width;
+                        width = this.maxWidthOrHeight;
+                    } else {
+                        width *= this.maxWidthOrHeight / height;
+                        height = this.maxWidthOrHeight;
+                    }
+                }
+
+                return { width, height };
+            }
+
+            uploadImages(formData, uploadedFileNames, container, imageNamesHidden) {
                 $.ajax({
-                    url: "{{ route('save_temp_file') }}",
+                    url: this.uploadUrl,
                     type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function (response) {
+                    success: (response) => {
                         if (response.status === 1) {
                             const tempFiles = response.temp_files;
 
-                            tempFiles.forEach(function (tempFile) {
+                            tempFiles.forEach((tempFile) => {
                                 uploadedFileNames.push(tempFile);
 
                                 const imgContainer = $('<div></div>').addClass('img_container');
-                                const img = $('<img>').attr('src', "{{ asset('uploads/temp') }}/" + tempFile);
+                                const img = $('<img>').attr('src', `{{ asset('uploads/temp') }}/${tempFile}`);
                                 imgContainer.append(img);
                                 container.append(imgContainer);
                             });
@@ -288,15 +352,19 @@
                             toastr.error(response.msg);
                         }
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
+                    error: (jqXHR, textStatus, errorThrown) => {
                         toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
                         console.log(jqXHR.responseText);
                     }
                 });
-            });
+            }
+        }
 
-            $('.custom-file-input').on('click', function () {
-                // $(this).closest('.form-group').find('.image_names_hidden').val('');
+        $(document).ready(function () {
+            const uploader = new ImageUploader(1024, '{{ csrf_token() }}', "{{ route('save_temp_file') }}");
+
+            $('.custom-file-input').change(function () {
+                uploader.handleFileUpload(this);
             });
         });
     </script>

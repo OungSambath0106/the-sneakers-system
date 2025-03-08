@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="form-group col-md-12 px-0">
-                    <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs">{{ __('Recommend size 1080 x 500 px') }}</span> </label>
+                    <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs">{{ __('Recommend size 1200 px') }}</span> </label>
                     <input type="hidden" name="image_names" class="image_names_hidden">
                     <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image"
                             data-default-file="{{ isset($baner) && $baner->image && file_exists(public_path('uploads/banner-slider/' . $baner->image))
@@ -73,8 +73,7 @@
             updateProgressBar(progressBar, 0);
 
             try {
-                // Resize and convert to WebP
-                const webpFile = await resizeAndConvertToWebP(file, 1080, 500);
+                const webpFile = await processImageToWebP(file);
 
                 formData.append('image', webpFile);
                 formData.append('_token', '{{ csrf_token() }}');
@@ -103,13 +102,13 @@
                 });
 
             } catch (error) {
-                toastr.error("Image processing failed.");
+                toastr.error("Image processing failed: " + error.message);
                 console.error(error);
                 progressBarContainer.hide();
             }
         });
 
-        dropifyInput.on('dropify.afterClear', function (event) {
+        dropifyInput.on('dropify.afterClear', function () {
             $(this).closest('.form-group').find('.image_names_hidden').val('');
             const progressBarContainer = $(this).closest('.form-group').find('.progress');
             progressBarContainer.hide();
@@ -135,27 +134,36 @@
             progressBar.attr('aria-valuenow', value);
         }
 
-        async function resizeAndConvertToWebP(file, targetWidth, targetHeight) {
+        async function processImageToWebP(file) {
+            const MAX_WIDTH = 1200;
+
+            const { canvas } = await loadImageToCanvas(file, MAX_WIDTH);
+
+            const webpFile = await convertCanvasToWebPFile(canvas, file.name, 0.85);
+            return webpFile;
+        }
+
+        async function loadImageToCanvas(file, maxWidth) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = function (event) {
                     const img = new Image();
                     img.onload = function () {
                         const canvas = document.createElement('canvas');
-                        canvas.width = targetWidth;
-                        canvas.height = targetHeight;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = (maxWidth / width) * height;
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
                         const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
 
-                        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-
-                        canvas.toBlob((blob) => {
-                            if (blob) {
-                                const webpFile = new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), { type: 'image/webp' });
-                                resolve(webpFile);
-                            } else {
-                                reject(new Error('Failed to create WebP blob.'));
-                            }
-                        }, 'image/webp', 0.8); // Quality 0.8 can be adjusted
+                        resolve({ canvas, width, height });
                     };
                     img.onerror = reject;
                     img.src = event.target.result;
@@ -164,9 +172,24 @@
                 reader.readAsDataURL(file);
             });
         }
+
+        async function convertCanvasToWebPFile(canvas, fileName, quality = 0.85) {
+            const blob = await canvasToBlob(canvas, quality);
+
+            if (!blob) {
+                throw new Error('Failed to convert canvas to WebP.');
+            }
+
+            return new File([blob], fileName.replace(/\.(jpg|jpeg|png)$/i, '.webp'), { type: 'image/webp' });
+        }
+
+        function canvasToBlob(canvas, quality) {
+            return new Promise((resolve) => {
+                canvas.toBlob(resolve, 'image/webp', quality);
+            });
+        }
     });
 </script>
-
 <script>
     $(document).ready(function () {
         var dropifyInstance = $('#dropifyInput').dropify();
