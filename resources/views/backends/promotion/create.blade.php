@@ -1,316 +1,516 @@
-@extends('backends.master')
+@extends('backends.layouts.admin')
+@section('page_title', __('Add New Promotion'))
 @section('contents')
     <style>
-        .select2-container--default .select2-selection--multiple .select2-selection__rendered li:first-child.select2-search.select2-search--inline .select2-search__field {
-            height: 29px !important;
+        .dark-version .table tbody tr td {
+            border-width: 1px !important;
+        }
+        .image-box {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 1px;
+            padding: 7px;
+            background-color: #E1E1E1;
+            text-align: center;
+            position: relative;
+        }
+        .div-form {
+            margin-top: 0.5rem;
+        }
+        .progress {
+            margin-top: 0.5rem;
+            border-radius: 6px;
+            height: 12px !important;
+        }
+        .image-box img {
+            width: 11rem;
+            height: auto;
+            object-fit: cover;
+        }
+        .image-box .description {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        .upload-box {
+            width: 12rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* border: 2px dashed #ccc; */
+            border-radius: 2px;
+            min-height: 121px;
+            font-size: 11px;
+            color: black;
+            cursor: pointer;
+            margin-top: 10px;
+            text-align: center;
+            background-color: #E1E1E1;
+        }
+        .upload-box div .fa-lg {
+            margin-bottom: 8px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #fff;
+            border: none;
+            color: red;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            width: 2rem;
+        }
+        .image-box:hover .close-btn {
+            display: block;
         }
     </style>
-    <!-- Content Wrapper. Contains page content -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>{{ __('Add New Promotion') }}</h1>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <!-- left column -->
                 <div class="col-md-12">
                     <form method="POST" action="{{ route('admin.promotion.store') }}" enctype="multipart/form-data">
                         @csrf
-                        <!-- general form elements -->
                         <div class="card card-primary">
-                            <!-- /.card-header -->
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-12">
-                                        <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
-                                            {{-- @dump($language) --}}
-                                            @foreach (json_decode($language, true) as $lang)
-                                                @if ($lang['status'] == 1)
-                                                    <li class="nav-item">
-                                                        <a class="nav-link text-capitalize {{ $lang['code'] == $default_lang ? 'active' : '' }}"
-                                                            id="lang_{{ $lang['code'] }}-tab" data-toggle="pill"
-                                                            href="#lang_{{ $lang['code'] }}" data-lang="{{ $lang['code'] }}"
-                                                            role="tab" aria-controls="lang_{{ $lang['code'] }}"
-                                                            aria-selected="false">{{ \App\helpers\AppHelper::get_language_name($lang['name']) . '(' . strtoupper($lang['code']) . ')' }}</a>
-                                                    </li>
-                                                @endif
-                                            @endforeach
-                                        </ul>
-                                        <div class="tab-content" id="custom-content-below-tabContent">
-                                            @foreach (json_decode($language, true) as $key => $lang)
-                                                @if ($lang['status'] == 1)
-                                                    <div class="tab-pane fade {{ $lang['code'] == $default_lang ? 'show active' : '' }} mt-3"
-                                                        id="lang_{{ $lang['code'] }}" role="tabpanel"
-                                                        aria-labelledby="lang_{{ $lang['code'] }}-tab">
-                                                        <div class="row">
-                                                            <div class="form-group col-md-12">
-                                                                <input type="hidden" name="lang[]"
-                                                                    value="{{ $lang['code'] }}">
-                                                                <label for="title_{{ $lang['code'] }}">{{ __('Title') }}
-                                                                    ({{ strtoupper($lang['code']) }})
-                                                                </label>
-                                                                <input type="text" id="title_{{ $lang['code'] }}"
-                                                                    class="form-control @error('title') is-invalid @enderror"
-                                                                    name="title[]" placeholder="{{ __('Enter Title') }}"
-                                                                    value="">
-                                                                @error('title')
-                                                                    <span class="invalid-feedback" role="alert">
-                                                                        <strong>{{ $message }}</strong>
-                                                                    </span>
-                                                                @enderror
-                                                            </div>
-                                                            <div class="form-group col-md-12">
-                                                                <label
-                                                                    for="description_{{ $lang['code'] }}">{{ __('Description') }}
-                                                                    ({{ strtoupper($lang['code']) }})</label>
-                                                                <textarea type="text"
-                                                                    id="description_{{ $lang['code'] }}"
-                                                                    class="form-control @error('description') is-invalid @enderror"
-                                                                    name="description[]"
-                                                                    placeholder="{{ __('Enter Description') }}"
-                                                                    value=""></textarea>
-                                                                @error('description')
-                                                                    <span class="invalid-feedback" role="alert">
-                                                                        <strong>{{ $message }}</strong>
-                                                                    </span>
-                                                                @enderror
-                                                            </div>
-                                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label for="title" class="required_label">{{ __('Name') }}</label>
+                                                <input type="title" id="title" class="form-control @error('title') is-invalid @enderror"
+                                                    name="title" placeholder="{{ __('Enter Name') }}" value="">
+                                                @error('title')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                <label for="description" class="required_label">{{ __('Description') }}</label>
+                                                <textarea type="text" id="description" class="form-control @error('description') is-invalid @enderror"
+                                                    name="description" placeholder="{{ __('Enter Description') }}" value=""></textarea>
+                                                @error('description')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="required_label" for="promotion_type">{{ __('Promotion Type') }}</label>
+                                                <select name="promotion_type" id="promotion_type" class="form-control select2 @error('Promotion_type') is-invalid @enderror" onchange="togglePromotionFields()">
+                                                    <option value="brand" selected>{{ __('By Brand') }}</option>
+                                                    <option value="product">{{ __('By Product') }}</option>
+                                                </select>
+                                                @error('promotion_type')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6" id="product_field">
+                                                <label class="required_label" for="product">{{ __('Promotion by Product') }}</label>
+                                                <select name="products[]" id="product" multiple class="form-control select2 @error('product') is-invalid @enderror">
+                                                    @foreach ($products as $product)
+                                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('product')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6" id="brand_field" style="display: none;">
+                                                <label class="required_label" for="brand">{{ __('Promotion by Brand') }}</label>
+                                                <select name="brands[]" id="brand" multiple class="form-control select2 @error('brand') is-invalid @enderror">
+                                                    @foreach ($brands as $brand)
+                                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('brand')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="required_label" for="discount_type">{{ __('Discount Type') }}</label>
+                                                <select name="discount_type" id="discount_type" class="form-control select2 @error('discount_type') is-invalid @enderror" onchange="toggleDiscountFields()">
+                                                    <option value="percent" selected>{{ __('Percent') }}</option>
+                                                    <option value="amount">{{ __('Amount') }}</option>
+                                                </select>
+                                                @error('discount_type')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+
+                                            <div class="form-group col-md-6" id="percent_field">
+                                                <label class="required_label" for="percent_input">{{ __('Discount Percent') }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">%</span>
                                                     </div>
-                                                @endif
-                                            @endforeach
-                                        </div>
+                                                    <input type="number" name="percent" id="percent_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
+                                                        class="form-control @error('percent') is-invalid @enderror" step="any"
+                                                        value="{{ old('percent') }}">
+                                                </div>
 
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card no_translate_wrapper">
-                            <div class="card-header">
-                                <h3 class="card-title">{{ __('General Info') }}</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="form-group col-md-6">
-                                        <label class="required_label" for="promotion_type">{{ __('Promotion Type') }}</label>
-                                        <select name="promotion_type" id="promotion_type" class="form-control select2 @error('Promotion_type') is-invalid @enderror" onchange="togglePromotionFields()">
-                                            <option value="brand" selected>{{ __('By Brand') }}</option>
-                                            <option value="product">{{ __('By Product') }}</option>
-                                        </select>
-                                        @error('promotion_type')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col-md-6" id="product_field">
-                                        <label class="required_label" for="product">{{ __('Promotion by Product') }}</label>
-                                        <select name="products[]" id="product" multiple class="form-control select2 @error('product') is-invalid @enderror">
-                                            @foreach ($products as $product)
-                                                <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('product')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col-md-6" id="brand_field" style="display: none;">
-                                        <label class="required_label" for="brand">{{ __('Promotion by Brand') }}</label>
-                                        <select name="brands[]" id="brand" multiple class="form-control select2 @error('brand') is-invalid @enderror">
-                                            @foreach ($brands as $brand)
-                                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('brand')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="required_label" for="discount_type">{{ __('Discount Type') }}</label>
-                                        <select name="discount_type" id="discount_type" class="form-control select2 @error('discount_type') is-invalid @enderror" onchange="toggleDiscountFields()">
-                                            <option value="percent" selected>{{ __('Percent') }}</option>
-                                            <option value="amount">{{ __('Amount') }}</option>
-                                        </select>
-                                        @error('discount_type')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group col-md-6" id="percent_field">
-                                        <label class="required_label" for="percent_input">{{ __('Discount Percent') }}</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">%</span>
+                                                @error('percent')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
                                             </div>
-                                            <input type="number" name="percent" id="percent_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
-                                                class="form-control @error('percent') is-invalid @enderror" step="any"
-                                                value="{{ old('percent') }}">
-                                        </div>
 
-                                        @error('percent')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
+                                            <div class="form-group col-md-6" id="amount_field" style="display: none;">
+                                                <label class="required_label" for="amount_input">{{ __('Discount Amount') }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">$</span>
+                                                    </div>
+                                                    <input type="number" name="amount" id="amount_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
+                                                        class="form-control @error('amount') is-invalid @enderror" step="any"
+                                                        value="{{ old('amount') }}">
+                                                </div>
 
-                                    <div class="form-group col-md-6" id="amount_field" style="display: none;">
-                                        <label class="required_label" for="amount_input">{{ __('Discount Amount') }}</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">$</span>
+                                                @error('amount')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
                                             </div>
-                                            <input type="number" name="amount" id="amount_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
-                                                class="form-control @error('amount') is-invalid @enderror" step="any"
-                                                value="{{ old('amount') }}">
-                                        </div>
 
-                                        @error('amount')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label class="required_label">{{__('Start Date')}}</label>
-                                        <input type="date" class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date') }}"
-                                            name="start_date" >
-                                        @error('start_date')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label class="required_label">{{__('End Date')}}</label>
-                                        <input type="date" class="form-control @error('end_date') is-invalid @enderror" value="{{ old('end_date') }}"
-                                            name="end_date" >
-                                        @error('end_date')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <div class="form-group">
-                                            <label for="exampleInputFile">{{ __('Banner') }}</label>
-                                            @include('backends.promotion.partial.promotion_galleries')
-                                            {{-- <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="hidden" name="banners"
-                                                        class="banner_hidden">
-                                                    <input type="file" class="custom-file-input header-file-input"
-                                                        id="exampleInputFile" name="banner"
-                                                        accept="image/png, image/jpeg">
-                                                    <label class="custom-file-label"
-                                                        for="exampleInputFile">{{ __('Choose Banner') }}</label>
+                                            <div class="form-group col-md-6">
+                                                <label class="required_label">{{__('Start Date')}}</label>
+                                                <input type="date" class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date') }}"
+                                                    name="start_date" >
+                                                @error('start_date')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label class="required_label">{{__('End Date')}}</label>
+                                                <input type="date" class="form-control @error('end_date') is-invalid @enderror" value="{{ old('end_date') }}"
+                                                    name="end_date" >
+                                                @error('end_date')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                <div class="form-group">
+                                                    <label class="required_label" for="exampleInputFile">{{ __('Banner') }} <span class="text-info text-xs"> {{ __('Upload a maximum of 5 images.') }} </span> </label>
+                                                    @include('backends.promotion.partial.promotion_galleries')
                                                 </div>
                                             </div>
-                                            <div class="preview preview-multiple text-center border rounded mt-2"
-                                                style="height: 150px">
-                                                <img src="{{ asset('uploads/defualt.png') }}" alt=""
-                                                    height="100%">
-                                            </div> --}}
                                         </div>
                                     </div>
-
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 form-group">
-                                <button type="submit" class="btn btn-primary float-right">
-                                    <i class="fa fa-save"></i>
-                                    {{ __('Save') }}
-                                </button>
+                                <div class="row">
+                                    <div class="col-md-12 text-end pt-2">
+                                        <button type="submit" class="btn bg-gradient-primary btn-sm submit float-right mb-0">
+                                            <i class="fa fa-save pe-1"></i>
+                                            {{__('Save')}}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <!-- /.row -->
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
-    <!-- /.content -->
 @endsection
-
 @push('js')
     <script>
-        const compressor = new window.Compress();
-        $('.custom-file-input').change(function(e) {
-            const files = [...e.target.files];
-            const formData = new FormData();
-            const image_names_hidden = $(this).closest('.custom-file').find('input[type=hidden]');
-            const container = $(this).closest('.form-group').find('.preview');
-
-            if (container.find('img').attr('src') === `{{ asset('uploads/image/default.png') }}`) {
-                container.empty();
+        class ImageUploader {
+            constructor(maxWidthOrHeight, csrfToken, uploadUrl) {
+                this.maxWidthOrHeight = maxWidthOrHeight;
+                this.csrfToken = csrfToken;
+                this.uploadUrl = uploadUrl;
             }
 
-            files.forEach(file => {
-                if (file.type === 'image/png') {
-                    // Skip compression for PNGs
-                    formData.append('images[]', file);
-                } else {
-                    // Compress non-PNG files
-                    compressor.compress([file], {
-                        size: 4,
-                        quality: 0.75,
-                    }).then(output => {
-                        const compressedFile = Compress.convertBase64ToFile(output[0].data, output[0].ext);
-                        formData.append('images[]', compressedFile);
+            async handleFileUpload(inputElement) {
+                const fileInput = $(inputElement);
+                const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
+                const container = fileInput.closest('.form-group').find('.preview');
+
+                const files = fileInput[0].files;
+                if (files.length === 0) return;
+
+                const formData = new FormData();
+                formData.append('_token', this.csrfToken);
+
+                let uploadedFileNames = imageNamesHidden.val() ? imageNamesHidden.val().split(' ') : [];
+
+                try {
+                    const compressedFiles = await Promise.all([...files].map(async (file) => {
+                        const progressBar = this.createProgressBar(container);
+                        progressBar.setProgress(10);
+
+                        try {
+                            const compressedFile = await this.compressAndConvertToWebP(file, progressBar);
+                            progressBar.setProgress(90);
+                            return { file: compressedFile, progressBar };
+                        } catch (error) {
+                            progressBar.setError();
+                            throw error;
+                        }
+                    }));
+
+                    compressedFiles.forEach(({ file, progressBar }) => {
+                        formData.append('images[]', file);
+                        progressBar.setProgress(100);
                     });
-                }
-            });
 
-            $.ajax({
-                url: "{{ route('save_temp_file') }}",
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.status == 0) {
-                        toastr.error(response.msg);
-                    }
-                    if (response.status == 1) {
-                        const temp_files = response.temp_files;
-                        temp_files.forEach(temp_file => {
-                            const img_container = $('<div></div>').addClass('img_container');
-                            const img = $('<img>').attr('src', "{{ asset('uploads/temp') }}" + '/' + temp_file);
-                            img_container.append(img);
-                            container.append(img_container);
+                    this.uploadImages(formData, uploadedFileNames, container, imageNamesHidden);
+                } catch (error) {
+                    toastr.error("Image processing failed");
+                    console.error("Processing error:", error);
+                }
+            }
 
-                            const current_file_name = image_names_hidden.val();
-                            const new_file_name = current_file_name + ' ' + temp_file;
-                            image_names_hidden.val(new_file_name);
-                        });
+            async compressAndConvertToWebP(file, progressBar) {
+                const options = {
+                    maxSizeMB: 0.2,
+                    quality: 1.0,
+                    useWebWorker: true,
+                };
+
+                try {
+                    progressBar.setProgress(30);
+                    const compressedFile = await imageCompression(file, options);
+                    progressBar.setProgress(60);
+
+                    const webpFile = await this.convertToWebP(compressedFile);
+                    progressBar.setProgress(80);
+                    return webpFile;
+                } catch (error) {
+                    progressBar.setError();
+                    console.error("Compression error:", error);
+                    throw error;
+                }
+            }
+
+            createProgressBar(container) {
+                const imageBox = $('<div class="image-box"></div>');
+                const progressContainer = $('<div class="progress"></div>');
+                const progressBar = $('<div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>');
+
+                progressContainer.append(progressBar);
+                imageBox.append(progressContainer);
+                container.append(imageBox);
+
+                return {
+                    setProgress: function (percentage) {
+                        progressBar.css('width', percentage + '%').text(percentage + '%').attr('aria-valuenow', percentage);
+                        if (percentage === 100) {
+                            progressContainer.fadeOut();
+                        }
+                    },
+                    setError: function () {
+                        progressBar.addClass('bg-danger').text('Failed');
+                    }
+                };
+            }
+
+            async convertToWebP(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+
+                            const { width, height } = this.getScaledDimensions(img);
+                            canvas.width = width;
+                            canvas.height = height;
+
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    resolve(new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), { type: 'image/webp' }));
+                                } else {
+                                    reject(new Error('WebP conversion failed'));
+                                }
+                            }, 'image/webp', 0.9);
+                        };
+                        img.onerror = reject;
+                        img.src = event.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            getScaledDimensions(img) {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > this.maxWidthOrHeight || height > this.maxWidthOrHeight) {
+                    if (width > height) {
+                        height *= this.maxWidthOrHeight / width;
+                        width = this.maxWidthOrHeight;
+                    } else {
+                        width *= this.maxWidthOrHeight / height;
+                        height = this.maxWidthOrHeight;
                     }
                 }
+
+                return { width, height };
+            }
+
+            uploadImages(formData, uploadedFileNames, container, imageNamesHidden) {
+                $.ajax({
+                    url: this.uploadUrl,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: (response) => {
+                        if (response.status === 1) {
+                            const tempFiles = response.temp_files;
+
+                            tempFiles.forEach((tempFile) => {
+                                uploadedFileNames.push(tempFile);
+
+                                const imgContainer = $('<div></div>').addClass('img_container');
+                                const img = $('<img>').attr('src', `{{ asset('uploads/temp') }}/${tempFile}`);
+                                imgContainer.append(img);
+                                container.append(imgContainer);
+                            });
+
+                            imageNamesHidden.val(uploadedFileNames.join(' '));
+                        } else {
+                            toastr.error(response.msg);
+                        }
+                    },
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
+                        console.log(jqXHR.responseText);
+                    }
+                });
+            }
+        }
+
+        $(document).ready(function () {
+            const uploader = new ImageUploader(1200, '{{ csrf_token() }}', "{{ route('save_temp_file') }}");
+
+            $('.custom-file-input').change(function () {
+                uploader.handleFileUpload(this);
             });
         });
+    </script>
+    <script>
+        document.querySelector('.upload-box').addEventListener('click', function() {
+            document.getElementById('fileUpload').click();
+        });
 
-        $(document).on('click', '.nav-tabs .nav-link', function(e) {
-            if ($(this).data('lang') != 'en') {
-                $('.no_translate_wrapper').addClass('d-none');
-            } else {
-                $('.no_translate_wrapper').removeClass('d-none');
+        $(document).ready(function() {
+            const maxImages = 5;
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+
+            $('#fileUpload').on('change', function(event) {
+                const files = event.target.files;
+                const currentImageCount = $('.image-box').length;
+
+                if (currentImageCount + files.length > maxImages) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'You can upload a maximum of ' + maxImages + ' images.'
+                    });
+                    return;
+                }
+
+                const uploadBox = $('#upload-box');
+
+                $.each(files, function(index, file) {
+                    if (!file.type.startsWith('image/')) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Please upload a valid image file.'
+                        });
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageBox = $(`
+                            <div class="image-box">
+                                <img src="${e.target.result}" alt="Uploaded Image">
+                                <button class="close-btn">&times;</button>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                                        aria-valuemin="0" aria-valuemax="100">0%</div>
+                                </div>
+                            </div>
+                        `);
+                        uploadBox.before(imageBox);
+                        simulateProgress(imageBox.find('.progress-bar'));
+
+                        imageBox.find('.close-btn').on('click', function() {
+                            imageBox.remove();
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            function simulateProgress(progressBar) {
+                let progress = 0;
+                progressBar.closest('.progress').show();
+
+                const interval = setInterval(function() {
+                    progress += 10;
+                    progressBar.css('width', progress + '%');
+                    progressBar.text(progress + '%');
+                    progressBar.attr('aria-valuenow', progress);
+
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        progressBar.closest('.progress').hide();
+                    }
+                }, 300);
             }
+
+            $('form').on('submit', function(event) {
+                const imageDetails = [];
+                const imageNames = $('.image_names_hidden').val().trim().split(' ');
+
+                $('.image-box').each(function(index) {
+                    const imgName = imageNames[index] || null;
+
+                    if (imgName) {
+                        imageDetails.push(imgName);
+                    }
+                });
+
+                if (imageDetails.length === 0) {
+                    event.preventDefault();
+                    $('#galleryError').removeClass('d-none').addClass('d-block');
+                    $("#card-validation-room").addClass('is-invalid-card');
+                }
+
+                $('.image_names_hidden').val(JSON.stringify(imageDetails));
+            });
         });
     </script>
     <script>

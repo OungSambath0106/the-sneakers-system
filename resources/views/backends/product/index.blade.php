@@ -118,16 +118,6 @@
             });
         });
 
-        $('.custom-file-input').change(function(e) {
-            var reader = new FileReader();
-            var preview = $(this).closest('.form-group').find('.preview img');
-            console.log(preview);
-            reader.onload = function(e) {
-                preview.attr('src', e.target.result).show();
-            }
-            reader.readAsDataURL(this.files[0]);
-        });
-
         $(document).on('click', '.btn-delete', function (e) {
             e.preventDefault();
 

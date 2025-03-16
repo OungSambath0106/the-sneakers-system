@@ -143,7 +143,7 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    <input type="number" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
+                                                                    <input type="text" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
                                                                         name="products_info[product_size][]">
                                                                 </td>
                                                                 <td>
@@ -151,7 +151,7 @@
                                                                         <div class="input-group-prepend">
                                                                             <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">$</span>
                                                                         </div>
-                                                                        <input type="number" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
+                                                                        <input type="text" class="form-control" min="0" oninput="validatePriceInput(this)" onkeydown="preventMinus(event)"
                                                                             name="products_info[product_price][]">
                                                                     </div>
                                                                 </td>
@@ -228,16 +228,13 @@
 
             async compressAndConvertToWebP(file) {
                 const options = {
-                    maxSizeMB: 0.05,
-                    quality: 0.7,
-                    maxWidthOrHeight: this.maxWidthOrHeight,
+                    maxSizeMB: 0.10,
+                    quality: 1.0,
+                    // maxWidthOrHeight: this.maxWidthOrHeight,
                     useWebWorker: true,
                 };
 
-                // Compress the image (using imageCompression lib, as in your code)
                 const compressedFile = await imageCompression(file, options);
-
-                // Convert the compressed image to webp
                 const webpFile = await this.convertToWebP(compressedFile);
                 return webpFile;
             }
@@ -327,7 +324,7 @@
         }
 
         $(document).ready(function () {
-            const uploader = new ImageUploader(1024, '{{ csrf_token() }}', "{{ route('save_temp_file') }}");
+            const uploader = new ImageUploader(1200, '{{ csrf_token() }}', "{{ route('save_temp_file') }}");
 
             $('.custom-file-input').change(function () {
                 uploader.handleFileUpload(this);

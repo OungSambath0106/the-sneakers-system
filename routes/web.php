@@ -113,6 +113,7 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         //Route for onboard
         Route::resource('shoes-slider', ShoesSliderController::class);
         Route::post('shoes-slider/update_status', [ShoesSliderController::class, 'updateStatus'])->name('shoes-slider.update_status');
+        Route::post('shoes-slider/delete-image', [ShoesSliderController::class, 'deleteImage'])->name('shoes-slider.delete_image');
 
         // Route Brand
         Route::post('brand/update_status', [BrandController::class, 'updateStatus'])->name('brand.update_status');

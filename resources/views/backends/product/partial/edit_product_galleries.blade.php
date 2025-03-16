@@ -8,7 +8,7 @@
         }
 
         .image-box {
-            width: 11rem;
+            width: 100%;
             border: 1px solid #ccc;
             border-radius: 1px;
             padding: 7px;

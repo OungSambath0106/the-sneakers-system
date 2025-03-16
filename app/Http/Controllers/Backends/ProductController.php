@@ -309,7 +309,7 @@ class ProductController extends Controller
             }
             $product->delete();
 
-            $products = Product::latest('id')->paginate(10);
+            $products = Product::latest('id')->get();
             $view = view('backends.product._table', compact('products'))->render();
 
             DB::commit();

@@ -1,5 +1,5 @@
 @extends('backends.layouts.admin')
-
+@section('page_title', __('Promotion'))
 @push('css')
     <style>
         .preview {
@@ -14,120 +14,110 @@
             background: #3d95d0 !important;
             box-shadow: inset 0 1px 1px rgba(84, 116, 152, 0.5) !important;
         }
-        .custom-carousel {
-            position: relative;
-            cursor: pointer;
+        .carousel-control-prev, .carousel-control-next {
+            width: unset !important;
+            height: 2rem !important;
+            align-self: center !important;
+        }
+        .carousel-control-prev {
+            left: -50px !important;
+        }
+        .carousel-control-next {
+            right: -50px !important;
         }
     </style>
 @endpush
 @section('contents')
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h3>{{ __('Promotion') }}</h3>
-                </div>
-                <div class="col-sm-6" style="text-align: right">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="row align-items-center">
-                                <div class="col-sm-6">
-                                    <h3 class="card-title"> <i class="fa fa-filter" aria-hidden="true"></i>
-                                        {{ __('Filter') }}</h3>
-                                </div>
-                            </div>
+                    <div class="card mb-4">
+                        <div class="card-header pb-0">
+                            <h5 class="pb-1">
+                                <i class="fa fa-filter" aria-hidden="true"></i>
+                                {{ __('Filter') }}
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div class="col-12">
+                            <div class="col-md-12">
                                 <div class="tab-content" id="custom-content-below-tabContent">
                                     <form method="GET" action="{{ route('admin.promotion.index') }}">
                                         <div class="row">
-                                            <div class=" col-10 d-flex">
-                                                <div class="col-sm-6 filter">
-                                                    <label for="start_date">{{ __('Start Date') }}</label>
-                                                    <input type="date" id="start_date" class="form-control"
-                                                        name="start_date" value="{{ request('start_date') }}">
-                                                </div>
-                                                <div class="col-sm-6 filter">
-                                                    <label for="end_date">{{ __('End Date') }}</label>
-                                                    <input type="date" id="end_date" class="form-control"
-                                                        name="end_date" value="{{ request('end_date') }}">
-                                                </div>
+                                            <div class="col-md-6 filter">
+                                                <label for="start_date">{{ __('Start Date') }}</label>
+                                                <input type="date" id="start_date" class="form-control"
+                                                    name="start_date" value="{{ request('start_date') }}">
                                             </div>
-                                            <div class=" col-2 mt-3">
-                                                <div class="col-sm-12 mt-3">
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="fa fa-filter" aria-hidden="true"></i>
-                                                        {{ __('Filter') }}
-                                                    </button>
-                                                    <a href="{{ route('admin.promotion.index') }}"
-                                                        class=" btn btn-danger">
-                                                        <i class="fa fa-refresh" aria-hidden="true"></i>
-                                                        {{ __('Reset') }}
-                                                    </a>
-                                                </div>
+                                            <div class="col-md-6 filter">
+                                                <label for="end_date">{{ __('End Date') }}</label>
+                                                <input type="date" id="end_date" class="form-control"
+                                                    name="end_date" value="{{ request('end_date') }}">
+                                            </div>
+                                            <div class="col-md-6 mt-3">
+                                                <label for="discount_type">{{ __('Discount Type') }}</label>
+                                                <select name="discount_type" id="discount_type" class="form-control select2">
+                                                    <option value="" {{ request('discount_type') == '' ? 'selected' : '' }}>
+                                                        {{ __('All Discount Types') }}
+                                                    </option>
+                                                    <option value="percent" {{ request('discount_type') == 'percent' ? 'selected' : '' }}>
+                                                        {{ __('Percent') }}
+                                                    </option>
+                                                    <option value="amount" {{ request('discount_type') == 'amount' ? 'selected' : '' }}>
+                                                        {{ __('Amount') }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="d-flex align-items-end justify-content-end col-md-6 mt-3" style="gap: 10px">
+                                                <button type="submit" class="btn btn-primary btn-sm mb-0">
+                                                    <i class="fa fa-filter" aria-hidden="true"></i>
+                                                    {{ __('Filter') }}
+                                                </button>
+                                                <a href="{{ route('admin.promotion.index') }}"
+                                                    class=" btn btn-danger btn-sm mb-0">
+                                                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                                                    {{ __('Reset') }}
+                                                </a>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                             </div>
-                            <div class="col-10 mt-3">
-                                <div class="col-md-6">
-                                    <label for="discount_type">{{ __('Discount Type') }}</label>
-                                    <select name="discount_type" id="discount_type" class="form-control select2">
-                                        <option value="" {{ request('discount_type') == '' ? 'selected' : '' }}>
-                                            {{ __('All Discount Types') }}
-                                        </option>
-                                        <option value="percent" {{ request('discount_type') == 'percent' ? 'selected' : '' }}>
-                                            {{ __('Percent') }}
-                                        </option>
-                                        <option value="amount" {{ request('discount_type') == 'amount' ? 'selected' : '' }}>
-                                            {{ __('Amount') }}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="row align-items-center">
-                                <div class="col-sm-6">
-                                    <h3 class="card-title">{{ __('Promotion List') }}</h3>
-                                </div>
-                                {{-- <span class="badge bg-warning total-count">{{ $grades->total() }}</span> --}}
-                                <div class="col-sm-6">
-                                    <a class="btn btn-primary float-right" href="{{ route('admin.promotion.create') }}">
-                                        <i class=" fa fa-plus-circle"></i>
-                                        {{ __('Add New') }}
-                                    </a>
-                                </div>
-                            </div>
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between pb-0">
+                            <h5 class="pb-1">{{ __('Promotions Table') }}</h5>
+                            @if (auth()->user()->can('promotion.create'))
+                                <a class="btn bg-gradient-primary add-new-button-right-side btn-xs" href="{{ route('admin.promotion.create') }}">
+                                    <i class="fas fa-plus-circle"></i>
+                                    {{ __('Add New') }}
+                                </a>
+                            @endif
                         </div>
-                        <!-- /.card-header -->
-
-                        {{-- table --}}
-                        @include('backends.promotion._table')
-
+                        <div class="card-body px-3 pt-0 pb-2">
+                            <div class="dataTableButtons-container d-flex mx-0 align-items-center pb-2">
+                                <div id="dataTableButtons" class="dataTableButtons-left-side col-md-12" style="justify-content: space-between"></div>
+                            </div>
+                            @include('backends.promotion._table')
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
     <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
+    @include('backends.promotion.partial.delete_promotion_modal')
 @endsection
 @push('js')
+    <script>
+        function openGalleryModal(promotionId) {
+            let modal = new bootstrap.Modal(document.getElementById('imageGalleryModal-' + promotionId), {
+                keyboard: true
+            });
+            modal.show();
+        }
+    </script>
     <script>
         $(document).ready(function () {
             $('#discount_type').change(function () {
@@ -163,57 +153,54 @@
             });
         });
 
-        $('.custom-file-input').change(function(e) {
-            var reader = new FileReader();
-            var preview = $(this).closest('.form-group').find('.preview img');
-            console.log(preview);
-            reader.onload = function(e) {
-                preview.attr('src', e.target.result).show();
-            }
-            reader.readAsDataURL(this.files[0]);
-        });
-
-        $(document).on('click', '.btn-delete', function(e) {
+        $(document).on('click', '.btn-delete', function (e) {
             e.preventDefault();
 
-            const Confirmation = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false
-            });
+            let promotionId = $(this).data('id');
+            let deleteUrl = $(this).data('href');
 
-            Confirmation.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
+            $('#deletePromotionModal').data('promotion-id', promotionId).data('delete-url', deleteUrl).modal('show');
+        });
 
-                    console.log(`.form-delete-${$(this).data('id')}`);
-                    var data = $(`.form-delete-${$(this).data('id')}`).serialize();
-                    // console.log(data);
-                    $.ajax({
-                        type: "post",
-                        url: $(this).data('href'),
-                        data: data,
-                        // dataType: "json",
-                        success: function(response) {
-                            console.log(response);
-                            if (response.status == 1) {
-                                $('.table-wrapper').replaceWith(response.view);
-                                toastr.success(response.msg);
-                            } else {
-                                toastr.error(response.msg)
+        $(document).on('click', '.btn-confirm-modal', function () {
+            let modal = $('#deletePromotionModal');
+            let promotionId = modal.data('promotion-id');
+            let deleteUrl = modal.data('delete-url');
 
-                            }
+            let row = $(`.btn-delete[data-id="${promotionId}"]`).closest('tr');
+            let dataTable = $('#bookingTable').DataTable();
+
+            var data = $(`.form-delete-${promotionId}`).serialize();
+
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: data,
+                success: function (response) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
                         }
                     });
+                    if (response.success == 1) {
+                        dataTable.row(row).remove().draw(false);
+                        modal.modal('hide');
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.msg
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: response.msg
+                        });
+                    }
                 }
             });
         });

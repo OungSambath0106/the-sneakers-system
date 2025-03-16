@@ -29417,6 +29417,26 @@ pre[class*="language-"] {
 .dark-version .data-not-available {
     background: rgb(5, 17, 57) !important;
 }
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    margin-inline: 5px !important;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: rgb(5, 17, 57) !important;
+    color: #fff !important;
+}
+.select2-container--default .select2-selection--multiple {
+    border-radius: 8px !important;
+}
+.select2.select2-container.select2-container--default {
+    width: 100% !important;
+}
+.dark-version .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #fff !important;
+    color: rgb(5, 17, 57) !important;
+}
+.dark-version .select2-container--default .select2-selection--multiple {
+    background: rgb(17, 28, 68) !important;
+}
 @media (max-width: 556px) {
     .navbar.navbar-main .container-fluid {
         padding-inline: 0px !important;
@@ -29436,5 +29456,42 @@ pre[class*="language-"] {
         padding-right: 0 !important;
     }
 }
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* Default: 6 columns */
+    gap: 10px;
+    width: 100%;
+}
+
+@media (max-width: 1590px) {
+    .image-grid {
+        grid-template-columns: repeat(5, 1fr); /* 5 columns */
+    }
+}
+
+@media (max-width: 1385px) {
+    .image-grid {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    }
+}
+
+@media (max-width: 910px) {
+    .image-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    }
+}
+
+@media (max-width: 710px) {
+    .image-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    }
+}
+
+@media (max-width: 505px) {
+    .image-grid {
+        grid-template-columns: repeat(1, 1fr); /* 1 column */
+    }
+}
+
 
 /*# sourceMappingURL=dashboard-free.css.map */

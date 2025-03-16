@@ -25,7 +25,7 @@ class ShoesSliderController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $shoessliders = ShoesSlider::latest('id')->paginate(10);
+        $shoessliders = ShoesSlider::latest('id')->get();
 
         return view('backends.shoes-slider.index', compact('shoessliders'));
     }
@@ -37,11 +37,7 @@ class ShoesSliderController extends Controller
      */
     public function create()
     {
-        $language = BusinessSetting::where('type', 'language')->first();
-        $language = $language->value ?? null;
-        $default_lang = 'en';
-        $default_lang = json_decode($language, true)[0]['code'];
-        return view('backends.shoes-slider.create', compact('language', 'default_lang'));
+        return view('backends.shoes-slider.create');
     }
 
     /**
@@ -56,7 +52,7 @@ class ShoesSliderController extends Controller
             'title' => 'required',
         ]);
 
-        if (is_null($request->title[array_search('en', $request->lang)])) {
+        if (is_null($request->title)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'title',
@@ -76,28 +72,21 @@ class ShoesSliderController extends Controller
             DB::beginTransaction();
 
             $shoesslider = new ShoesSlider();
-            $shoesslider->title = $request->title[array_search('en', $request->lang)];
+            $shoesslider->title = $request->title;
 
-            if ($request->hasFile('image')) {
-                $shoesslider->image = ImageManager::upload('uploads/shoes-slider/', $request->image);
-            }
+            if ($request->filled('image_names')) {
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $shoesSliderPath = public_path("uploads/shoes-slider/{$imageName}");
 
-            $shoesslider->save();
-
-            $data = [];
-            foreach ($request->lang as $index => $key) {
-                if ($request->title[$index] && $key != 'en') {
-                    array_push($data, array(
-                        'translationable_type' => 'App\Models\ShoesSlider',
-                        'translationable_id' => $shoesslider->id,
-                        'locale' => $key,
-                        'key' => 'title',
-                        'value' => $request->title[$index],
-                    ));
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/shoes-slider'), 0777, true);
+                    \File::move($tempPath, $shoesSliderPath);
+                    $shoesslider->image = $imageName;
                 }
             }
 
-            Translation::insert($data);
+            $shoesslider->save();
 
             DB::commit();
             $output = [
@@ -105,7 +94,6 @@ class ShoesSliderController extends Controller
                 'msg' => __('Created successfully')
             ];
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             $output = [
                 'success' => 0,
@@ -134,13 +122,8 @@ class ShoesSliderController extends Controller
      */
     public function edit($id)
     {
-        // $shoesslider = ShoesSlider::orderByRaw('sort_order = 1 DESC')->orderBy('sort_order')->get();
-        $shoesslider = ShoesSlider::withoutGlobalScopes()->with('translations')->findOrFail($id);
-        $language = BusinessSetting::where('type', 'language')->first();
-        $language = $language->value ?? null;
-        $default_lang = 'en';
-        $default_lang = json_decode($language, true)[0]['code'];
-        return view('backends.shoes-slider.edit', compact('shoesslider', 'language', 'default_lang'));
+        $shoesslider = ShoesSlider::withoutGlobalScopes()->findOrFail($id);
+        return view('backends.shoes-slider.edit', compact('shoesslider'));
     }
 
     /**
@@ -156,7 +139,7 @@ class ShoesSliderController extends Controller
             'title' => 'required',
         ]);
 
-        if (is_null($request->title[array_search('en', $request->lang)])) {
+        if (is_null($request->title)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'title',
@@ -176,36 +159,24 @@ class ShoesSliderController extends Controller
             DB::beginTransaction();
 
             $shoesslider =  ShoesSlider::findOrFail($id);
-            $shoesslider->title = $request->title[array_search('en', $request->lang)];
+            $shoesslider->title = $request->title;
 
-            if ($request->hasFile('image')) {
-                if ($shoesslider->image) {
-                    $oldImagePath = public_path('uploads/shoes-slider/' . $shoesslider->image);
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
-                    }
+            if ($request->filled('image_names')) {
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $shoesSliderPath = public_path("uploads/shoes-slider/{$imageName}");
+
+                if ($shoesslider->image && \File::exists(public_path("uploads/shoes-slider/{$shoesslider->image}"))) {
+                    \File::delete(public_path("uploads/shoes-slider/{$shoesslider->image}"));
                 }
-                $image = $request->file('image');
-                $imageName = now()->format('Y-m-d') . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('uploads/shoes-slider'), $imageName);
-                $shoesslider->image = $imageName;
-                $shoesslider->save();
+
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/shoes-slider'), 0777, true);
+                    \File::move($tempPath, $shoesSliderPath);
+                    $shoesslider->image = $imageName;
+                }
             }
             $shoesslider->save();
-
-            $data = [];
-            foreach ($request->lang as $index => $key) {
-                if (isset($request->title[$index]) && $key != 'en') {
-                    Translation::updateOrInsert(
-                        ['translationable_type' => 'App\Models\ShoesSlider',
-                            'translationable_id' => $shoesslider->id,
-                            'locale' => $key,
-                            'key' => 'title'],
-                        ['value' => $request->title[$index]]
-                    );
-                }
-            }
-            Translation::insert($data);
 
             DB::commit();
             $output = [
@@ -213,7 +184,6 @@ class ShoesSliderController extends Controller
                 'msg' => __('Created successfully')
             ];
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             $output = [
                 'success' => 0,
@@ -255,28 +225,55 @@ class ShoesSliderController extends Controller
         try {
             DB::beginTransaction();
             $shoesslider = ShoesSlider::findOrFail($id);
-            $translation = Translation::where('translationable_type', 'App\Models\ShoesSlider')
-                ->where('translationable_id', $shoesslider->id);
-            $translation->delete();
+
+            if ($shoesslider->image) {
+                $imagePath = public_path('uploads/shoes-slider/' . $shoesslider->image);
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+
             $shoesslider->delete();
 
-            $shoessliders = ShoesSlider::latest('id')->paginate(10);
+            $shoessliders = ShoesSlider::latest('id')->get();
             $view = view('backends.shoes-slider._table', compact('shoessliders'))->render();
 
             DB::commit();
             $output = [
-                'status' => 1,
-                'view' => $view,
+                'success' => 1,
+                'view'  => $view,
                 'msg' => __('Deleted successfully')
             ];
         } catch (Exception $e) {
+            dd($e);
             DB::rollBack();
+
             $output = [
-                'status' => 0,
-                'msg' => __('Something went wrong')
+                'success' => 0,
+                'msg' => __('Something when wrong')
             ];
         }
 
         return response()->json($output);
+    }
+
+    public function deleteImage(Request $request)
+    {
+        $shoesslider = ShoesSlider::find($request->shoesslider_id);
+        if ($shoesslider && $shoesslider->image) {
+            $imagePath = public_path('uploads/shoes-slider/' . $shoesslider->image);
+
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            $shoesslider->image = null;
+            $shoesslider->save();
+
+            return response()->json(['success' => 1, 'msg' => 'Image deleted']);
+        }
+
+        return response()->json(['success' => 0, 'msg' => 'Banner or image not found']);
     }
 }

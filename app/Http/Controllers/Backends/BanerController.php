@@ -25,7 +25,7 @@ class BanerController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $banners = Baner::latest('id')->paginate(10);
+        $banners = Baner::latest('id')->get();
         return view('backends.banner-slider.index', compact('banners'));
     }
 
@@ -36,6 +36,10 @@ class BanerController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('banner.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $language = BusinessSetting::where('type', 'language')->first();
         $language = $language->value ?? null;
         $default_lang = 'en';
@@ -128,14 +132,8 @@ class BanerController extends Controller
      */
     public function edit($id)
     {
-        $baner = Baner::withoutGlobalScopes()->with('translations')->findOrFail($id);
-
-        $language = BusinessSetting::where('type', 'language')->first();
-        $language = $language->value ?? null;
-        $default_lang = 'en';
-        $default_lang = json_decode($language, true)[0]['code'];
-
-        return view('backends.banner-slider._edit', compact('baner', 'language', 'default_lang'));
+        $baner = Baner::withoutGlobalScopes()->findOrFail($id);
+        return view('backends.banner-slider._edit', compact('baner'));
     }
 
     /**
@@ -228,7 +226,7 @@ class BanerController extends Controller
             }
 
             $baner->delete();
-            $view = view('backends.banner-slider._table', ['banners' => Baner::latest()->paginate(10)])->render();
+            $view = view('backends.banner-slider._table', ['banners' => Baner::latest()->get()])->render();
 
             DB::commit();
             $output = [

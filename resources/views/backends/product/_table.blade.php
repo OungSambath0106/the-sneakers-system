@@ -36,7 +36,7 @@
                         </div>
                     </td>
                     <td data-order="{{ strtolower($product->name) }}">
-                        <p class="mb-0 text-sm font-weight-bold"> {{ $product->name ?? 'Null' }} </p>
+                        <p class="text-sm font-weight-bold mb-0 "> {{ $product->name ?? 'Null' }} </p>
                     </td>
                     <td>
                         <p class="text-sm font-weight-bold mb-0">{{ $product->brand->name ?? 'Null' }}</p>

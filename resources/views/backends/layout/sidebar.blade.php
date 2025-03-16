@@ -84,7 +84,6 @@
                 @if (auth()->user()->can('brand.view') || auth()->user()->can('product.view'))
                     <li class="nav-item main-nav-item @if (request()->routeIs('admin.brand*', 'admin.product*')) menu-is-opening menu-open @endif">
                         <a href="#" class="nav-link main-nav-link @if (request()->routeIs('admin.brand*', 'admin.product*')) active @endif">
-                            {{-- @include('svgs.blog') --}}
                             <i class="nav-icon fa-solid fa-boxes"></i>
                             <p>
                                 {{ __('Product Management') }}

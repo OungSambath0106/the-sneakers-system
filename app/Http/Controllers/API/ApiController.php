@@ -438,16 +438,16 @@ class ApiController extends Controller
             $promotion->products = $promotion->activeProducts->map(function ($product) {
                 $product = [
                     'id' => $product->id,
-                    'name' => $product->name,
-                    'description' => $product->description,
-                    'brand_id' => $product->brand_id,
-                    'status' => $product->status,
-                    'product_info' => $product->product_info,
-                    'rating' => $product->rating,
-                    'count_product_sale' => $product->count_product_sale,
-                    'productgallery' => $product->productgallery ? array_map(function($image) {
-                        return asset('uploads/products/' . $image);
-                    }, $product->productgallery->images) : null
+                    // 'name' => $product->name,
+                    // 'description' => $product->description,
+                    // 'brand_id' => $product->brand_id,
+                    // 'status' => $product->status,
+                    // 'product_info' => $product->product_info,
+                    // 'rating' => $product->rating,
+                    // 'count_product_sale' => $product->count_product_sale,
+                    // 'productgallery' => $product->productgallery ? array_map(function($image) {
+                    //     return asset('uploads/products/' . $image);
+                    // }, $product->productgallery->images) : null
                 ];
                 return $product;
             });
@@ -456,8 +456,8 @@ class ApiController extends Controller
             $promotion->brands = $promotion->activeBrands->map(function ($brand) {
                 $brand = [
                     'id' => $brand->id,
-                    'name' => $brand->name,
-                    'images_url' => $brand->images_url
+                    // 'name' => $brand->name,
+                    // 'images_url' => $brand->images_url
                 ];
                 return $brand;
             });

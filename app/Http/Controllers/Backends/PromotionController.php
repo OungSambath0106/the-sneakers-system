@@ -32,11 +32,11 @@ class PromotionController extends Controller
         $promotions = Promotion::when($request->start_date && $request->end_date, function ($query) use ($request) {
             $query->where(function ($query) use ($request) {
                 $query->whereBetween('start_date', [$request->start_date, $request->end_date])
-                      ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
-                      ->orWhere(function ($query) use ($request) {
-                          $query->where('start_date', '<=', $request->start_date)
-                                ->where('end_date', '>=', $request->end_date);
-                      });
+                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date])
+                    ->orWhere(function ($query) use ($request) {
+                        $query->where('start_date', '<=', $request->start_date)
+                            ->where('end_date', '>=', $request->end_date);
+                });
             });
         })
         ->when($request->discount_type, function ($query, $discountType) {
@@ -44,7 +44,7 @@ class PromotionController extends Controller
         })
         ->with('promotiongallery')
         ->latest('id')
-        ->paginate(10);
+        ->get();
 
         return view('backends.promotion.index', compact('promotions'));
     }
@@ -56,13 +56,9 @@ class PromotionController extends Controller
      */
     public function create()
     {
-        $language = BusinessSetting::where('type', 'language')->first();
         $brands = Brand::with('products')->get();
         $products = Product::where('status', 1)->orderBy('name')->get();
-        $language = $language->value ?? null;
-        $default_lang = 'en';
-        $default_lang = json_decode($language, true)[0]['code'];
-        return view('backends.promotion.create', compact('brands', 'products', 'language', 'default_lang'));
+        return view('backends.promotion.create', compact('brands', 'products'));
     }
 
     /**
@@ -79,7 +75,7 @@ class PromotionController extends Controller
             'end_date' => 'required',
         ]);
 
-        if (is_null($request->title[array_search('en', $request->lang)])) {
+        if (is_null($request->title)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'title',
@@ -88,7 +84,7 @@ class PromotionController extends Controller
             });
         }
 
-        if (is_null($request->description[array_search('en', $request->lang)])) {
+        if (is_null($request->description)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'description',
@@ -109,8 +105,8 @@ class PromotionController extends Controller
 
             // dd($request->all());
             $promotion = new Promotion();
-            $promotion->title = $request->title[array_search('en', $request->lang)];
-            $promotion->description = $request->description[array_search('en', $request->lang)];
+            $promotion->title = $request->title;
+            $promotion->description = $request->description;
             $promotion->discount_type = $request->discount_type;
             $promotion->percent = $request->percent;
             $promotion->amount = $request->amount;
@@ -118,15 +114,6 @@ class PromotionController extends Controller
             $promotion->end_date = $request->end_date;
             $promotion->promotion_type = $request->promotion_type;
 
-            // if ($request->filled('banners')) {
-            //     $promotion->banner = $request->banners;
-            //     $directory = public_path('uploads/promotions');
-            //     if (!File::exists($directory)) {
-            //         File::makeDirectory($directory, 0777, true);
-            //     }
-
-            //     $banner = File::move(public_path('/uploads/temp/' . $request->banners), public_path('uploads/promotions/' . $request->banners));
-            // }
             $promotion->save();
 
             $promotionid = $promotion->id;
@@ -157,29 +144,12 @@ class PromotionController extends Controller
                 $promotion->brands()->attach($brandIds);
             }
 
-
-            $data = [];
-            foreach ($request->lang as $index => $key) {
-                if ($request->title[$index] && $key != 'en') {
-                    array_push($data, array(
-                        'translationable_type' => 'App\Models\Promotion',
-                        'translationable_id' => $promotion->id,
-                        'locale' => $key,
-                        'key' => 'title',
-                        'value' => $request->title[$index],
-                    ));
-                }
-            }
-
-            Translation::insert($data);
-
             DB::commit();
             $output = [
                 'success' => 1,
                 'msg' => __('Created successfully')
             ];
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             $output = [
                 'success' => 0,
@@ -208,8 +178,7 @@ class PromotionController extends Controller
      */
     public function edit($id)
     {
-        // $promotion = Promotion::withoutGlobalScopes()->with('translations')->findOrFail($id);
-        $promotion = Promotion::withoutGlobalScopes()->with('translations', 'products', 'brands', 'promotiongallery')->findOrFail($id);
+        $promotion = Promotion::withoutGlobalScopes()->with('products', 'brands', 'promotiongallery')->findOrFail($id);
 
         $brands = Brand::with('products')->get();
         $brand_promotionId = [];
@@ -225,11 +194,7 @@ class PromotionController extends Controller
         }
         // dd($product_promotionId);
 
-        $language = BusinessSetting::where('type', 'language')->first();
-        $language = $language->value ?? null;
-        $default_lang = 'en';
-        $default_lang = json_decode($language, true)[0]['code'];
-        return view('backends.promotion.edit', compact('brands', 'products', 'brand_promotionId', 'product_promotionId', 'promotion', 'language', 'default_lang'));
+        return view('backends.promotion.edit', compact('brands', 'products', 'brand_promotionId', 'product_promotionId', 'promotion'));
     }
 
     /**
@@ -247,7 +212,7 @@ class PromotionController extends Controller
             'end_date' => 'required',
         ]);
 
-        if (is_null($request->title[array_search('en', $request->lang)])) {
+        if (is_null($request->title)) {
             $validator->after(function ($validator) {
                 $validator->errors()->add(
                     'title',
@@ -265,24 +230,14 @@ class PromotionController extends Controller
 
         try {
             DB::beginTransaction();
-
             $promotion =  Promotion::findOrFail($id);
-            $promotion->title = $request->title[array_search('en', $request->lang)];
+            $promotion->title = $request->title;
             $promotion->discount_type = $request->discount_type;
             $promotion->percent = $request->percent;
             $promotion->amount = $request->amount;
             $promotion->start_date = $request->start_date;
             $promotion->end_date = $request->end_date;
             $promotion->promotion_type = $request->promotion_type;
-
-            // Update header banner
-            // if ($request->hasFile('banner')) {
-            //     if ($promotion->banner && file_exists(public_path('uploads/promotions/' . $promotion->banner))) {
-            //         unlink(public_path('uploads/promotions/' . $promotion->banner));
-            //     }
-
-            //     $promotion->banner = ImageManager::update('uploads/promotions/', null, $request->banner);
-            // }
 
             $promotion->save();
 
@@ -313,38 +268,22 @@ class PromotionController extends Controller
             }
 
             if ($request->promotion_type === 'brand') {
-                // Sync brands and clear products
                 if ($request->filled('brands')) {
                     $brandIds = $request->brands;
                     $promotion->brands()->sync($brandIds);
                 } else {
                     $promotion->brands()->sync([]);
                 }
-                // Clear products
                 $promotion->products()->sync([]);
 
             } elseif ($request->promotion_type === 'product') {
-                // Sync products and clear brands
                 if ($request->filled('products')) {
                     $productIds = $request->products;
                     $promotion->products()->sync($productIds);
                 } else {
                     $promotion->products()->sync([]);
                 }
-                // Clear brands
                 $promotion->brands()->sync([]);
-            }
-
-            foreach ($request->lang as $index => $key) {
-                if (isset($request->title[$index]) && $key != 'en') {
-                    Translation::updateOrInsert(
-                        ['translationable_type' => 'App\Models\Promotion',
-                            'translationable_id' => $promotion->id,
-                            'locale' => $key,
-                            'key' => 'title'],
-                        ['value' => $request->title[$index]]
-                    );
-                }
             }
 
             DB::commit();
@@ -353,7 +292,6 @@ class PromotionController extends Controller
                 'msg' => __('Created successfully')
             ];
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             $output = [
                 'success' => 0,
@@ -410,25 +348,37 @@ class PromotionController extends Controller
     {
         try {
             DB::beginTransaction();
+
             $promotion = Promotion::findOrFail($id);
-            $translation = Translation::where('translationable_type', 'App\Models\Promotion')
-                ->where('translationable_id', $promotion->id);
-            $translation->delete();
+            $promotionImages = PromotionGallery::where('promotion_id', $id)->get();
+
+            foreach ($promotionImages as $image) {
+                if ($image->images) {
+                    foreach ($image->images as $img) {
+                        $imagePath = public_path('uploads/promotions/' . $img);
+                        if (file_exists($imagePath)) {
+                            unlink($imagePath);
+                        }
+                    }
+                }
+                $image->delete();
+            }
             $promotion->delete();
 
-            $promotions = Promotion::latest('id')->paginate(10);
+            $promotions = Promotion::latest('id')->get();
             $view = view('backends.promotion._table', compact('promotions'))->render();
 
             DB::commit();
             $output = [
-                'status' => 1,
-                'view' => $view,
+                'success' => 1,
+                'view'  => $view,
                 'msg' => __('Deleted successfully')
             ];
         } catch (Exception $e) {
             DB::rollBack();
+
             $output = [
-                'status' => 0,
+                'success' => 0,
                 'msg' => __('Something went wrong')
             ];
         }
