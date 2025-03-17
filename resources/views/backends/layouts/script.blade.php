@@ -915,56 +915,52 @@
     });
 </script>
 <script>
-    $(document).ready(function () {
-        $('.dropify').dropify();
-        const compressor = new window.Compress();
+    // $(document).ready(function () {
+    //     $('.dropify').dropify();
+    //     const compressor = new window.Compress();
 
-        $('.custom-file-input').change(async function (e) {
-            const fileInput = $(this);
-            const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
+    //     $('.custom-file-input').change(async function (e) {
+    //         const fileInput = $(this);
+    //         const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
 
-            const file = e.target.files[0];
-            const formData = new FormData();
+    //         const file = e.target.files[0];
+    //         const formData = new FormData();
 
-            try {
-                const options = {
-                    maxSizeMB: 0.05,
-                    quality: 1.0,
-                    maxWidthOrHeight: 1024,
-                    useWebWorker: true,
-                    fileType: file.type
-                };
+    //         try {
+    //             const options = {
+    //                 maxSizeMB: 0.05,
+    //                 quality: 1.0,
+    //                 maxWidthOrHeight: 1024,
+    //                 useWebWorker: true,
+    //                 fileType: file.type
+    //             };
 
-                const compressedFile = await imageCompression(file, options);
+    //             const compressedFile = await imageCompression(file, options);
 
-                formData.append('image', compressedFile);
-                formData.append('_token', '{{ csrf_token() }}');
+    //             formData.append('image', compressedFile);
+    //             formData.append('_token', '{{ csrf_token() }}');
 
-                $.post({
-                    url: "{{ route('save_temp_file') }}",
-                    data: formData,
-                    processData: false,
-                    contentType: false
-                }).done(response => {
-                    if (response.status === 1) {
-                        imageNamesHidden.val(response.temp_files);
-                    } else {
-                        toastr.error(response.msg);
-                    }
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
-                    console.log(jqXHR.responseText);
-                });
+    //             $.post({
+    //                 url: "{{ route('save_temp_file') }}",
+    //                 data: formData,
+    //                 processData: false,
+    //                 contentType: false
+    //             }).done(response => {
+    //                 if (response.status === 1) {
+    //                     imageNamesHidden.val(response.temp_files);
+    //                 } else {
+    //                     toastr.error(response.msg);
+    //                 }
+    //             }).fail(function (jqXHR, textStatus, errorThrown) {
+    //                 toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
+    //                 console.log(jqXHR.responseText);
+    //             });
 
-            } catch (error) {
-                toastr.error("Image compression failed.");
-                console.error(error);
-            }
-        });
-
-        // dropifyInput.on('dropify.afterClear', function (event) {
-        //     $(this).closest('.form-group').find('.image_names_hidden').val('');
-        // });
-    });
+    //         } catch (error) {
+    //             toastr.error("Image compression failed.");
+    //             console.error(error);
+    //         }
+    //     });
+    // });
 </script>
 @stack('js')

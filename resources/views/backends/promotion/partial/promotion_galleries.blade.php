@@ -7,7 +7,7 @@
                 <div>{{ __('Drop files or click to upload') }}</div>
                 <input type="hidden" name="image_names" class="image_names_hidden">
                 <input type="file" class="custom-file-input" name="gallery[]" id="fileUpload"
-                    accept="image/png, image/jpeg" style="display: none;" multiple>
+                    accept="image/png, image/jpeg, image/gif, image/webp" style="display: none;" multiple>
             </div>
         </div>
         <div id="galleryError" class="invalid-feedback error d-none mt-2" role="alert">

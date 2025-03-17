@@ -5,6 +5,67 @@
         .dark-version .table tbody tr td {
             border-width: 1px !important;
         }
+        .image-box {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 1px;
+            padding: 7px;
+            background-color: #E1E1E1;
+            text-align: center;
+            position: relative;
+        }
+        .div-form {
+            margin-top: 0.5rem;
+        }
+        .progress {
+            margin-top: 0.5rem;
+            border-radius: 6px;
+            height: 10px !important;
+        }
+        .image-box img {
+            width: 100%;
+            height: 7rem;
+            border-radius: 7px;
+            object-fit: cover;
+        }
+        .image-box .description {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        .upload-box {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 2px;
+            height: 127px;
+            font-size: 11px;
+            color: black;
+            cursor: pointer;
+            margin-top: 10px;
+            text-align: center;
+            background-color: #E1E1E1;
+        }
+        .upload-box div .fa-lg {
+            margin-bottom: 8px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #fff;
+            border: none;
+            color: red;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            width: 2rem;
+        }
+        .image-box:hover .close-btn {
+            display: block;
+        }
     </style>
     <section class="content">
         <div class="container-fluid">
@@ -166,7 +227,7 @@
                                             </div>
                                             <div class="form-group col-md-12">
                                                 <div class="form-group">
-                                                    <label for="exampleInputFile" class="required_label">{{ __('Image') }}</label>
+                                                    <label for="exampleInputFile" class="required_label">{{ __('Image') }} <span class="text-info text-xs"> {{ __('Recommended upload a maximum of 5 images.') }} </span> </label>
                                                     @include('backends.product.partial.product_galleries')
                                                 </div>
                                             </div>
@@ -197,14 +258,18 @@
                 this.maxWidthOrHeight = maxWidthOrHeight;
                 this.csrfToken = csrfToken;
                 this.uploadUrl = uploadUrl;
+                this.isUploading = false;
             }
 
             async handleFileUpload(inputElement) {
+                if (this.isUploading) return;
+
+                this.isUploading = true;
                 const fileInput = $(inputElement);
                 const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
                 const container = fileInput.closest('.form-group').find('.preview');
 
-                const files = fileInput[0].files;
+                const files = Array.from(fileInput[0].files);
                 if (files.length === 0) return;
 
                 const formData = new FormData();
@@ -212,31 +277,72 @@
 
                 let uploadedFileNames = imageNamesHidden.val() ? imageNamesHidden.val().split(' ') : [];
 
-                for (const file of files) {
-                    try {
-                        const compressedFile = await this.compressAndConvertToWebP(file);
-                        formData.append('images[]', compressedFile);
-                    } catch (error) {
-                        toastr.error(`Image processing failed for ${file.name}`);
-                        console.error("Processing error:", error);
-                        return;
-                    }
-                }
+                try {
+                    const compressedFiles = await Promise.all(files.map((file) => {
+                        const progressBar = this.createProgressBar(container);
+                        return this.compressAndConvertToWebP(file, progressBar);
+                    }));
 
-                this.uploadImages(formData, uploadedFileNames, container, imageNamesHidden);
+                    compressedFiles.forEach(({ file, progressBar }) => {
+                        formData.append('images[]', file);
+                        progressBar.setProgress(100);
+                    });
+
+                    this.uploadImages(formData, uploadedFileNames, container, imageNamesHidden);
+                } catch (error) {
+                    toastr.error("Image processing failed");
+                    console.error("Processing error:", error);
+                } finally {
+                    this.isUploading = false;
+                }
             }
 
-            async compressAndConvertToWebP(file) {
-                const options = {
-                    maxSizeMB: 0.10,
-                    quality: 1.0,
-                    // maxWidthOrHeight: this.maxWidthOrHeight,
-                    useWebWorker: true,
-                };
+            async compressAndConvertToWebP(file, progressBar) {
+                progressBar.setProgress(10);
 
-                const compressedFile = await imageCompression(file, options);
-                const webpFile = await this.convertToWebP(compressedFile);
-                return webpFile;
+                try {
+                    const compressedFile = await this.compressImage(file);
+                    progressBar.setProgress(60);
+
+                    const webpFile = await this.convertToWebP(compressedFile);
+                    progressBar.setProgress(90);
+                    return { file: webpFile, progressBar };
+                } catch (error) {
+                    progressBar.setError();
+                    throw error;
+                }
+            }
+
+            async compressImage(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        try {
+                            const img = new Image();
+                            img.src = event.target.result;
+                            img.onload = () => {
+                                const { width, height } = this.getScaledDimensions(img);
+                                const canvas = document.createElement('canvas');
+                                const ctx = canvas.getContext('2d');
+                                canvas.width = width;
+                                canvas.height = height;
+                                ctx.drawImage(img, 0, 0, width, height);
+
+                                canvas.toBlob((blob) => {
+                                    if (blob) {
+                                        resolve(new File([blob], file.name, { type: file.type }));
+                                    } else {
+                                        reject(new Error('Compression failed'));
+                                    }
+                                }, file.type, 0.8);
+                            };
+                            img.onerror = reject;
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
             }
 
             async convertToWebP(file) {
@@ -247,19 +353,13 @@
                         img.onload = () => {
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
-
-                            const { width, height } = this.getScaledDimensions(img);
-                            canvas.width = width;
-                            canvas.height = height;
-
-                            ctx.drawImage(img, 0, 0, width, height);
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx.drawImage(img, 0, 0, img.width, img.height);
 
                             canvas.toBlob((blob) => {
                                 if (blob) {
-                                    const webpFile = new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), {
-                                        type: 'image/webp'
-                                    });
-                                    resolve(webpFile);
+                                    resolve(new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), { type: 'image/webp' }));
                                 } else {
                                     reject(new Error('WebP conversion failed'));
                                 }
@@ -271,6 +371,28 @@
                     reader.onerror = reject;
                     reader.readAsDataURL(file);
                 });
+            }
+
+            createProgressBar(container) {
+                const imageBox = $('<div class="image-box"></div>');
+                const progressContainer = $('<div class="progress"></div>');
+                const progressBar = $('<div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>');
+
+                progressContainer.append(progressBar);
+                imageBox.append(progressContainer);
+                container.append(imageBox);
+
+                return {
+                    setProgress: function (percentage) {
+                        progressBar.css('width', percentage + '%').text(percentage + '%').attr('aria-valuenow', percentage);
+                        if (percentage === 100) {
+                            progressContainer.fadeOut();
+                        }
+                    },
+                    setError: function () {
+                        progressBar.addClass('bg-danger').text('Failed');
+                    }
+                };
             }
 
             getScaledDimensions(img) {
@@ -286,7 +408,6 @@
                         height = this.maxWidthOrHeight;
                     }
                 }
-
                 return { width, height };
             }
 
@@ -301,16 +422,18 @@
                         if (response.status === 1) {
                             const tempFiles = response.temp_files;
 
-                            tempFiles.forEach((tempFile) => {
-                                uploadedFileNames.push(tempFile);
+                            if (tempFiles.length > 0) {
+                                tempFiles.forEach((tempFile) => {
+                                    uploadedFileNames.push(tempFile);
 
-                                const imgContainer = $('<div></div>').addClass('img_container');
-                                const img = $('<img>').attr('src', `{{ asset('uploads/temp') }}/${tempFile}`);
-                                imgContainer.append(img);
-                                container.append(imgContainer);
-                            });
+                                    const imgContainer = $('<div></div>').addClass('img_container');
+                                    const img = $('<img>').attr('src', "{{ asset('uploads/temp') }}/" + tempFile);
+                                    imgContainer.append(img);
+                                    container.append(imgContainer);
+                                });
 
-                            imageNamesHidden.val(uploadedFileNames.join(' '));
+                                imageNamesHidden.val(uploadedFileNames.join(' '));
+                            }
                         } else {
                             toastr.error(response.msg);
                         }
@@ -328,6 +451,91 @@
 
             $('.custom-file-input').change(function () {
                 uploader.handleFileUpload(this);
+            });
+        });
+    </script>
+    <script>
+        document.querySelector('.upload-box').addEventListener('click', function() {
+            document.getElementById('fileUpload').click();
+        });
+
+        $(document).ready(function() {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+
+            $('#fileUpload').on('change', function(event) {
+                const files = event.target.files;
+                const uploadBox = $('#upload-box');
+
+                $.each(files, function(index, file) {
+                    if (!file.type.startsWith('image/')) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Please upload a valid image file.'
+                        });
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageBox = $(`
+                            <div class="image-box">
+                                <img src="${e.target.result}" alt="Uploaded Image">
+                                <button type="button" class="remove-image">&times;</button>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                                        aria-valuemin="0" aria-valuemax="100">0%</div>
+                                </div>
+                            </div>
+                        `);
+                        uploadBox.before(imageBox);
+                        simulateProgress(imageBox.find('.progress-bar'));
+
+                        imageBox.find('.close-btn').on('click', function() {
+                            imageBox.remove();
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            function simulateProgress(progressBar) {
+                let progress = 0;
+                progressBar.closest('.progress').show();
+
+                const interval = setInterval(function() {
+                    progress += 10;
+                    progressBar.css('width', progress + '%');
+                    progressBar.text(progress + '%');
+                    progressBar.attr('aria-valuenow', progress);
+
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        progressBar.closest('.progress').hide();
+                    }
+                }, 300);
+            }
+
+            $('form').on('submit', function(event) {
+                const imageDetails = [];
+                const imageNames = $('.image_names_hidden').val().trim();
+
+                if (imageNames) {
+                    const imageArray = imageNames.split(' ');
+                    imageArray.forEach((imgName) => {
+                        if (imgName) imageDetails.push(imgName);
+                    });
+                }
+
+                $('.image_names_hidden').val(imageDetails.length > 0 ? JSON.stringify(imageDetails) : '');
+
+                $('#galleryError').removeClass('d-block').addClass('d-none');
+                $("#card-validation-room").removeClass('is-invalid-card');
             });
         });
     </script>

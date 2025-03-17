@@ -29491,6 +29491,9 @@ pre[class*="language-"] {
     .image-grid {
         grid-template-columns: repeat(1, 1fr); /* 1 column */
     }
+    .image-box img {
+        object-fit: contain !important;
+    }
 }
 
 

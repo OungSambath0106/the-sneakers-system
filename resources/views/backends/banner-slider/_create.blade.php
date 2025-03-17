@@ -30,7 +30,7 @@
                 <div class="form-group col-md-12 px-0">
                     <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs"> {{ __('Recommend size 1200 px') }} </span> </label>
                     <input type="hidden" name="image_names" class="image_names_hidden">
-                    <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image" accept="image/png, image/jpeg">
+                    <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image" accept="image/png, image/jpeg, image/gif, image/webp">
                     <div class="progress mt-2" style="height: 10px; display: none;">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
                     </div>
@@ -59,10 +59,10 @@
             const progressBar = progressBarContainer.find('.progress-bar');
 
             const file = e.target.files[0];
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
 
             if (!allowedTypes.includes(file.type)) {
-                toastr.error('Only JPG, JPEG, and PNG files are allowed.');
+                toastr.error('Only JPG, JPEG, PNG, GIF, WEBP files are allowed.');
                 return;
             }
 

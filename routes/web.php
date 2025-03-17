@@ -46,12 +46,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-// save temp file
-Route::post('save_temp_file', [FileManagerController::class, 'saveTempFile'])->name('save_temp_file');
-
 Route::redirect('/admin', '/admin/dashboard');
 // Route::redirect('/admin', '/admin/highlight');
 
+// save temp file
 Route::post('save_temp_file', [FileManagerController::class, 'saveTempFile'])->name('save_temp_file');
 Route::get('remove_temp_file', [FileManagerController::class, 'removeTempFile'])->name('remove_temp_file');
 

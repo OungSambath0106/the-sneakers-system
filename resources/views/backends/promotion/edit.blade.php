@@ -23,12 +23,13 @@
         .progress {
             margin-top: 0.5rem;
             border-radius: 6px;
-            height: 12px !important;
+            height: 10px !important;
         }
 
         .image-box img {
-            width: 11rem;
-            height: auto;
+            width: 100%;
+            height: 7rem;
+            border-radius: 7px;
             object-fit: cover;
         }
 
@@ -39,14 +40,13 @@
         }
 
         .upload-box {
-            width: 12rem;
+            width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* border: 2px dashed #ccc; */
             border-radius: 2px;
-            min-height: 121px;
+            height: 127px;
             font-size: 11px;
             color: black;
             cursor: pointer;
@@ -182,7 +182,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">%</span>
                                                     </div>
-                                                    <input type="number" name="percent" id="percent_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
+                                                    <input type="text" name="percent" id="percent_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
                                                         class="form-control @error('percent') is-invalid @enderror" step="any"
                                                         value="{{ old('percent', $promotion->percent) }}">
                                                 </div>
@@ -200,7 +200,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">$</span>
                                                     </div>
-                                                    <input type="number" name="amount" id="amount_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
+                                                    <input type="text" name="amount" id="amount_input" min="0" oninput="validateDiscountInput(this)" onkeydown="preventMinus(event)"
                                                         class="form-control @error('amount') is-invalid @enderror" step="any"
                                                         value="{{ old('amount', $promotion->amount) }}">
                                                 </div>
@@ -234,7 +234,7 @@
                                             </div>
                                             <div class="form-group col-md-12">
                                                 <div class="form-group">
-                                                    <label for="exampleInputFile">{{ __('Banner') }}</label>
+                                                    <label for="exampleInputFile">{{ __('Banner') }} <span class="text-info text-xs"> {{ __('Recommended upload a maximum of 5 images.') }} </span> </label>
                                                     @include('backends.promotion.partial.edit_promotion_galleries')
                                                 </div>
                                             </div>
@@ -265,14 +265,18 @@
                 this.maxWidthOrHeight = maxWidthOrHeight;
                 this.csrfToken = csrfToken;
                 this.uploadUrl = uploadUrl;
+                this.isUploading = false;
             }
 
             async handleFileUpload(inputElement) {
+                if (this.isUploading) return;
+
+                this.isUploading = true;
                 const fileInput = $(inputElement);
                 const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
                 const container = fileInput.closest('.form-group').find('.preview');
 
-                const files = fileInput[0].files;
+                const files = Array.from(fileInput[0].files);
                 if (files.length === 0) return;
 
                 const formData = new FormData();
@@ -281,18 +285,9 @@
                 let uploadedFileNames = imageNamesHidden.val() ? imageNamesHidden.val().split(' ') : [];
 
                 try {
-                    const compressedFiles = await Promise.all([...files].map(async (file) => {
+                    const compressedFiles = await Promise.all(files.map((file) => {
                         const progressBar = this.createProgressBar(container);
-                        progressBar.setProgress(10);
-
-                        try {
-                            const compressedFile = await this.compressAndConvertToWebP(file, progressBar);
-                            progressBar.setProgress(90);
-                            return { file: compressedFile, progressBar };
-                        } catch (error) {
-                            progressBar.setError();
-                            throw error;
-                        }
+                        return this.compressAndConvertToWebP(file, progressBar);
                     }));
 
                     compressedFiles.forEach(({ file, progressBar }) => {
@@ -304,29 +299,85 @@
                 } catch (error) {
                     toastr.error("Image processing failed");
                     console.error("Processing error:", error);
+                } finally {
+                    this.isUploading = false;
                 }
             }
 
             async compressAndConvertToWebP(file, progressBar) {
-                const options = {
-                    maxSizeMB: 0.2,
-                    quality: 1.0,
-                    useWebWorker: true,
-                };
+                progressBar.setProgress(10);
 
                 try {
-                    progressBar.setProgress(30);
-                    const compressedFile = await imageCompression(file, options);
+                    const compressedFile = await this.compressImage(file);
                     progressBar.setProgress(60);
 
                     const webpFile = await this.convertToWebP(compressedFile);
-                    progressBar.setProgress(80);
-                    return webpFile;
+                    progressBar.setProgress(90);
+                    return { file: webpFile, progressBar };
                 } catch (error) {
                     progressBar.setError();
-                    console.error("Compression error:", error);
                     throw error;
                 }
+            }
+
+            async compressImage(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        try {
+                            const img = new Image();
+                            img.src = event.target.result;
+                            img.onload = () => {
+                                const { width, height } = this.getScaledDimensions(img);
+                                const canvas = document.createElement('canvas');
+                                const ctx = canvas.getContext('2d');
+                                canvas.width = width;
+                                canvas.height = height;
+                                ctx.drawImage(img, 0, 0, width, height);
+
+                                canvas.toBlob((blob) => {
+                                    if (blob) {
+                                        resolve(new File([blob], file.name, { type: file.type }));
+                                    } else {
+                                        reject(new Error('Compression failed'));
+                                    }
+                                }, file.type, 0.8);
+                            };
+                            img.onerror = reject;
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            async convertToWebP(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    resolve(new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), { type: 'image/webp' }));
+                                } else {
+                                    reject(new Error('WebP conversion failed'));
+                                }
+                            }, 'image/webp', 0.8);
+                        };
+                        img.onerror = reject;
+                        img.src = event.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
             }
 
             createProgressBar(container) {
@@ -351,37 +402,6 @@
                 };
             }
 
-            async convertToWebP(file) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const img = new Image();
-                        img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-
-                            const { width, height } = this.getScaledDimensions(img);
-                            canvas.width = width;
-                            canvas.height = height;
-
-                            ctx.drawImage(img, 0, 0, width, height);
-
-                            canvas.toBlob((blob) => {
-                                if (blob) {
-                                    resolve(new File([blob], file.name.replace(/\.(jpg|jpeg|png)$/i, '.webp'), { type: 'image/webp' }));
-                                } else {
-                                    reject(new Error('WebP conversion failed'));
-                                }
-                            }, 'image/webp', 0.9);
-                        };
-                        img.onerror = reject;
-                        img.src = event.target.result;
-                    };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
-            }
-
             getScaledDimensions(img) {
                 let width = img.width;
                 let height = img.height;
@@ -395,7 +415,6 @@
                         height = this.maxWidthOrHeight;
                     }
                 }
-
                 return { width, height };
             }
 
@@ -410,16 +429,18 @@
                         if (response.status === 1) {
                             const tempFiles = response.temp_files;
 
-                            tempFiles.forEach((tempFile) => {
-                                uploadedFileNames.push(tempFile);
+                            if (tempFiles.length > 0) {
+                                tempFiles.forEach((tempFile) => {
+                                    uploadedFileNames.push(tempFile);
 
-                                const imgContainer = $('<div></div>').addClass('img_container');
-                                const img = $('<img>').attr('src', `{{ asset('uploads/temp') }}/${tempFile}`);
-                                imgContainer.append(img);
-                                container.append(imgContainer);
-                            });
+                                    const imgContainer = $('<div></div>').addClass('img_container');
+                                    const img = $('<img>').attr('src', "{{ asset('uploads/temp') }}/" + tempFile);
+                                    imgContainer.append(img);
+                                    container.append(imgContainer);
+                                });
 
-                            imageNamesHidden.val(uploadedFileNames.join(' '));
+                                imageNamesHidden.val(uploadedFileNames.join(' '));
+                            }
                         } else {
                             toastr.error(response.msg);
                         }
@@ -446,8 +467,6 @@
         });
 
         $(document).ready(function() {
-            const maxImages = 5;
-
             const Toast = Swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -458,16 +477,6 @@
 
             $('#fileUpload').on('change', function(event) {
                 const files = event.target.files;
-                const currentImageCount = $('.image-box').length;
-
-                if (currentImageCount + files.length > maxImages) {
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'You can upload a maximum of ' + maxImages + ' images.'
-                    });
-                    return;
-                }
-
                 const uploadBox = $('#upload-box');
 
                 $.each(files, function(index, file) {
@@ -484,9 +493,9 @@
                         const imageBox = $(`
                             <div class="image-box">
                                 <img src="${e.target.result}" alt="Uploaded Image">
-                                <button class="close-btn remove-image">&times;</button>
+                                <button type="button" class="remove-image">&times;</button>
                                 <div class="progress">
-                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0"
                                         aria-valuemin="0" aria-valuemax="100">0%</div>
                                 </div>
                             </div>
@@ -521,23 +530,19 @@
 
             $('form').on('submit', function(event) {
                 const imageDetails = [];
-                const imageNames = $('.image_names_hidden').val().trim().split(' ');
+                const imageNames = $('.image_names_hidden').val().trim();
 
-                $('.image-box').each(function(index) {
-                    const imgName = imageNames[index] || null;
-
-                    if (imgName) {
-                        imageDetails.push(imgName);
-                    }
-                });
-
-                if (imageDetails.length === 0) {
-                    event.preventDefault();
-                    $('#galleryError').removeClass('d-none').addClass('d-block');
-                    $("#card-validation-room").addClass('is-invalid-card');
+                if (imageNames) {
+                    const imageArray = imageNames.split(' ');
+                    imageArray.forEach((imgName) => {
+                        if (imgName) imageDetails.push(imgName);
+                    });
                 }
 
-                $('.image_names_hidden').val(JSON.stringify(imageDetails));
+                $('.image_names_hidden').val(imageDetails.length > 0 ? JSON.stringify(imageDetails) : '');
+
+                $('#galleryError').removeClass('d-block').addClass('d-none');
+                $("#card-validation-room").removeClass('is-invalid-card');
             });
         });
     </script>

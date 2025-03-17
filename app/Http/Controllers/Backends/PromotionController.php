@@ -245,6 +245,7 @@ class PromotionController extends Controller
             $promotiongallery = $promotion_gallery->images??[];
             $imageNameToUpdate = $request->input('image_names');
             $newImage = json_decode($imageNameToUpdate, true);
+
             $promotion_data = [];
             if (is_array($newImage)) {
                 foreach ($newImage as $detail) {
@@ -252,10 +253,12 @@ class PromotionController extends Controller
                     if (!\File::exists($directory)) {
                         \File::makeDirectory($directory, 0777, true);
                     }
+
                     $moved_image = \File::move(public_path('uploads/temp/' . $detail), $directory . '/' . $detail);
                     $promotion_data[] = $detail;
                 }
             }
+
             $merge = array_merge($promotiongallery, $promotion_data);
             if ($promotion_gallery) {
                 $promotion_gallery->images = $merge;
@@ -293,6 +296,7 @@ class PromotionController extends Controller
             ];
         } catch (\Exception $e) {
             DB::rollBack();
+            dd($e);
             $output = [
                 'success' => 0,
                 'msg' => __('Something went wrong')

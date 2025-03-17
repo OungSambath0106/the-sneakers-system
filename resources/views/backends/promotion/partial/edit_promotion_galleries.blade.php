@@ -1,7 +1,6 @@
 <div class="col-md-12 px-0 pt-2">
     <div class="card p-2 mb-0" style="box-shadow:none !important;border:1px solid #E1E1E1 !important">
         <div class="image-grid">
-            {{-- @dd($promotion->promotiongallery) --}}
             <input type="hidden" name="promotion_id" class="promotion_id" value="{{ $promotion->id }}">
 
             @if (@$promotion->promotiongallery)
@@ -24,7 +23,7 @@
                 <div>{{ __('Drop files or click to upload') }}</div>
                 <input type="hidden" name="image_names" class="image_names_hidden">
                 <input value="" type="file" class="custom-file-input" name="gallery[]" id="fileUpload"
-                    accept="image/png, image/jpeg" style="display: none;" multiple>
+                    accept="image/png, image/jpeg, image/gif, image/webp" style="display: none;" multiple>
             </div>
         </div>
     </div>

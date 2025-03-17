@@ -184,6 +184,12 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'brand_id' => 'required',
+            // 'images' => ['nullable', function ($attribute, $value, $fail) {
+            //     $images = json_decode($value, true);
+            //     if (is_array($images) && count($images) > 5) {
+            //         $fail('You can upload a maximum of 5 images.');
+            //     }
+            // }],
         ]);
 
         if (is_null($request->name)) {
@@ -211,7 +217,6 @@ class ProductController extends Controller
         }
 
         try {
-            // dd($request->all());
             DB::beginTransaction();
 
             $product = Product::findOrFail($id);
@@ -236,37 +241,39 @@ class ProductController extends Controller
             $product->save();
 
             $product_gallery = ProductGallery::where('product_id', $product->id)->first();
-            if (!$product_gallery) {
-                $product_gallery = new ProductGallery();
-                $product_gallery->product_id = $product->id;
-                $product_gallery->images = [];
-            }
-
             $existingImages = $product_gallery->images ?? [];
-            $imageNames = $request->input('image_names', '');
-            $newImages = $imageNames ? explode(' ', trim($imageNames)) : [];
+            $imageNameToUpdate = $request->input('image_names');
+            $newImages = json_decode($imageNameToUpdate, true);
 
             $product_data = [];
-            foreach ($newImages as $newImage) {
-                if (!empty($newImage)) {
-                    $sourcePath = public_path('uploads/temp/' . $newImage);
-                    $destinationPath = public_path('uploads/products/' . $newImage);
-
-                    if (!\File::exists(public_path('uploads/products'))) {
-                        \File::makeDirectory(public_path('uploads/products'), 0777, true);
+            if (is_array($newImages)) {
+                foreach ($newImages as $image) {
+                    $directory = public_path('uploads/products');
+                    if (!\File::exists($directory)) {
+                        \File::makeDirectory($directory, 0777, true);
                     }
+
+                    $sourcePath = public_path('uploads/temp/' . $image);
+                    $destinationPath = $directory . '/' . $image;
 
                     if (\File::exists($sourcePath)) {
                         \File::move($sourcePath, $destinationPath);
-                        $product_data[] = $newImage;
+                        $product_data[] = $image;
                     }
                 }
             }
 
             $mergedImages = array_merge($existingImages, $product_data);
+            if ($product_gallery) {
+                $product_gallery->images = $mergedImages;
+                $product_gallery->save();
+            } else {
+                $product_gallery = new ProductGallery();
+                $product_gallery->product_id = $product->id;
+                $product_gallery->images = $mergedImages;
+                $product_gallery->save();
+            }
 
-            $product_gallery->images = $mergedImages;
-            $product_gallery->save();
 
             DB::commit();
             $output = [
