@@ -27,6 +27,7 @@ use App\Models\ShoesSlider;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -393,27 +394,37 @@ class ApiController extends Controller
 
         $product = Product::where('id', $request->input('id'))
             ->where('status', 1)
-            ->with(['productgallery' => function ($query) {
-                $query->select('id', 'product_id', 'images');
-            }])
+            ->with([
+                'productgallery' => function ($query) {
+                    $query->select('id', 'product_id', 'images');
+                }
+            ])
             ->first();
 
         if (!$product) {
             return response()->json(['error' => 'Product not found'], 404);
         }
 
-        if ($product->productgallery && is_array($product->productgallery->images)) {
-            $images = $product->productgallery->images ?? [];
-            $product->images = !empty($images)
-                ? array_map(function($image) {
-                    return asset('uploads/products/' . $image);
-                }, $images)
-                : null;
-        } else {
-            $product->images = null;
-        }
-        unset($product->productgallery);
+        $images = $product->productgallery->images ?? [];
+        $product->images = !empty($images)
+            ? array_map(function ($image) {
+                return asset('uploads/products/' . $image);
+            }, $images)
+            : [];
 
+        $product->image = !empty($product->images) ? $product->images[0] : null;
+
+        $productInfo = is_string($product->product_info)
+            ? json_decode($product->product_info, true)
+            : (is_array($product->product_info) ? $product->product_info : []);
+
+        $product->product_info = $productInfo;
+
+        $product->price = !empty($productInfo) && isset($productInfo[0]['product_price'])
+            ? $productInfo[0]['product_price']
+            : null;
+
+        unset($product->productgallery);
         unset($product->created_by, $product->deleted_at, $product->created_at, $product->updated_at);
 
         return response()->json($product, 200);
@@ -739,28 +750,44 @@ class ApiController extends Controller
 
     public function customerRegister(Request $request)
     {
-        // Validate incoming request
-        $validated = $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'gender' => 'required|string|in:male,female',
-            'phone' => 'required',
-            'email' => 'required|email|unique:customers,email',
-            'password' => 'required|string|min:8|confirmed',
+        // Validate request data
+        $request->validate([
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'gender' => ['required', 'string', 'in:male,female'],
+            'phone' => ['required', 'unique:customers,phone', 'max:14', 'min:10'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:customers,email'],
+            'password' => ['required', 'string', 'min:8', 'max:128'],
+        ], [
+            'phone.required' => 'Phone is required',
+            'phone.min' => 'Phone may not be less than 10 characters',
+            'phone.max' => 'Phone may not be greater than 14 characters',
+            'phone.unique' => 'Phone number already exists',
         ]);
 
         try {
-            $customer = Customer::create([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'gender' => $validated['gender'],
-                'phone' => $validated['phone'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-            ]);
+            $customer = new Customer;
+
+            $customer->first_name = $request->first_name;
+            $customer->last_name = $request->last_name;
+            $customer->gender = $request->gender;
+            $customer->phone = $request->phone;
+            $customer->email = $request->email;
+            $customer->password = Hash::make($request->password);
+            $customer->email_verified_at = now();
+            $customer->locale = app()->getLocale();
+            $customer->timezone = config('app.timezone');
+            $customer->api_token = Str::random(64);
+
+            $customer->save();
+
+            $tokenResult = $customer->createToken('Customer Access Token');
+            $token = $tokenResult->token;
+            $token->save();
 
             return response()->json([
                 'message' => 'Customer registered successfully!',
+                'access_token' => $tokenResult->accessToken,
                 'customer' => $customer,
             ], 201);
         } catch (\Exception $e) {
@@ -774,30 +801,31 @@ class ApiController extends Controller
     public function customerLogin(Request $request)
     {
         // Validate request data
-        $validated = $request->validate([
+        $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:8',
         ]);
 
-        $customer = Customer::where('email', $validated['email'])->first();
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $customer = Auth::user(); // Get authenticated user
 
-        if (!$customer || !Hash::check($validated['password'], $customer->password)) {
+            // Revoke all existing tokens (for Laravel Passport or Sanctum)
+            $customer->tokens->each(function ($token) {
+                $token->revoke(); // For Passport
+                // $token->delete(); // For Sanctum
+            });
+
+            // Create a new token
+            $tokenResult = $customer->createToken('CustomerAccessToken');
+            $token = $tokenResult->token;
+            $token->save();
+
             return response()->json([
-                'message' => 'Invalid credentials.',
-            ], 401);
+                'access_token' => $tokenResult->accessToken,
+            ]);
         }
 
-        $customer->tokens()->delete();
-        $token = $customer->createToken('CustomerAccessToken')->accessToken;
-        return response()->json([
-            'message' => 'Login successful!',
-            'token' => $token,
-            'customer' => [
-                'id' => $customer->id,
-                'name' => $customer->name,
-                'email' => $customer->email,
-            ],
-        ], 200);
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
     public function generateOTP(Request $request){

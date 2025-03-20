@@ -1,52 +1,66 @@
-<div class="card-body p-0 table-wrapper">
-    <table class="table table-striped nowrap" id="myTable">
+<div class="table-wrapper p-0">
+    <table id="bookingTable" class="table align-items-center table-responsive mb-0">
         <thead>
             <tr>
-                {{-- <th>#</th> --}}
-                <th>{{ __('Order ID') }}</th>
-                <th>{{ __('Customer Name') }}</th>
-                <th>{{ __('Total Product Amount	') }}</th>
-                <th>{{ __('Product Discount') }}</th>
-                <th>{{ __('Shipping Charge') }}</th>
-                <th>{{ __('Order Amount') }}</th>
-                <th>{{ __('Payment Method') }}</th>
-                <th>{{ __('Payment Status') }}</th>
-                <th>{{ __('Action') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('SL') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Order ID') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Customer Name') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Product Amount	') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Product Discount') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Shipping Charge') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Order Amount') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Payment Method') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Payment Status') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Action') }}</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($orders as $item)
+            @forelse ($orders as $item)
                 <tr>
-                    {{-- <td>{{ $loop->iteration }}</td> --}}
-                    <td>#{{ $item->id }}</td>
-                    <td>{{ $item->customer->first_name }} {{ $item->customer->last_name }}</td>
-                    <td>$ {{ $item->order_amount }}</td>
-                    <td>$ {{ $item->discount_amount }}</td>
-                    <td>$ {{ $item->shipping_fee }}</td>
-                    <td>$ {{ $item->order_amount }}</td>
-                    <td>{{ ucwords(str_replace('_', ' ', $item->payment_method)) }}</td>
-                    <td>{{ ucwords($item->payment_status) }}</td>
                     <td>
-                        <a href="{{ route('admin.order.edit', $item->id) }}" class="btn btn-info btn-sm btn-edit">
-                            <i class="fas fa-pencil-alt"></i>
-                            {{ __('Edit') }}
+                        <p class="text-sm font-weight-bold mb-0"> {{ $loop->iteration }} </p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> {{ $item->id }} </p>
+                    </td>
+                    <td data-order="{{ strtolower(@$user->first_name) . ' ' . strtolower(@$user->last_name) }}">
+                        <p class="text-sm font-weight-bold mb-0"> {{ $item->customer->first_name }} {{ $item->customer->last_name }} </p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> $ {{ $item->order_amount }} </p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> $ {{ $item->discount_amount }} </p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> $ {{ $item->shipping_fee }} </p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> $ {{ $item->order_amount }} </p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> {{ ucwords(str_replace('_', ' ', $item->payment_method)) }} </p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> {{ ucwords($item->payment_status) }} </p>
+                    </td>
+                    <td class="align-middle">
+                        <a href="{{ route('admin.order.show', $product->id) }}" class="text-secondary font-weight-bold text-xs btn-modal btn-edit pe-1">
+                            {{ __('View') }}
                         </a>
+                        <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">
+                            <i class="fas fa-file-pdf text-lg me-1"></i>
+                            {{ __('PDF') }}
+                        </button>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="10" class="text-center data-not-available" style="background-color: ghostwhite">
+                        {{ __('Transactions are not available.') }}
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
-
-    <div class="row">
-        <div class="col-12 d-flex flex-row flex-wrap">
-            <div class="row" style="width: -webkit-fill-available;">
-                <div class="col-12 text-center text-sm-left pl-3" style="margin-block: 20px">
-                    {{ __('Showing') }} {{ $orders->firstItem() }} {{ __('to') }} {{ $orders->lastItem() }}
-                    {{ __('of') }} {{ $orders->total() }} {{ __('entries') }}
-
-                </div>
-                <div class="col-12 pagination-nav pr-3"> {{ $orders->links() }}</div>
-            </div>
-        </div>
-    </div>
 </div>
