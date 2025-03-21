@@ -61,7 +61,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('logout', [ApiController::class, 'logout']);
 
     // (Order)
-    Route::post('/orders', [ApiController::class, 'storeOrder']);
     // Route::get('order/{id}', [ApiController::class, 'showOrder']);
 });
 
@@ -71,6 +70,7 @@ Route::post('customer_register', [ApiController::class, 'customerRegister']);
 Route::post('customer_login', [ApiController::class, 'customerLogin']);
 
 Route::middleware(['auth:customer'])->group(function () {
+    Route::post('/orders', [ApiController::class, 'storeOrder']);
 
     Route::get('customer_dashboard', [ApiController::class, 'customerDashboard']);
 });

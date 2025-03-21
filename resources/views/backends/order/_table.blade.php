@@ -21,7 +21,7 @@
                         <p class="text-sm font-weight-bold mb-0"> {{ $loop->iteration }} </p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0"> {{ $item->id }} </p>
+                        <p class="text-sm font-weight-bold mb-0"> {{ $item->invoice_ref }} </p>
                     </td>
                     <td data-order="{{ strtolower(@$user->first_name) . ' ' . strtolower(@$user->last_name) }}">
                         <p class="text-sm font-weight-bold mb-0"> {{ $item->customer->first_name }} {{ $item->customer->last_name }} </p>

@@ -602,7 +602,11 @@ class ApiController extends Controller
         try {
             DB::beginTransaction();
 
+            $datePrefix = now()->format('ymd');
             $order = Order::create($validated);
+
+            $order->invoice_ref = "INV-{$datePrefix}00{$order->id}";
+            $order->save();
 
             foreach ($validated['order_details'] as $detail) {
                 $order_detail = new OrderDetail();
@@ -641,13 +645,11 @@ class ApiController extends Controller
                     throw new \Exception("Product size {$detail['product_size']} not found for product ID {$detail['product_id']}.");
                 }
 
-                // Update product_info with new quantity
                 $product->product_info = array_map(function ($info) {
                     $info['product_qty'] = (string) $info['product_qty'];
                     return $info;
                 }, $productInfoArray);
 
-                // Increment count_product_sale
                 $product->increment('count_product_sale', $detail['product_qty']);
 
                 $product->save();
@@ -657,14 +659,14 @@ class ApiController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Order created successfully',
+                'message' => 'Order successfully created',
                 'data' => $order->load('details')
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create order',
+                'message' => 'Failed to order',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -755,12 +757,12 @@ class ApiController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'in:male,female'],
-            'phone' => ['required', 'unique:customers,phone', 'max:14', 'min:10'],
+            'phone' => ['required', 'unique:customers,phone', 'max:14', 'min:9'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:customers,email'],
             'password' => ['required', 'string', 'min:8', 'max:128'],
         ], [
             'phone.required' => 'Phone is required',
-            'phone.min' => 'Phone may not be less than 10 characters',
+            'phone.min' => 'Phone may not be less than 9 characters',
             'phone.max' => 'Phone may not be greater than 14 characters',
             'phone.unique' => 'Phone number already exists',
         ]);
@@ -791,6 +793,7 @@ class ApiController extends Controller
                 'customer' => $customer,
             ], 201);
         } catch (\Exception $e) {
+            dd($e);
             return response()->json([
                 'message' => 'Registration failed. Please try again.',
                 'error' => $e->getMessage(),

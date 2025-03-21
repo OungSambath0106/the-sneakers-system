@@ -11,7 +11,7 @@
  Target Server Version : 80300 (8.3.0)
  File Encoding         : 65001
 
- Date: 07/03/2025 11:16:19
+ Date: 21/03/2025 20:50:11
 */
 
 SET NAMES utf8mb4;
@@ -30,7 +30,7 @@ CREATE TABLE `baners`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of baners
@@ -52,7 +52,7 @@ CREATE TABLE `brands`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of brands
@@ -126,19 +126,19 @@ CREATE TABLE `customers`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `api_token` varchar(80) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `locale` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
+  `timezone` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `customers_api_token_unique`(`api_token` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of customers
 -- ----------------------------
-INSERT INTO `customers` VALUES (1, 'Thon', 'Sotheavann', 'female', '022 333 444', 'sotheavann@gmail.com', '$10$3pqP3Us2mVcWsdgfY8l1..WTkIhMpDhmOHMjpe1GOsuAi6NpJmmI2', '2025-02-18-67b4ba4e3e364.png', 1, NULL, NULL, '2025-01-26 16:06:42', '2025-02-18 23:50:23', NULL);
-INSERT INTO `customers` VALUES (3, 'China', 'Ing', 'male', '098 765 432', 'china@gmail.com', '$2y$10$uSrEOf/FtEQNBdiAeIzJWOTAs3qDyQOJ3Z5JkB95tiov./9GNPjKu', '2025-02-18-67b4b634c0c93.png', 0, NULL, NULL, '2025-02-18 23:32:55', '2025-02-18 23:33:02', NULL);
-INSERT INTO `customers` VALUES (4, 'Customer', 'Demo', 'male', '012 345 678', 'demo@gmail.com', '$2y$10$OimxnbT3taRtkaTQuwa1v./gKueGcdai3ZJFEQt1uWWcRbt46XcDC', '2025-02-20-67b71d936e43f.png', 1, NULL, '2025-02-20 20:37:06', '2025-02-18 23:56:57', '2025-02-20 20:37:06', NULL);
-INSERT INTO `customers` VALUES (5, 'HEHEH', 'hehehe', 'male', '12847238947', 'hehe@gmail.com', '$2y$10$hbiJTRkbsnBWr1zbSQ/gTuKbriJPt/lmESQkijfrsZkr3rQj8AO26', NULL, 1, NULL, '2025-02-20 19:18:09', '2025-02-19 00:06:56', '2025-02-20 19:18:09', NULL);
-INSERT INTO `customers` VALUES (6, 'CHEA', 'ICHIGO', 'male', '010 679 106', 'cheaichigo@gmail.com', '$2y$10$4DVQY23r7zW7nvpykLSoYOSIKop0FmiCfKjxq0vF7I6cbfMXKVHz6', NULL, 1, NULL, NULL, '2025-02-19 00:14:45', '2025-02-20 20:41:53', NULL);
-INSERT INTO `customers` VALUES (7, 'hah', 'hah', 'male', '374', 'hah@gmail.com', '$2y$10$Lzi7jUxvig6qnSREJ0nMleptTFe9hdqTxajfFg3ctOMwoxZDNKCqi', NULL, 1, NULL, '2025-02-19 00:57:38', '2025-02-19 00:19:08', '2025-02-19 00:57:38', NULL);
+INSERT INTO `customers` VALUES (1, 'Thon', 'Sotheavann', 'female', '022 333 444', 'sotheavann@gmail.com', '$10$3pqP3Us2mVcWsdgfY8l1..WTkIhMpDhmOHMjpe1GOsuAi6NpJmmI2', '2025-02-18-67b4ba4e3e364.png', 1, NULL, NULL, '2025-01-26 16:06:42', '2025-02-18 23:50:23', NULL, NULL, NULL, NULL);
+INSERT INTO `customers` VALUES (3, 'China', 'Ing', 'male', '098 765 432', 'china@gmail.com', '$2y$10$uSrEOf/FtEQNBdiAeIzJWOTAs3qDyQOJ3Z5JkB95tiov./9GNPjKu', '2025-02-18-67b4b634c0c93.png', 0, NULL, NULL, '2025-02-18 23:32:55', '2025-02-18 23:33:02', NULL, NULL, NULL, NULL);
+INSERT INTO `customers` VALUES (12, 'Chea', 'Ichigo', 'male', '010 679 106', 'chea@gmail.com', '$2y$10$wCGwdgytOXJQFcpLjfdFgujZmWyK7/MGnhPikSnjrE1vkhz1OiwD6', NULL, 1, NULL, NULL, '2025-03-21 20:18:00', '2025-03-21 20:18:00', 'XNzW6QW1Dwz1wEG4tXBXWgNvnGUDLHJuWW2UxgjTwU0QYPvcbqJGG1mAMQyBetu6', '2025-03-21 20:18:00', 'en', 'Asia/Bangkok');
 
 -- ----------------------------
 -- Table structure for failed_jobs
@@ -174,7 +174,7 @@ CREATE TABLE `jobs`  (
   `created_at` int UNSIGNED NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `jobs_queue_index`(`queue` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of jobs
@@ -189,7 +189,7 @@ CREATE TABLE `migrations`  (
   `migration` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 139 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 142 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of migrations
@@ -295,6 +295,9 @@ INSERT INTO `migrations` VALUES (133, '2025_01_08_110032_create_order_details_ta
 INSERT INTO `migrations` VALUES (134, '2025_01_19_143358_create_shoes_sliders_table', 59);
 INSERT INTO `migrations` VALUES (135, '2025_01_24_134656_add_api_token_to_customers_table', 60);
 INSERT INTO `migrations` VALUES (137, '2025_02_13_201734_add_gender_to_users_table', 61);
+INSERT INTO `migrations` VALUES (139, '2025_03_18_203744_add_some_column_to_customers_table', 62);
+INSERT INTO `migrations` VALUES (140, '2025_03_21_200203_add_column_invoice_ref_to_order_details_table', 62);
+INSERT INTO `migrations` VALUES (141, '2025_03_21_203856_add_column_invoice_ref_to_orders_table', 63);
 
 -- ----------------------------
 -- Table structure for model_has_permissions
@@ -361,11 +364,12 @@ CREATE TABLE `oauth_access_tokens`  (
   `expires_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `oauth_access_tokens_user_id_index`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oauth_access_tokens
 -- ----------------------------
+INSERT INTO `oauth_access_tokens` VALUES ('c88ae075afedbab6fdf2b748a507e746838c1201d0c7470e74bc1ec23a9103877fbee212c9d644e1', 12, 1, 'Customer Access Token', '[]', 0, '2025-03-21 20:18:00', '2025-03-21 20:18:01', '2026-03-21 20:18:00');
 
 -- ----------------------------
 -- Table structure for oauth_auth_codes
@@ -380,7 +384,7 @@ CREATE TABLE `oauth_auth_codes`  (
   `expires_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `oauth_auth_codes_user_id_index`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oauth_auth_codes
@@ -404,11 +408,13 @@ CREATE TABLE `oauth_clients`  (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `oauth_clients_user_id_index`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oauth_clients
 -- ----------------------------
+INSERT INTO `oauth_clients` VALUES (1, NULL, 'Laravel Personal Access Client', 'JwC55H6Ge8JNpt19sWazJykFdnSngcCFAExAqE39', NULL, 'http://localhost', 1, 0, 0, '2025-03-21 20:16:56', '2025-03-21 20:16:56');
+INSERT INTO `oauth_clients` VALUES (2, NULL, 'Laravel Password Grant Client', 'EpyhQ1cdpjSt08t0Z5S2BFbFBzdLJOZIhRy3l0j1', 'users', 'http://localhost', 0, 1, 0, '2025-03-21 20:16:56', '2025-03-21 20:16:56');
 
 -- ----------------------------
 -- Table structure for oauth_personal_access_clients
@@ -420,11 +426,12 @@ CREATE TABLE `oauth_personal_access_clients`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oauth_personal_access_clients
 -- ----------------------------
+INSERT INTO `oauth_personal_access_clients` VALUES (1, 1, '2025-03-21 20:16:56', '2025-03-21 20:16:56');
 
 -- ----------------------------
 -- Table structure for oauth_refresh_tokens
@@ -437,7 +444,7 @@ CREATE TABLE `oauth_refresh_tokens`  (
   `expires_at` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `oauth_refresh_tokens_access_token_id_index`(`access_token_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oauth_refresh_tokens
@@ -455,7 +462,7 @@ CREATE TABLE `onboards`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of onboards
@@ -472,13 +479,13 @@ CREATE TABLE `order_details`  (
   `product_id` bigint UNSIGNED NOT NULL,
   `brand_id` bigint UNSIGNED NOT NULL,
   `product_details` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
-  `qty` int NULL DEFAULT NULL,
-  `size` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
-  `price` decimal(10, 2) NULL DEFAULT NULL,
+  `product_qty` int NULL DEFAULT NULL,
+  `product_size` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
+  `product_price` decimal(10, 2) NULL DEFAULT NULL,
   `discount` decimal(10, 2) NULL DEFAULT NULL,
+  `discount_type` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
   `delivery_status` enum('pending','delivered','cancelled') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'pending',
   `payment_status` enum('unpaid','paid') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
-  `discount_type` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
@@ -486,13 +493,16 @@ CREATE TABLE `order_details`  (
   INDEX `order_details_product_id_foreign`(`product_id` ASC) USING BTREE,
   INDEX `order_details_brand_id_foreign`(`brand_id` ASC) USING BTREE,
   CONSTRAINT `order_details_brand_id_foreign` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
-  CONSTRAINT `order_details_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
-  CONSTRAINT `order_details_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+  CONSTRAINT `order_details_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `order_details_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of order_details
 -- ----------------------------
+INSERT INTO `order_details` VALUES (4, 2, 26, 8, NULL, 2, '40', 70.00, 0.00, NULL, 'pending', NULL, '2025-03-21 20:47:14', '2025-03-21 20:47:14');
+INSERT INTO `order_details` VALUES (5, 2, 21, 6, NULL, 5, '41', 120.00, 0.00, NULL, 'pending', NULL, '2025-03-21 20:47:14', '2025-03-21 20:47:14');
+INSERT INTO `order_details` VALUES (6, 2, 21, 6, NULL, 5, '42', 130.00, 0.00, NULL, 'pending', NULL, '2025-03-21 20:47:14', '2025-03-21 20:47:14');
 
 -- ----------------------------
 -- Table structure for orders
@@ -500,13 +510,13 @@ CREATE TABLE `order_details`  (
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders`  (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `invoice_ref` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
   `customer_id` bigint UNSIGNED NOT NULL,
-  `order_amount` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
-  `discount_amount` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
-  `discount_type` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
+  `order_amount` decimal(10, 2) NULL DEFAULT NULL,
+  `discount_amount` decimal(10, 2) NULL DEFAULT NULL,
   `shipping_method` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
   `shipping_address` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
-  `shipping_fee` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
+  `shipping_fee` decimal(10, 2) NULL DEFAULT NULL,
   `order_status` enum('pending','confirmed','packaging','out_for_delivery','delivered','failed_to_deliver','cancelled') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'pending',
   `order_note` varchar(191) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
   `payment_status` enum('unpaid','paid') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
@@ -519,11 +529,12 @@ CREATE TABLE `orders`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `orders_customer_id_foreign`(`customer_id` ASC) USING BTREE,
   CONSTRAINT `orders_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
+INSERT INTO `orders` VALUES (2, 'INV-250321002', 12, 790.00, 440.00, 'J&T Express', 'Pou Banteay Chey Village, Siem Reap Province', 5.00, 'pending', 'Please delivery fast', 'paid', 'AC', NULL, '13.362077', '103.860218', '2025-03-21 20:47:14', '2025-03-21 20:47:14');
 
 -- ----------------------------
 -- Table structure for password_resets
@@ -623,7 +634,7 @@ CREATE TABLE `product_galleries`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of product_galleries
@@ -702,15 +713,15 @@ CREATE TABLE `products`  (
   `recommended` tinyint(1) NOT NULL DEFAULT 0,
   `popular` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 71 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 71 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of products
 -- ----------------------------
-INSERT INTO `products` VALUES (1, 'Air Jordan 1 Retro High Off-White Chicago', 'Sneaker Shoes', 5, 1, '2025-01-24 15:19:20', '2024-11-25 03:20:10', '2025-01-24 15:19:20', '[{\"product_size\":\"41\",\"product_price\":\"4500.00\",\"product_qty\":\"5\"},{\"product_size\":\"42\",\"product_price\":\"4700.00\",\"product_qty\":\"8\"}]', 1, '5', '10', 0, 1, 0);
-INSERT INTO `products` VALUES (2, 'Nike Dunk SB Low Bucks', 'Sneaker Shoes', 5, 1, '2025-01-24 15:19:18', '2024-11-25 03:25:30', '2025-01-24 15:19:18', '[{\"product_size\":\"42\",\"product_price\":\"400.00\",\"product_qty\":\"10\"},{\"product_size\":\"43\",\"product_price\":\"450.00\",\"product_qty\":\"6\"}]', 1, '4', '5', 0, 1, 1);
-INSERT INTO `products` VALUES (10, 'Yeezy Boost 700 V1 Wave Runner', 'Adidas', 5, 1, '2025-01-24 15:19:13', '2024-11-28 03:35:10', '2025-01-24 15:19:13', '[{\"product_size\":\"43\",\"product_price\":\"550.00\",\"product_qty\":\"8\"},{\"product_size\":\"44\",\"product_price\":\"560.00\",\"product_qty\":\"9\"},{\"product_size\":\"45\",\"product_price\":\"570.00\",\"product_qty\":\"10\"}]', 1, '3', '4', 0, 0, 0);
-INSERT INTO `products` VALUES (11, 'Vans', 'Vans Old Skool', 5, 1, '2025-01-24 15:19:11', '2024-12-08 05:15:35', '2025-01-24 15:19:11', '[{\"product_size\":\"41\",\"product_price\":\"100.00\",\"product_qty\":\"8\"},{\"product_size\":\"43\",\"product_price\":\"100.00\",\"product_qty\":\"5\"},{\"product_size\":\"44\",\"product_price\":\"120.00\",\"product_qty\":\"5\"}]', 1, '4', '20', 1, 0, 1);
+INSERT INTO `products` VALUES (1, 'Air Jordan 1 Retro High Off-White Chicago', 'Sneaker Shoes', 5, 1, '2025-01-24 15:19:20', '2024-11-25 03:20:10', '2025-01-24 15:19:20', '[{\"product_size\":\"41\",\"product_price\":\"4500.00\",\"product_qty\":\"5\"},{\"product_size\":\"42\",\"product_price\":\"4700.00\",\"product_qty\":\"8\"}]', 1, '5', '0', 0, 1, 0);
+INSERT INTO `products` VALUES (2, 'Nike Dunk SB Low Bucks', 'Sneaker Shoes', 5, 1, '2025-01-24 15:19:18', '2024-11-25 03:25:30', '2025-01-24 15:19:18', '[{\"product_size\":\"42\",\"product_price\":\"400.00\",\"product_qty\":\"10\"},{\"product_size\":\"43\",\"product_price\":\"450.00\",\"product_qty\":\"6\"}]', 1, '4', '0', 0, 1, 1);
+INSERT INTO `products` VALUES (10, 'Yeezy Boost 700 V1 Wave Runner', 'Adidas', 5, 1, '2025-01-24 15:19:13', '2024-11-28 03:35:10', '2025-01-24 15:19:13', '[{\"product_size\":\"43\",\"product_price\":\"550.00\",\"product_qty\":\"8\"},{\"product_size\":\"44\",\"product_price\":\"560.00\",\"product_qty\":\"9\"},{\"product_size\":\"45\",\"product_price\":\"570.00\",\"product_qty\":\"10\"}]', 1, '3', '0', 0, 0, 0);
+INSERT INTO `products` VALUES (11, 'Vans', 'Vans Old Skool', 5, 1, '2025-01-24 15:19:11', '2024-12-08 05:15:35', '2025-01-24 15:19:11', '[{\"product_size\":\"41\",\"product_price\":\"100.00\",\"product_qty\":\"8\"},{\"product_size\":\"43\",\"product_price\":\"100.00\",\"product_qty\":\"5\"},{\"product_size\":\"44\",\"product_price\":\"120.00\",\"product_qty\":\"5\"}]', 1, '4', '0', 1, 0, 1);
 INSERT INTO `products` VALUES (12, 'Nike Air Force 1 \'07', 'The radiance lives on in the Nike Air Force 1 ’07, the b-ball OG that puts a fresh spin on what you know best: durably stitched overlays.', 6, 1, NULL, '2025-01-24 15:33:42', '2025-01-24 15:34:14', '[{\"product_size\":\"41\",\"product_price\":\"115.00\",\"product_qty\":\"5\"}]', 1, '5', '0', 1, 1, 0);
 INSERT INTO `products` VALUES (13, 'Nike Air Max Dn x Isamaya Ffrench', 'Designed in collaboration with renowned makeup artist Isamaya Ffrench', 6, 1, NULL, '2025-01-24 15:40:20', '2025-01-24 15:42:14', '[{\"product_size\":\"39\",\"product_price\":\"170.00\",\"product_qty\":\"5\"},{\"product_size\":\"38\",\"product_price\":\"170.00\",\"product_qty\":\"10\"}]', 1, '4', '0', 1, 1, 0);
 INSERT INTO `products` VALUES (14, 'Nike Air Max Plus OG', 'Hot damn! Better than gold and more sensory stimulating than grandma\'s raspberry pie.', 6, 1, NULL, '2025-01-24 15:44:27', '2025-01-24 15:44:27', '[{\"product_size\":\"40\",\"product_price\":\"180.00\",\"product_qty\":\"10\"},{\"product_size\":\"41\",\"product_price\":\"180.00\",\"product_qty\":\"5\"},{\"product_size\":\"39\",\"product_price\":\"180.00\",\"product_qty\":\"5\"}]', 1, '5', '0', 1, 1, 0);
@@ -719,12 +730,12 @@ INSERT INTO `products` VALUES (16, 'Nike Blazer Low Pro Club', 'Sleek, simple an
 INSERT INTO `products` VALUES (17, 'Air Jordan 1 Low', 'Inspired by the original that debuted in 1985, the Air Jordan 1 Low offers a clean, classic look that\'s familiar yet always fresh.', 6, 1, '2025-01-24 15:53:05', '2025-01-24 15:52:04', '2025-01-24 15:53:05', '[{\"product_size\":\"40\",\"product_price\":\"115.00\",\"product_qty\":\"20\"}]', 1, '5', '0', 1, 1, 1);
 INSERT INTO `products` VALUES (18, 'Nike Dunk Low Retro', 'You can always count on a classic. The Dunk Low pairs its iconic color blocking with premium materials and plush padding for game-changing comfort that lasts.', 6, 1, NULL, '2025-01-24 15:54:24', '2025-01-24 15:54:24', '[{\"product_size\":\"40\",\"product_price\":\"115.00\",\"product_qty\":\"20\"}]', 1, '5', '0', 1, 1, 1);
 INSERT INTO `products` VALUES (20, 'Nike Dunk High Next Nature', 'Taking design cues from leather jackets and bags, the Dunk High combines bold color blocking and plush padding for game-changing comfort that lasts.', 6, 1, NULL, '2025-01-24 15:57:01', '2025-01-24 15:57:01', '[{\"product_size\":\"38\",\"product_price\":\"130.00\",\"product_qty\":\"10\"}]', 1, '5', '0', 1, 1, 1);
-INSERT INTO `products` VALUES (21, 'Nike Air Force 1 \'07 LV8', 'Comfortable, durable and timeless. The classic ‘80s construction pairs with bold details for style that tracks whether you’re on court or on the go.', 6, 1, NULL, '2025-01-24 15:59:14', '2025-01-24 15:59:14', '[{\"product_size\":\"41\",\"product_price\":\"120.00\",\"product_qty\":\"20\"}]', 1, '5', '0', 1, 1, 1);
+INSERT INTO `products` VALUES (21, 'Nike Air Force 1 \'07 LV8', 'Comfortable, durable and timeless. The classic ‘80s construction pairs with bold details for style that tracks whether you’re on court or on the go.', 6, 1, NULL, '2025-01-24 15:59:14', '2025-03-21 20:47:14', '[{\"product_size\":\"41\",\"product_price\":\"120.00\",\"product_qty\":\"15\"},{\"product_size\":\"42\",\"product_price\":\"130.00\",\"product_qty\":\"15\"}]', 1, '5', '10', 1, 1, 1);
 INSERT INTO `products` VALUES (22, 'Nike Zoom Vomero 5 SE', 'A combination of breathable and durable materials stands ready for the rigors of your day, while Zoom Air cushioning delivers a smooth ride.', 6, 1, NULL, '2025-01-24 16:02:37', '2025-01-24 16:02:37', '[{\"product_size\":\"41\",\"product_price\":\"160.00\",\"product_qty\":\"10\"},{\"product_size\":\"40\",\"product_price\":\"160.00\",\"product_qty\":\"10\"}]', 1, '4', '0', 0, 1, 0);
 INSERT INTO `products` VALUES (23, 'Nike Cortez Vintage Suede', 'Now with a wider toe area and firmer side panels, you can comfortably wear them day in and day out. Plus, reengineered materials help prevent warping or creasing.', 6, 1, NULL, '2025-01-24 16:04:57', '2025-01-24 16:04:57', '[{\"product_size\":\"38\",\"product_price\":\"100.00\",\"product_qty\":\"30\"}]', 1, '5', '0', 1, 1, 0);
 INSERT INTO `products` VALUES (24, 'PUMA x LAMELO BALL MB.04 Scooby-Doo', 'Zoinks! LaMelo Ball’s signature shoe, the MB.04, gets a groovy redesign based off of everyone’s favorite cartoon car: The Mystery', 8, 1, NULL, '2025-01-24 16:12:58', '2025-01-24 16:12:58', '[{\"product_size\":\"41\",\"product_price\":\"135.00\",\"product_qty\":\"30\"}]', 1, '5', '0', 1, 1, 1);
 INSERT INTO `products` VALUES (25, 'Speedcat OG', 'An icon of racing culture, the PUMA Speedcat has been synonymous with speed, precision, and unparalleled performance for over 25', 8, 1, NULL, '2025-01-24 16:14:15', '2025-01-24 16:14:15', '[{\"product_size\":\"39\",\"product_price\":\"100.00\",\"product_qty\":\"20\"}]', 1, '5', '0', 1, 1, 0);
-INSERT INTO `products` VALUES (26, 'Amplifier', 'Introducing the Amplifier. In the Amplifier Sneakers, you can enjoy performance-worthy design with every step of day-to-day life.', 8, 1, NULL, '2025-01-24 16:15:24', '2025-01-24 16:15:24', '[{\"product_size\":\"40\",\"product_price\":\"70.00\",\"product_qty\":\"23\"}]', 1, '4', '0', 1, 1, 0);
+INSERT INTO `products` VALUES (26, 'Amplifier', 'Introducing the Amplifier. In the Amplifier Sneakers, you can enjoy performance-worthy design with every step of day-to-day life.', 8, 1, NULL, '2025-01-24 16:15:24', '2025-03-21 20:47:14', '[{\"product_size\":\"40\",\"product_price\":\"70.00\",\"product_qty\":\"17\"}]', 1, '4', '2', 1, 1, 0);
 INSERT INTO `products` VALUES (27, 'Rebound V6', 'Inspired by basketball, the Rebound Low is back to change the game. V6 offers a low-cut silhouette for daily wear on and off the court.', 8, 1, NULL, '2025-01-24 16:16:54', '2025-01-24 16:16:54', '[{\"product_size\":\"40\",\"product_price\":\"70.00\",\"product_qty\":\"30\"}]', 1, '5', '0', 1, 1, 0);
 INSERT INTO `products` VALUES (28, 'Viz Runner Repeat', 'Viz Runner\'s stable cushioning will take care of all your running needs.', 8, 1, NULL, '2025-01-24 16:18:12', '2025-01-24 16:18:12', '[{\"product_size\":\"39\",\"product_price\":\"70.00\",\"product_qty\":\"10\"},{\"product_size\":\"38\",\"product_price\":\"70.00\",\"product_qty\":\"10\"}]', 1, '4', '0', 1, 1, 0);
 INSERT INTO `products` VALUES (29, 'PUMA x LAMELO BALL MB.04 Heem', 'Melo is HEEM. LaMelo Ball’s signature shoe, the MB.04, gets a neon redesign inspired by the energy he brings on the court.', 8, 1, NULL, '2025-01-24 16:19:25', '2025-01-24 16:19:25', '[{\"product_size\":\"40\",\"product_price\":\"125.00\",\"product_qty\":\"25\"}]', 1, '5', '0', 1, 1, 0);
@@ -775,7 +786,7 @@ CREATE TABLE `promotion_brand`  (
   INDEX `promotion_brand_brand_id_foreign`(`brand_id` ASC) USING BTREE,
   CONSTRAINT `promotion_brand_brand_id_foreign` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `promotion_brand_promotion_id_foreign` FOREIGN KEY (`promotion_id`) REFERENCES `promotions` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of promotion_brand
@@ -792,7 +803,7 @@ CREATE TABLE `promotion_galleries`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of promotion_galleries
@@ -814,7 +825,7 @@ CREATE TABLE `promotion_product`  (
   INDEX `promotion_product_product_id_foreign`(`product_id` ASC) USING BTREE,
   CONSTRAINT `promotion_product_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `promotion_product_promotion_id_foreign` FOREIGN KEY (`promotion_id`) REFERENCES `promotions` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of promotion_product
@@ -841,7 +852,7 @@ CREATE TABLE `promotions`  (
   `amount` decimal(11, 2) NULL DEFAULT 0.00,
   `promotion_type` enum('brand','product') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of promotions
@@ -903,7 +914,7 @@ CREATE TABLE `shoes_sliders`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of shoes_sliders
@@ -924,7 +935,7 @@ CREATE TABLE `shoessliders`  (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of shoessliders
