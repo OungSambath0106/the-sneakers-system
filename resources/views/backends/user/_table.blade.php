@@ -1,14 +1,15 @@
-<div class="table-wrapper table-responsive">
-    <table id="bookingTable" class="table table-striped" style="white-space: nowrap;">
-        <thead class="text-uppercase">
+<div class="table-wrapper p-0">
+    <table id="bookingTable" class="table align-items-center table-responsive mb-0">
+        <thead>
             <tr>
-                <th>{{ __('Username') }}</th>
-                <th>{{ __('Gender') }}</th>
-                <th>{{ __('Phone') }}</th>
-                <th>{{ __('Email') }}</th>
-                <th>{{ __('Created date') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('Image') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Username') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Gender') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Phone') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Email') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 text-center">{{ __('Created date') }}</th>
                 @if (auth()->user()->can('user.edit'))
-                <th>{{ __('Action') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 text-center">{{ __('Action') }}</th>
                 @endif
             </tr>
         </thead>
@@ -22,22 +23,28 @@
                             @else
                                 {{ asset('uploads/man.png') }}
                             @endif
-                            " alt="" class="profile_img_table rounded-circle mr-3" style="object-fit: cover; cursor: pointer;"
+                            " alt="" class="avatar avatar-md rounded-circle" style="object-fit: cover; cursor: pointer;"
                             data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
-                        {{ @$user->first_name }} {{ @$user->last_name ?? 'N/A' }}
                     </td>
-                    <td>{{ ucfirst(@$user->gender ?? 'N/A') }}</td>
-                    <td>{{ @$user->phone ?? 'N/A' }}</td>
+                    <td data-order="{{ strtolower(@$user->first_name) . ' ' . strtolower(@$user->last_name) }}">
+                        <p class="text-sm font-weight-bold mb-0 "> {{ @$user->first_name }} {{ @$user->last_name ?? 'N/A' }} </p>
+                    </td>
+                    <td data-order="{{ strtolower(@$user->gender) }}">
+                        <p class="text-sm font-weight-bold mb-0 "> {{ ucfirst(@$user->gender ?? 'N/A') }} </p>
+                    </td>
+                    <td data-order="{{ strtolower(@$user->phone) }}">
+                        <p class="text-sm font-weight-bold mb-0 "> {{ @$user->phone ?? 'N/A' }} </p>
+                    </td>
                     <td data-order="{{ strtolower(@$user->email) }}">
-                        {{ @$user->email ?? 'N/A' }}
+                        <p class="text-sm font-weight-bold mb-0 "> {{ @$user->email ?? 'N/A' }} </p>
                     </td>
                     <td data-order="{{ $user->created_at->timestamp }}">
-                        {{ $user->created_at->format('d M Y h:i A') }}
+                        <p class="text-sm font-weight-bold mb-0 text-center"> {{ $user->created_at->format('d M Y h:i A') }} </p>
                     </td>
-                    <td>
+                    <td class="align-middle text-center">
                         @if (auth()->user()->can('user.edit'))
-                            <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-info btn-sm btn-edit">
-                                <i class="fas fa-pencil-alt"></i> {{ __('Edit') }}
+                            <a href="{{ route('admin.user.edit', $user->id) }}" class="text-secondary font-weight-bold text-xs btn-edit pe-1">
+                                {{ __('Edit') }}
                             </a>
                         @endif
                         @if (auth()->user()->can('user.delete'))
@@ -45,8 +52,8 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" data-id="{{ $user->id }}" data-username="{{ @$user->first_name }} {{ @$user->last_name ?? 'N/A' }}"
-                                    data-href="{{ route('admin.user.destroy', $user->id) }}" class="btn btn-danger btn-sm btn-delete" title="Delete">
-                                    <i class="fa fa-trash-alt"></i> {{ __('Delete') }}
+                                    data-href="{{ route('admin.user.destroy', $user->id) }}" class="text-secondary font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
+                                    <i class="fa fa-trash-alt"></i>
                                 </button>
                             </form>
                         @endif
@@ -58,7 +65,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ auth()->user()->can('user.edit') || auth()->user()->can('user.delete') ? 6 : 5 }}" class="text-center" style="background-color: ghostwhite">
+                    <td colspan="{{ auth()->user()->can('user.edit') || auth()->user()->can('user.delete') ? 7 : 6 }}" class="text-center data-not-available" style="background-color: ghostwhite">
                         {{ __('Users are not available.') }}
                     </td>
                 </tr>

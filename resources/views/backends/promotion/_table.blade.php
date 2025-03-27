@@ -40,7 +40,6 @@
                                     alt="promotion Image" class="avatar avatar-banner me-3"
                                     style="object-fit: contain; cursor: pointer;"
                                     onclick="openGalleryModal({{ $promotion->id }})">
-
                                 @include('backends.promotion.partial.modal_popup_image')
                             @else
                                 <img src="{{ !empty($promotion->image[0]) && file_exists(public_path('uploads/promotions/' . $promotion->image[0])) ? asset('uploads/promotions/' . $promotion->image[0]) : asset('uploads/default.png') }}"

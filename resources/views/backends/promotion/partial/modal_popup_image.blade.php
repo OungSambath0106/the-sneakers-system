@@ -6,7 +6,6 @@
             <div class="modal-body p-0">
                 <div id="galleryCarousel-{{ $promotion->id }}" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
-
                         @foreach ($allImages as $index => $image)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                                 <img src="{{ file_exists(public_path('uploads/promotions/' . $image)) ? asset('uploads/promotions/' . $image) : asset('uploads/default.png') }}"
@@ -14,7 +13,6 @@
                                     alt="Promotion Image">
                             </div>
                         @endforeach
-
                     </div>
                     <a class="carousel-control-prev" href="#galleryCarousel-{{ $promotion->id }}" role="button"
                         data-bs-slide="prev">

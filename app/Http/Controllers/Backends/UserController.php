@@ -177,12 +177,10 @@ class UserController extends Controller
                 $tempPath = public_path("uploads/temp/{$imageName}");
                 $userPath = public_path("uploads/users/{$imageName}");
 
-                // Check if the user already has an image, then delete it
                 if ($user->image && \File::exists(public_path("uploads/users/{$user->image}"))) {
                     \File::delete(public_path("uploads/users/{$user->image}"));
                 }
 
-                // Move the new file from temp to the final users directory
                 if (\File::exists($tempPath)) {
                     \File::ensureDirectoryExists(public_path('uploads/users'), 0777, true);
                     \File::move($tempPath, $userPath);

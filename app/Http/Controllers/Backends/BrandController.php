@@ -65,7 +65,6 @@ class BrandController extends Controller
                 $tempPath = public_path("uploads/temp/{$imageName}");
                 $brandPath = public_path("uploads/brand/{$imageName}");
 
-                // Move image if exists & ensure directory creation
                 if (\File::exists($tempPath)) {
                     \File::ensureDirectoryExists(public_path('uploads/brand'), 0777, true);
                     \File::move($tempPath, $brandPath);
@@ -190,7 +189,7 @@ class BrandController extends Controller
 
             if ($brand->image) {
                 $imagePath = public_path('uploads/brand/' . $brand->image);
-    
+
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }
