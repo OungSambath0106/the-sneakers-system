@@ -153,7 +153,7 @@ class ApiController extends Controller
             } else {
                 $product->price = null;
             }
-            unset($product->product_info);
+            // unset($product->product_info);
 
             if ($product->productgallery && is_array($product->productgallery->images)) {
                 $firstImage = $product->productgallery->images[0] ?? null;
@@ -580,9 +580,6 @@ class ApiController extends Controller
     {
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'order_amount' => 'required|numeric',
-            'discount_amount' => 'nullable|numeric',
-            'discount_type' => 'nullable|string',
             'shipping_method' => 'nullable|string',
             'shipping_address' => 'nullable|string',
             'shipping_fee' => 'nullable|numeric',
@@ -597,13 +594,36 @@ class ApiController extends Controller
             'order_details.*.product_qty' => 'required|integer|min:1',
             'order_details.*.product_price' => 'required|numeric',
             'order_details.*.product_size' => 'required|string',
+            'order_details.*.discount' => 'nullable|numeric',
+            'order_details.*.discount_type' => 'nullable|in:amount,percent',
         ]);
 
         try {
             DB::beginTransaction();
 
+            $order_amount = 0;
+            $discount_amount = 0;
+
+            foreach ($validated['order_details'] as $detail) {
+                $subtotal = $detail['product_price'] * $detail['product_qty'];
+                $order_amount += $subtotal;
+
+                if (!empty($detail['discount']) && !empty($detail['discount_type'])) {
+                    if ($detail['discount_type'] === 'percent') {
+                        $discount_value = ($detail['discount'] / 100) * $detail['product_price'];
+                    } else {
+                        $discount_value = $detail['discount'];
+                    }
+                    $discount_amount += $discount_value * $detail['product_qty'];
+                }
+            }
+
             $datePrefix = now()->format('ymd');
-            $order = Order::create($validated);
+
+            $order = Order::create(array_merge($validated, [
+                'order_amount' => $order_amount,
+                'discount_amount' => $discount_amount,
+            ]));
 
             $order->invoice_ref = "INV-{$datePrefix}00{$order->id}";
             $order->save();
@@ -637,8 +657,7 @@ class ApiController extends Controller
                         $matchingSize['product_qty'] -= $detail['product_qty'];
                     } else {
                         throw new \Exception(
-                            "Insufficient quantity for product ID {$detail['product_id']} (Size: {$detail['product_size']}).
-                            Available: {$matchingSize['product_qty']}, Requested: {$detail['product_qty']}"
+                            "Insufficient quantity for product ID {$detail['product_id']} (Size: {$detail['product_size']}). Available: {$matchingSize['product_qty']}, Requested: {$detail['product_qty']}"
                         );
                     }
                 } else {
@@ -651,7 +670,6 @@ class ApiController extends Controller
                 }, $productInfoArray);
 
                 $product->increment('count_product_sale', $detail['product_qty']);
-
                 $product->save();
             }
 
@@ -810,11 +828,10 @@ class ApiController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $customer = Auth::user(); // Get authenticated user
+            $customer = Auth::user();
 
-            // Revoke all existing tokens (for Laravel Passport or Sanctum)
             $customer->tokens->each(function ($token) {
-                $token->revoke(); // For Passport
+                $token->revoke();
                 // $token->delete(); // For Sanctum
             });
 

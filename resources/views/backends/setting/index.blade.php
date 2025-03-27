@@ -1,17 +1,20 @@
-@extends('backends.master')
+@extends('backends.layouts.admin')
 @push('css')
     <style>
         .preview {
             margin-block: 12px;
             text-align: center;
         }
+
         .video-preview {
             margin-block: 12px;
             text-align: center;
         }
+
         .tab-pane {
             margin-top: 20px
         }
+
         .ckbx-style-9 input[type=checkbox]:checked+label:before {
             background: #3d95d0 !important;
             box-shadow: inset 0 1px 1px rgba(84, 116, 152, 0.5) !important;
@@ -19,24 +22,10 @@
     </style>
 @endpush
 @section('contents')
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h3>{{ __('Business Setting') }}</h3>
-                </div>
-                <div class="col-sm-6" style="text-align: right">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="card-outline card-outline-tabs">
-                <div class="card-header p-0 border-bottom-0">
+                <div class="card-header pb-0 p-0 border-bottom-0">
                     @include('backends.setting.partials.tab')
                 </div>
                 <div class="">
@@ -49,9 +38,9 @@
                                 <div class="row">
 
                                     <div class="col-md-12">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h3 class="card-title">{{ __('Company Information') }}</h3>
+                                        <div class="card mb-3">
+                                            <div class="card-header pb-0">
+                                                <h4 class="card-title">{{ __('Company Information') }}</h4>
                                             </div>
                                             <div class="card-body">
                                                 <div class="row">
@@ -141,7 +130,8 @@
                                                                                 </div>
                                                                             </div>
                                                                             @if ($lang['code'] == 'en')
-                                                                                <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                                                                                <div
+                                                                                    class="col-12 col-sm-12 col-md-6 col-lg-6">
                                                                                     <div class="form-group">
                                                                                         <label
                                                                                             for="copy_right_text">{{ __('Link Google Map') }}</label>
@@ -170,11 +160,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="card" hidden>
-                                            <div class="card-header">
-                                                <h3 class="card-title">{{ __('Home Slider') }}</h3>
+                                        <div class="card mb-3" hidden>
+                                            <div class="card-header pb-0">
+                                                <h4 class="card-title">{{ __('Home Slider') }}</h4>
                                             </div>
-                                            <div class="card-body">
+                                            <div class="card-body pt-1">
                                                 <div class="row">
                                                     <div class="col-12">
                                                         @include('backends.setting.partials._lang_tab', [
@@ -238,11 +228,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h3 class="card-title">{{ __('Contact') }}</h3>
+                                        <div class="card mb-3">
+                                            <div class="card-header pb-0">
+                                                <h4 class="card-title">{{ __('Contact') }}</h4>
                                             </div>
-                                            <div class="card-body">
+                                            <div class="card-body pt-1">
                                                 <div class="row">
                                                     <table class="table">
                                                         <thead>
@@ -251,12 +241,14 @@
                                                                 <th>
                                                                     {{ __('Icon') }}
                                                                     <br>
-                                                                    <span class="text-info text-xs">{{ __('Recommend svg icon') }}</span>
+                                                                    <span
+                                                                        class="text-info text-xs">{{ __('Recommend svg icon') }}</span>
                                                                 </th>
                                                                 <th>{{ __('Link') }}</th>
                                                                 <th>{{ __('Status') }}</th>
                                                                 <th>
-                                                                    <button type="button" class="btn btn-success btn-sm btn_add_contact">
+                                                                    <button type="button"
+                                                                        class="btn btn-success btn-sm btn_add_contact">
                                                                         <i class="fa fa-plus-circle"></i>
                                                                     </button>
                                                                 </th>
@@ -268,11 +260,11 @@
                                             </div>
                                         </div>
 
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h3 class="card-title">{{ __('Social Media') }}</h3>
+                                        <div class="card mb-3">
+                                            <div class="card-header pb-0">
+                                                <h4 class="card-title">{{ __('Social Media') }}</h4>
                                             </div>
-                                            <div class="card-body">
+                                            <div class="card-body pt-1">
                                                 <div class="row">
                                                     <table class="table">
                                                         <thead>
@@ -281,12 +273,14 @@
                                                                 <th>
                                                                     {{ __('Icon') }}
                                                                     <br>
-                                                                    <span class="text-info text-xs">{{ __('Recommend svg icon') }}</span>
+                                                                    <span
+                                                                        class="text-info text-xs">{{ __('Recommend svg icon') }}</span>
                                                                 </th>
                                                                 <th>{{ __('Link') }}</th>
                                                                 <th>{{ __('Status') }}</th>
                                                                 <th>
-                                                                    <button type="button" class="btn btn-success btn-sm btn_add_social_media">
+                                                                    <button type="button"
+                                                                        class="btn btn-success btn-sm btn_add_social_media">
                                                                         <i class="fa fa-plus-circle"></i>
                                                                     </button>
                                                                 </th>
@@ -298,11 +292,11 @@
                                             </div>
                                         </div>
 
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h3 class="card-title">{{ __('Payment') }}</h3>
+                                        <div class="card mb-3">
+                                            <div class="card-header pb-0">
+                                                <h4 class="card-title">{{ __('Payment') }}</h4>
                                             </div>
-                                            <div class="card-body">
+                                            <div class="card-body pt-1">
                                                 <div class="row">
                                                     <table class="table">
                                                         <thead>
@@ -311,11 +305,13 @@
                                                                 <th>
                                                                     {{ __('Icon') }}
                                                                     <br>
-                                                                    <span class="text-info text-xs">{{ __('Recommend svg icon') }}</span>
+                                                                    <span
+                                                                        class="text-info text-xs">{{ __('Recommend svg icon') }}</span>
                                                                 </th>
                                                                 <th>{{ __('Status') }}</th>
                                                                 <th>
-                                                                    <button type="button" class="btn btn-success btn-sm btn_add_payment">
+                                                                    <button type="button"
+                                                                        class="btn btn-success btn-sm btn_add_payment">
                                                                         <i class="fa fa-plus-circle"></i>
                                                                     </button>
                                                                 </th>
@@ -326,9 +322,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h3 class="card-title">{{ __('Website Logo setup') }}</h3>
+                                        <div class="card mb-3">
+                                            <div class="card-header pb-0">
+                                                <h4 class="card-title">{{ __('Website Logo setup') }}</h4>
                                             </div>
                                             <div class="card-body">
                                                 {{-- <div class="row">
@@ -365,7 +361,8 @@
                                                             @else
                                                                 {{ asset('uploads/image/default.png') }} @endif
                                                             "
-                                                                    alt="" height="150px" width="190px" style="object-fit: cover;">
+                                                                    alt="" height="150px" width="190px"
+                                                                    style="object-fit: cover;">
                                                             </div>
                                                             <div class="custom-file">
                                                                 <input type="file" class="custom-file-input"
@@ -384,7 +381,8 @@
                                                             @else
                                                                 {{ asset('uploads/image/default.png') }} @endif
                                                             "
-                                                                    alt="" height="150px" width="190px" style="object-fit: cover;">
+                                                                    alt="" height="150px" width="190px"
+                                                                    style="object-fit: cover;">
                                                             </div>
                                                             <div class="custom-file">
                                                                 <input type="file" class="custom-file-input"

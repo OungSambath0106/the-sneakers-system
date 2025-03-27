@@ -71,7 +71,6 @@ Route::post('customer_login', [ApiController::class, 'customerLogin']);
 
 Route::middleware(['auth:customer'])->group(function () {
     Route::post('/orders', [ApiController::class, 'storeOrder']);
-
     Route::get('customer_dashboard', [ApiController::class, 'customerDashboard']);
 });
 

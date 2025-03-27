@@ -1,4 +1,4 @@
-@extends('backends.master')
+@extends('backends.layouts.admin')
 @push('css')
     <style>
         .preview {

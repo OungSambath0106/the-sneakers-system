@@ -187,7 +187,7 @@
 
                                             <div class="form-group col-md-6">
                                                 <label class="required_label">{{__('Start Date')}}</label>
-                                                <input type="date" class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date') }}"
+                                                <input type="date" class="form-control flatpickr @error('start_date') is-invalid @enderror" value="{{ old('start_date') }}"
                                                     name="start_date" >
                                                 @error('start_date')
                                                     <span class="invalid-feedback" role="alert">
@@ -197,7 +197,7 @@
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <label class="required_label">{{__('End Date')}}</label>
-                                                <input type="date" class="form-control @error('end_date') is-invalid @enderror" value="{{ old('end_date') }}"
+                                                <input type="date" class="form-control flatpickr @error('end_date') is-invalid @enderror" value="{{ old('end_date') }}"
                                                     name="end_date" >
                                                 @error('end_date')
                                                     <span class="invalid-feedback" role="alert">
