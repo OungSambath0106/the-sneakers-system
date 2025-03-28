@@ -80,14 +80,15 @@ class BusinessSettingController extends Controller
         if ($social_media) {
             $data['social_medias'] = $social_media->value;
         }
-        
+
         $data['payments']  = [];
         $payment = $setting->where('type', 'payment')->first();
         if ($payment) {
             $data['payments'] = $payment->value;
         }
 
-        $data['web_header_logo'] = @$setting->where('type', 'web_header_logo')->first()->value;
+        // $data['web_header_logo'] = @$setting->where('type', 'web_header_logo')->first()->value;
+        $data['web_header_logo'] = optional(@$setting->where('type', 'web_header_logo')->first())->value;
         $data['web_banner_logo'] = @$setting->where('type', 'web_banner_logo')->first()->value;
         $data['fav_icon'] = @$setting->where('type', 'fav_icon')->first()->value;
 
@@ -204,15 +205,10 @@ class BusinessSettingController extends Controller
                         );
                     }
                 }
-
-
-                // dd($request->all());
-
             }
-            // save the four image in homepage
+
             if ($request->image1_names && $request->filled('image1_names')) {
                 $image1_names = $request->image1_names;
-                // dd($image1_names);
                 BusinessSetting::updateOrCreate(
                     [
                         'type' => 'image1',
@@ -220,18 +216,13 @@ class BusinessSettingController extends Controller
                         'value' => $image1_names,
                     ]
                 );
-                // $service_gallery->image = explode(' ', $request->image_names);
-                // foreach ($service_gallery->image as $key => $image) {
-
-                    if (file_exists(public_path('uploads/temp/' . $image1_names))) {
-                        $image = File::move(public_path('uploads/temp/' . $image1_names), public_path('uploads/business_settings/'. $image1_names));
-                    }
-                // }
+                if (file_exists(public_path('uploads/temp/' . $image1_names))) {
+                    $image = File::move(public_path('uploads/temp/' . $image1_names), public_path('uploads/business_settings/'. $image1_names));
+                }
             }
 
             if ($request->image2_names && $request->filled('image2_names')) {
                 $image2_names = $request->image2_names;
-                // dd($image2_names);
                 BusinessSetting::updateOrCreate(
                     [
                         'type' => 'image2',
@@ -239,13 +230,9 @@ class BusinessSettingController extends Controller
                         'value' => $image2_names,
                     ]
                 );
-                // $service_gallery->image = explode(' ', $request->image_names);
-                // foreach ($service_gallery->image as $key => $image) {
-
-                    if (file_exists(public_path('uploads/temp/' . $image2_names))) {
-                        $image = File::move(public_path('uploads/temp/' . $image2_names), public_path('uploads/business_settings/'. $image2_names));
-                    }
-                // }
+                if (file_exists(public_path('uploads/temp/' . $image2_names))) {
+                    $image = File::move(public_path('uploads/temp/' . $image2_names), public_path('uploads/business_settings/'. $image2_names));
+                }
             }
 
             if ($request->image3_names && $request->filled('image3_names')) {
@@ -257,14 +244,9 @@ class BusinessSettingController extends Controller
                         'value' => $image3_names,
                     ]
                 );
-                // $service_gallery->image = explode(' ', $request->image_names);
-                // foreach ($service_gallery->image as $key => $image) {
-                    // $directory = public_path('uploads/business_settings');
-
-                    if (file_exists(public_path('uploads/temp/' . $image3_names))) {
-                        $image = File::move(public_path('uploads/temp/' . $image3_names), public_path('uploads/business_settings/'. $image3_names));
-                    }
-                // }
+                if (file_exists(public_path('uploads/temp/' . $image3_names))) {
+                    $image = File::move(public_path('uploads/temp/' . $image3_names), public_path('uploads/business_settings/'. $image3_names));
+                }
             }
 
             if ($request->image4_names && $request->filled('image4_names')) {
@@ -276,44 +258,74 @@ class BusinessSettingController extends Controller
                         'value' => $image4_names,
                     ]
                 );
-                // $service_gallery->image = explode(' ', $request->image_names);
-                // foreach ($service_gallery->image as $key => $image) {
-                    // $directory = public_path('uploads/business_settings');
-
-                    if (file_exists(public_path('uploads/temp/' . $image4_names))) {
-                        $image = File::move(public_path('uploads/temp/' . $image4_names), public_path('uploads/business_settings/'. $image4_names));
-                    }
-                // }
+                if (file_exists(public_path('uploads/temp/' . $image4_names))) {
+                    $image = File::move(public_path('uploads/temp/' . $image4_names), public_path('uploads/business_settings/'. $image4_names));
+                }
             }
 
-            // contact
-            $contact = [];
+            if ($request->filled('image_names')) {
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $businessSettingPath = public_path("uploads/business_settings/{$imageName}");
+                $businessSetting = BusinessSetting::where('type', 'web_header_logo')->first();
+                if ($businessSetting && $businessSetting->value) {
+                    // dd(1);
+                    $existingImage = $businessSetting->value;
+                    $existingImagePath = public_path("uploads/business_settings/{$existingImage}");
+                    if (\File::exists($existingImagePath)) {
+                        \File::delete($existingImagePath);
+                    }
+                }
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/business_settings'), 0777, true);
+                    \File::move($tempPath, $businessSettingPath);
+                    $businessSetting->updateOrCreate(
+                        ['type' => 'web_header_logo'],
+                        ['value' => $imageName]
+                    );
+                }
+            }
 
+            // if ($request->filled('image_names')) {
+            //     $imageName = $request->image_names;
+            //     $tempPath = public_path("uploads/temp/{$imageName}");
+            //     $businessSettingPath = public_path("uploads/business_settings/{$imageName}");
+            //     $businessSetting = BusinessSetting::where('type', 'fav_icon')->first();
+            //     if ($businessSetting && $businessSetting->value) {
+            //         // dd(1);
+            //         $existingImage = $businessSetting->value;
+            //         $existingImagePath = public_path("uploads/business_settings/{$existingImage}");
+            //         if (\File::exists($existingImagePath)) {
+            //             \File::delete($existingImagePath);
+            //         }
+            //     }
+            //     if (\File::exists($tempPath)) {
+            //         \File::ensureDirectoryExists(public_path('uploads/business_settings'), 0777, true);
+            //         \File::move($tempPath, $businessSettingPath);
+            //         $businessSetting->updateOrCreate(
+            //             ['type' => 'fav_icon'],
+            //             ['value' => $imageName]
+            //         );
+            //     }
+            // }J
+
+            $contact = [];
             if ($request->has('contact')) {
                 foreach ($request->contact['title'] as $key => $value) {
                     $item = [];
                     $item['title'] = $request->contact['title'][$key];
                     $item['link'] = $request->contact['link'][$key];
-
-                    // Handle file upload
                     if ($request->hasFile('contact.icon.'.$key)) {
                         $uploadedFile = $request->file('contact.icon.'.$key);
                         $icon = ImageManager::update('uploads/social_media/', $request->contact['old_icon'][$key], $uploadedFile);
-                        // $item['icon'] = asset('uploads/social_media/'.$icon);
                         $item['icon'] = $icon;
                     } else {
-                        // No new file uploaded, use the old icon if available
                         $item['icon'] = $request->contact['old_icon'][$key] ?? null;
                     }
-
-                    // Check status
                     $item['status'] = $request->has('contact.status_'.$key) ? 1 : 0;
-
-                    // Push the item into the $contact array
                     $contact[] = $item;
                 }
             }
-
             BusinessSetting::updateOrCreate(
                 [
                     'type' => 'contact',
@@ -322,34 +334,23 @@ class BusinessSettingController extends Controller
                 ]
             );
 
-            // social media
             $social_media = [];
-
             if ($request->has('social_media')) {
                 foreach ($request->social_media['title'] as $key => $value) {
                     $item = [];
                     $item['title'] = $request->social_media['title'][$key];
                     $item['link'] = $request->social_media['link'][$key];
-
-                    // Handle file upload
                     if ($request->hasFile('social_media.icon.'.$key)) {
                         $uploadedFile = $request->file('social_media.icon.'.$key);
                         $icon = ImageManager::update('uploads/social_media/', $request->social_media['old_icon'][$key], $uploadedFile);
-                        // $item['icon'] = asset('uploads/social_media/'.$icon);
                         $item['icon'] = $icon;
                     } else {
-                        // No new file uploaded, use the old icon if available
                         $item['icon'] = $request->social_media['old_icon'][$key] ?? null;
                     }
-
-                    // Check status
                     $item['status'] = $request->has('social_media.status_'.$key) ? 1 : 0;
-
-                    // Push the item into the $social_media array
                     $social_media[] = $item;
                 }
             }
-
             BusinessSetting::updateOrCreate(
                 [
                     'type' => 'social_media',
@@ -358,40 +359,32 @@ class BusinessSettingController extends Controller
                 ]
             );
 
-           // payment method
-           $payment = [];
+            $payment = [];
+            if ($request->has('payment')) {
+                foreach ($request->payment['title'] as $key => $value) {
+                    $item = [];
+                    $item['title'] = $request->payment['title'][$key];
+                    if ($request->hasFile('payment.icon.'.$key)) {
+                        $uploadedFile = $request->file('payment.icon.'.$key);
+                        $icon = ImageManager::update('uploads/social_media/', $request->payment['old_icon'][$key], $uploadedFile);
+                        $item['icon'] = $icon;
+                    } else {
+                        $item['icon'] = $request->payment['old_icon'][$key] ?? null;
+                    }
+                    $item['status'] = $request->has('payment.status_'.$key) ? 1 : 0;
+                    $payment[] = $item;
+                }
+            }
 
-           if ($request->has('payment')) {
-               foreach ($request->payment['title'] as $key => $value) {
-                   $item = [];
-                   $item['title'] = $request->payment['title'][$key];
 
-                   // Handle file upload
-                   if ($request->hasFile('payment.icon.'.$key)) {
-                       $uploadedFile = $request->file('payment.icon.'.$key);
-                       $icon = ImageManager::update('uploads/social_media/', $request->payment['old_icon'][$key], $uploadedFile);
-                    //    $item['icon'] = asset('uploads/social_media/'.$icon);
-                       $item['icon'] = $icon;
-                   } else {
-                       // No new file uploaded, use the old icon if available
-                       $item['icon'] = $request->payment['old_icon'][$key] ?? null;
-                   }
 
-                   // Check status
-                   $item['status'] = $request->has('payment.status_'.$key) ? 1 : 0;
-
-                   // Push the item into the $payment array
-                   $payment[] = $item;
-               }
-           }
-
-           BusinessSetting::updateOrCreate(
-               [
-                   'type' => 'payment',
-               ], [
-                   'value' => json_encode($payment),
-               ]
-           ); 
+            BusinessSetting::updateOrCreate(
+                [
+                    'type' => 'payment',
+                ], [
+                    'value' => json_encode($payment),
+                ]
+            );
 
             DB::commit();
             return redirect()->route('admin.setting.index')->with([
@@ -406,9 +399,7 @@ class BusinessSettingController extends Controller
                 'success' => 0,
                 'msg' => __('Something went wrong')
             ]);
-
         }
-
     }
 
     public function webContent ()

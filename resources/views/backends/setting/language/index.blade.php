@@ -1,4 +1,5 @@
 @extends('backends.layouts.admin')
+@section('page_title', __('Language'))
 @push('css')
     <style>
         .preview {
