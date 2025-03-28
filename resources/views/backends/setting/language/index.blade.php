@@ -9,24 +9,13 @@
         .tab-pane {
             margin-top: 20px
         }
+
+        .table > :not(caption) > * > * {
+            padding: 0.5rem 0.5rem !important;
+        }
     </style>
 @endpush
 @section('contents')
-
-<!-- Content Header (Page header) -->
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h3>{{ __('Business Setting') }}</h3>
-            </div>
-            <div class="col-sm-6" style="text-align: right">
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Main content -->
 <section class="content">
     <div class="container-fluid">
         <div class="card-outline card-outline-tabs">
@@ -37,17 +26,15 @@
                 <div class="tab-content" id="custom-tabs-four-tabContent">
                     <div class="tab-pane fade active show" id="custom-tabs-for-webcontent" role="tabpanel" aria-labelledby="custom-tabs-for-webcontent-tab">
                         <div class="row">
-
                             <div class="col-md-12">
-
                                 <div class="card">
-                                    <div class="card-header">
+                                    <div class="card-header pb-0">
                                         <div class="row align-items-center">
-                                            <div class="col-6">
-                                                <h3 class="card-title">{{ __('Language') }}</h3>
+                                            <div class="col-md-6">
+                                                <h4 class="card-title">{{ __('Language') }}</h4>
                                             </div>
-                                            <div class="col-6">
-                                                <a class="btn btn-primary btn-modal float-right" href="#" data-href="{{ route('admin.setting.language.create') }}" data-toggle="modal" data-container=".modal_form">
+                                            <div class="col-md-6 text-end">
+                                                <a class="btn bg-gradient-primary btn-sm btn-modal" href="#" data-href="{{ route('admin.setting.language.create') }}" data-toggle="modal" data-container=".modal_form">
                                                     <i class=" fa fa-plus-circle"></i>
                                                     {{ __('Add New') }}
                                                 </a>
@@ -61,9 +48,7 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
 </section>
 <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>

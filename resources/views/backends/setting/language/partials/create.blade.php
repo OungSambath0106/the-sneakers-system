@@ -4,9 +4,9 @@
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">{{ __('New Language') }}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-            </button>
+            {{-- <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button> --}}
         </div>
         <form action="{{ route('admin.setting.language.store') }}" class="submit-form" method="post">
             <div class="modal-body">
@@ -37,8 +37,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                <button type="submit" class="btn btn-primary submit">{{ __('Save') }}</button>
+                <button type="button" class="btn bg-gradient-secondary btn-sm" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                <button type="submit" class="btn bg-gradient-primary btn-sm submit">{{ __('Save') }}</button>
             </div>
         </form>
     </div>
