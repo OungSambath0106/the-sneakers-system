@@ -87,8 +87,7 @@ class BusinessSettingController extends Controller
             $data['payments'] = $payment->value;
         }
 
-        // $data['web_header_logo'] = @$setting->where('type', 'web_header_logo')->first()->value;
-        $data['web_header_logo'] = optional(@$setting->where('type', 'web_header_logo')->first())->value;
+        $data['web_header_logo'] = @$setting->where('type', 'web_header_logo')->first()->value;
         $data['web_banner_logo'] = @$setting->where('type', 'web_banner_logo')->first()->value;
         $data['fav_icon'] = @$setting->where('type', 'fav_icon')->first()->value;
 
@@ -116,6 +115,9 @@ class BusinessSettingController extends Controller
         ]);
         try {
             DB::beginTransaction();
+            $setting = BusinessSetting::where('type', 'web_header_logo')->first();
+            $old_logo_path = $setting['value'];
+
             $all_input = $request->all();
             foreach ($all_input as $input_name => $input_value) {
                 // save video
@@ -263,51 +265,16 @@ class BusinessSettingController extends Controller
                 }
             }
 
-            if ($request->filled('image_names')) {
-                $imageName = $request->image_names;
-                $tempPath = public_path("uploads/temp/{$imageName}");
-                $businessSettingPath = public_path("uploads/business_settings/{$imageName}");
-                $businessSetting = BusinessSetting::where('type', 'web_header_logo')->first();
-                if ($businessSetting && $businessSetting->value) {
-                    // dd(1);
-                    $existingImage = $businessSetting->value;
-                    $existingImagePath = public_path("uploads/business_settings/{$existingImage}");
-                    if (\File::exists($existingImagePath)) {
-                        \File::delete($existingImagePath);
-                    }
-                }
-                if (\File::exists($tempPath)) {
-                    \File::ensureDirectoryExists(public_path('uploads/business_settings'), 0777, true);
-                    \File::move($tempPath, $businessSettingPath);
-                    $businessSetting->updateOrCreate(
-                        ['type' => 'web_header_logo'],
-                        ['value' => $imageName]
-                    );
-                }
-            }
+            if ($request->hasFile('web_header_logo')) {
+                $web_header_logo = $request->file('web_header_logo');
+                $imageName = Carbon::now()->toDateString() . "-" . uniqid() . "." . $web_header_logo->getClientOriginalExtension();
 
-            // if ($request->filled('image_names')) {
-            //     $imageName = $request->image_names;
-            //     $tempPath = public_path("uploads/temp/{$imageName}");
-            //     $businessSettingPath = public_path("uploads/business_settings/{$imageName}");
-            //     $businessSetting = BusinessSetting::where('type', 'fav_icon')->first();
-            //     if ($businessSetting && $businessSetting->value) {
-            //         // dd(1);
-            //         $existingImage = $businessSetting->value;
-            //         $existingImagePath = public_path("uploads/business_settings/{$existingImage}");
-            //         if (\File::exists($existingImagePath)) {
-            //             \File::delete($existingImagePath);
-            //         }
-            //     }
-            //     if (\File::exists($tempPath)) {
-            //         \File::ensureDirectoryExists(public_path('uploads/business_settings'), 0777, true);
-            //         \File::move($tempPath, $businessSettingPath);
-            //         $businessSetting->updateOrCreate(
-            //             ['type' => 'fav_icon'],
-            //             ['value' => $imageName]
-            //         );
-            //     }
-            // }J
+                if ($old_logo_path && File::exists(public_path('uploads/business_settings/' . $old_logo_path))) {
+                    File::delete(public_path('uploads/business_settings/' . $old_logo_path));
+                }
+
+                $setting->web_header_logo = $imageName;
+            }
 
             $contact = [];
             if ($request->has('contact')) {
@@ -375,8 +342,6 @@ class BusinessSettingController extends Controller
                     $payment[] = $item;
                 }
             }
-
-
 
             BusinessSetting::updateOrCreate(
                 [
