@@ -54,7 +54,7 @@
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('brand.edit'))
                             <a href="#" data-href="{{ route('admin.brand.edit', $brand->id) }}"
-                                class="text-secondary font-weight-bold text-xs btn-modal btn-edit pe-1" data-toggle="modal" data-container=".modal_form">
+                                class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1" data-toggle="modal" data-container=".modal_form">
                                 {{ __('Edit') }}
                             </a>
                         @endif
@@ -63,7 +63,7 @@
                             <form action="{{ route('admin.brand.destroy', $brand->id) }}" class="d-inline-block form-delete-{{ $brand->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" data-id="{{ $brand->id }}" data-href="{{ route('admin.brand.destroy', $brand->id) }}" class="text-secondary font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
+                                <button type="button" data-id="{{ $brand->id }}" data-href="{{ route('admin.brand.destroy', $brand->id) }}" class="text-danger font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
                                     <i class="fa fa-trash-alt"></i>
                                 </button>
                             </form>

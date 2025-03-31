@@ -12,8 +12,8 @@
         <tbody>
             @foreach (json_decode($language) as $row)
                 <tr>
-                    <td class="text-capitalize">{{ $row->name }}</td>
-                    <td>{{ $row->code }}</td>
+                    <td class="text-capitalize align-content-center">{{ $row->name }}</td>
+                    <td class="align-content-center">{{ $row->code }}</td>
                     <td>
                         @if($row->code != 'en')
                             <label for="status_{{ $row->id }}" class="switch">
@@ -46,27 +46,20 @@
                             </label>
                         @endif
                     </td>
-
-                    {{-- <td>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input switcher_input default_status" id="default_{{ $row->id }}" data-id="{{ $row->id }}" {{ $row->default == 1 ? 'checked' : '' }} name="default_status">
-                            <label class="custom-control-label" for="default_{{ $row->id }}"></label>
-                        </div>
-                    </td> --}}
                     <td>
                         @if ($row->code != 'en')
-                            <a class="btn bg-gradient-success btn-sm btn-modal" href="#" data-href="{{ route('admin.setting.language.edit', ['id' => $row->id]) }}" data-toggle="modal" data-container=".modal_form">
+                            <a class="btn bg-gradient-success btn-sm mb-0 btn-modal" href="#" data-href="{{ route('admin.setting.language.edit', ['id' => $row->id]) }}" data-toggle="modal" data-container=".modal_form">
                                 <i class=" fa fa-pencil-alt"></i>
                                 {{ __('Edit') }}
                             </a>
-                            <a class="btn bg-gradient-info btn-sm" href="{{ route('admin.setting.language.translate', ['code' => $row->code]) }}" >
+                            <a class="btn bg-gradient-info btn-sm mb-0" href="{{ route('admin.setting.language.translate', ['code' => $row->code]) }}" >
                                 {{-- <i class=" fa fa-tr"></i> --}}
                                 {{ __('Translate') }}
                             </a>
                             <form action="{{ route('admin.setting.language.delete', ['id' => $row->id, 'code' => $row->code]) }}" class="d-inline-block form-delete-{{ $row->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" data-id="{{ $row->id }}" data-href="{{ route('admin.setting.language.delete', ['id' => $row->id, 'code' => $row->code]) }}" class="btn bg-gradient-danger btn-sm btn-delete">
+                                <button type="submit" data-id="{{ $row->id }}" data-href="{{ route('admin.setting.language.delete', ['id' => $row->id, 'code' => $row->code]) }}" class="btn bg-gradient-danger btn-sm mb-0 btn-delete">
                                     <i class="fas fa-trash-alt"></i>
                                     {{ __('Delete') }}
                                 </button>

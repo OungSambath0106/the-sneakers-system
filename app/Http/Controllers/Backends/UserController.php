@@ -299,13 +299,19 @@ class UserController extends Controller
             }
 
             if ($request->filled('image_names')) {
-                $user->image = $request->image_names;
-                $directory = public_path('uploads/users');
-                if (!\File::exists($directory)) {
-                    \File::makeDirectory($directory, 0777, true);
+                $imageName = $request->image_names;
+                $tempPath = public_path("uploads/temp/{$imageName}");
+                $userPath = public_path("uploads/users/{$imageName}");
+
+                if ($user->image && \File::exists(public_path("uploads/users/{$user->image}"))) {
+                    \File::delete(public_path("uploads/users/{$user->image}"));
                 }
 
-                $image = \File::move(public_path('uploads/temp/' . $request->image_names), public_path('uploads/users/'. $request->image_names));
+                if (\File::exists($tempPath)) {
+                    \File::ensureDirectoryExists(public_path('uploads/users'), 0777, true);
+                    \File::move($tempPath, $userPath);
+                    $user->image = $imageName;
+                }
             }
 
             $user->save();

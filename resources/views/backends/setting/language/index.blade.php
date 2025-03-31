@@ -52,7 +52,7 @@
     </div>
 </section>
 <div class="modal fade modal_form" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"></div>
-
+@include('backends.setting.language.partials.delete_lang_modal')
 @endsection
 @push('js')
 <script>
@@ -90,50 +90,60 @@
         reader.readAsDataURL(this.files[0]);
     });
 
-    $(document).on('click', '.btn-delete', function (e) {
-        e.preventDefault();
+    class DeleteHandler {
+        constructor() {
+            this.itemId = null;
+            this.itemHref = null;
 
-        const Confirmation = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-danger'
-            },
-            buttonsStyling: false
-        });
+            this.init();
+        }
 
-        Confirmation.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
+        init() {
+            // Bind delete button
+            $(document).on('click', '.btn-delete', (e) => {
+                e.preventDefault();
 
-                console.log(`.form-delete-${$(this).data('id')}`);
-                var data = $(`.form-delete-${$(this).data('id')}`).serialize();
-                // console.log(data);
-                $.ajax({
-                    type: "post",
-                    url: $(this).data('href'),
-                    data: data,
-                    // dataType: "json",
-                    success: function (response) {
-                        console.log(response);
-                        if (response.status == 1) {
-                            $('.table-wrapper').replaceWith(response.view);
-                            toastr.success(response.msg);
-                        } else {
-                            toastr.error(response.msg)
+                this.itemId = $(e.currentTarget).data('id');
+                this.itemHref = $(e.currentTarget).data('href');
 
-                        }
+                $('#deleteLangModal').modal('show');
+            });
+
+            // Bind confirm button inside modal
+            $(document).on('click', '.btn-confirm-modal', () => {
+                this.handleDelete();
+            });
+        }
+
+        handleDelete() {
+            const formSelector = `.form-delete-${this.itemId}`;
+            const formData = $(formSelector).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: this.itemHref,
+                data: formData,
+                success: (response) => {
+                    $('#deleteLangModal').modal('hide');
+
+                    if (response.status === 1) {
+                        $('.table-wrapper').replaceWith(response.view);
+                        toastr.success(response.msg);
+                    } else {
+                        toastr.error(response.msg);
                     }
-                });
-            }
-        });
-    });
+                },
+                error: () => {
+                    $('#deleteLangModal').modal('hide');
+                    toastr.error('Something went wrong.');
+                }
+            });
+        }
+    }
 
+    // Initialize the handler
+    $(document).ready(function () {
+        new DeleteHandler();
+    });
 </script>
 @endpush

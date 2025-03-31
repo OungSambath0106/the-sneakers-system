@@ -54,7 +54,7 @@
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('banner.edit'))
                             <a href="#" data-href="{{ route('admin.banner-slider.edit', $banner->id) }}"
-                                class="text-secondary font-weight-bold text-xs btn-modal btn-edit pe-1" data-toggle="modal" data-container=".modal_form">
+                                class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1" data-toggle="modal" data-container=".modal_form">
                                 {{ __('Edit') }}
                             </a>
                         @endif
@@ -63,7 +63,7 @@
                             <form action="{{ route('admin.banner-slider.destroy', $banner->id) }}" class="d-inline-block form-delete-{{ $banner->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" data-id="{{ $banner->id }}" data-href="{{ route('admin.banner-slider.destroy', $banner->id) }}" class="text-secondary font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
+                                <button type="button" data-id="{{ $banner->id }}" data-href="{{ route('admin.banner-slider.destroy', $banner->id) }}" class="text-danger font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
                                     <i class="fa fa-trash-alt"></i>
                                 </button>
                             </form>

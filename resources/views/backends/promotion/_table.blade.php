@@ -96,7 +96,7 @@
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('promotion.edit'))
                             <a href="{{ route('admin.promotion.edit', $promotion->id) }}"
-                                class="text-secondary font-weight-bold text-xs btn-modal btn-edit pe-1">
+                                class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1">
                                 {{ __('Edit') }}
                             </a>
                         @endif
@@ -108,7 +108,7 @@
                                 @method('DELETE')
                                 <button type="button" data-id="{{ $promotion->id }}"
                                     data-href="{{ route('admin.promotion.destroy', $promotion->id) }}"
-                                    class="text-secondary font-weight-bold text-xs btn-delete" title="Delete"
+                                    class="text-danger font-weight-bold text-xs btn-delete" title="Delete"
                                     style="background: none; border: none;">
                                     <i class="fa fa-trash-alt"></i>
                                 </button>

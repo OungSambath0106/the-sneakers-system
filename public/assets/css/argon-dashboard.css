@@ -6836,6 +6836,10 @@ fieldset:disabled .btn {
     margin: calc(var(--bs-modal-footer-gap) * 0.5);
 }
 
+.dropify-wrapper .dropify-preview {
+    padding: 20px !important;
+}
+
 @media (min-width: 576px) {
     .modal {
         --bs-modal-margin: 1.75rem;
@@ -28553,7 +28557,7 @@ span.flatpickr-weekday {
 }
 
 .flatpickr.form-control {
-    background: #fff;
+    /* background: #fff; */
 }
 
 .flatpickr-day.endRange.startRange + .endRange:not(:nth-child(7n + 1)),
@@ -29437,6 +29441,57 @@ pre[class*="language-"] {
 .dark-version .select2-container--default .select2-selection--multiple {
     background: rgb(17, 28, 68) !important;
 }
+@media (max-width: 659px) {
+    .dataTableButtons-container {
+        justify-content: center !important;
+    }
+
+    #dataTableButtons {
+        flex-direction: column !important;
+    }
+    .dt-buttons {
+        display: flex !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        gap: 1px !important;
+        scroll-behavior: smooth !important;
+    }
+
+    .dt-buttons .btn {
+        flex: none !important;
+        padding: 10px 20px !important;
+        cursor: pointer !important;
+        white-space: nowrap !important;
+        scroll-snap-align: start !important;
+        background-color: #007bff !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 5px !important;
+    }
+
+    .dt-buttons::-webkit-scrollbar {
+        height: 8px !important;
+    }
+
+    .dt-buttons::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        border-radius: 10px !important;
+    }
+}
+@media (max-width: 542px) {
+    .dt-buttons {
+        display: block !important;
+        white-space: unset !important;
+    }
+    #bookingTable_length label {
+        display: flex;
+        gap: 10px;
+        margin: 0;
+    }
+    #bookingTable_filter, #bookingTable_filter label {
+        width: 100%;
+    }
+}
 @media (max-width: 556px) {
     .navbar.navbar-main .container-fluid {
         padding-inline: 0px !important;
@@ -29493,6 +29548,11 @@ pre[class*="language-"] {
     }
     .image-box img {
         object-fit: contain !important;
+    }
+}
+@media (max-width: 390px) {
+    .welcome-text {
+        font-size: .85rem;
     }
 }
 

@@ -1,4 +1,4 @@
-@extends('backends.master')
+@extends('backends.layouts.admin')
 @push('css')
     <style>
         .preview {
@@ -8,24 +8,12 @@
         .tab-pane {
             margin-top: 20px
         }
+        .table > :not(caption) > * > * {
+            padding: 0.5rem 0.5rem !important;
+        }
     </style>
 @endpush
 @section('contents')
-
-<!-- Content Header (Page header) -->
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h3>{{ __('Business Setting') }}</h3>
-            </div>
-            <div class="col-sm-6" style="text-align: right">
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Main content -->
 <section class="content">
     <div class="container-fluid">
         <div class="card-outline card-outline-tabs">
@@ -40,18 +28,18 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="row align-items-center">
-                                            <div class="col-6">
-                                                <h3 class="card-title">{{ __('Language') }}</h3>
+                                            <div class="col-md-6">
+                                                <h4 class="card-title">{{ __('Language') }}</h4>
                                             </div>
-                                            <div class="col-6">
-                                                <a class="btn btn-outline-secondary float-right" href="{{ route('admin.setting.language.index') }}">
-                                                    <i class=" fa fa-arrow-alt-circle-left"></i>
+                                            <div class="col-md-6 text-end">
+                                                <a class="btn bg-gradient-danger btn-sm float-right" href="{{ route('admin.setting.language.index') }}">
+                                                    <i class=" fa fa-arrow-alt-circle-left pe-1"></i>
                                                     {{ __('Back') }}
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body p-0 table-wrapper">
+                                    <div class="card-body pt-0 table-wrapper">
                                         <table class="table">
                                             <thead>
                                                 <tr>
@@ -63,7 +51,7 @@
                                             <tbody>
                                                 @foreach ($lang_data as $count => $row)
                                                     <tr id="lang-{{$row['key']}}">
-                                                        <td class="text-capitalize">
+                                                        <td class="text-capitalize align-content-center">
                                                             <input type="text" name="key[]" value="{{$row['key']}}" hidden>
                                                             {{ $row["key"] }}
                                                         </td>
@@ -71,7 +59,7 @@
                                                             <input type="text" class="form-control" name="value[]" id="value-{{$count+1}}" value="{{$row['value']}}">
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-success btn-sm btn-modal" href="#" onclick="update_lang('{{$row['key']}}',$('#value-{{$count+1}}').val())">
+                                                            <a class="btn bg-gradient-success mb-0 btn-sm btn-modal" href="#" onclick="update_lang('{{$row['key']}}',$('#value-{{$count+1}}').val())">
                                                                 <i class=" fa fa-pencil-alt"></i>
                                                                 {{ __('Edit') }}
                                                             </a>

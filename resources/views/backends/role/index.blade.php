@@ -1,33 +1,26 @@
-@extends('backends.master')
+@extends('backends.layouts.admin')
+@section('page_title', __('Role Management'))
 @push('css')
 
 @endpush
 @section('contents')
-<section class="content-header">
-
-</section>
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col-6 col-xs-6 col-sm-6">
-                                <h3 class="card-title">{{ __('User role list') }}</h3>
-                            </div>
-
-                            <div class="col-6 col-xs-6 col-sm-6">
-                                <a class="btn btn-primary float-right" href="{{ route('admin.roles.create') }}">
-                                    <i class=" fa fa-plus-circle"></i>
-                                    {{ __('Add New') }}
-                                </a>
-                            </div>
-                        </div>
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between pb-0">
+                        <h5 class="pb-1">{{ __('User role list') }}</h5>
+                        @if (auth()->user()->can('role.create'))
+                            <a class="btn bg-gradient-primary btn-modal add-new-button-right-side btn-xs" href="{{ route('admin.roles.create') }}">
+                                <i class=" fa fa-plus-circle"></i>
+                                {{ __('Add New') }}
+                            </a>
+                        @endif
                     </div>
-
-                    @include('backends.role._table')
-
+                    <div class="card-body px-3 pt-0 pb-2">
+                        @include('backends.role._table')
+                    </div>
                 </div>
             </div>
         </div>

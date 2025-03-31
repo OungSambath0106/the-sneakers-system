@@ -166,6 +166,10 @@
         color: #FFF !important;
     }
 
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: .1em .8em !important;
+    }
+
     .upload-box.custom-file {
         border-radius: 10px;
     }
@@ -339,12 +343,21 @@
     }
 
     #bookingTable_info {
-        padding-top: 1.5rem;
+        padding-top: 1rem;
+    }
+
+    table.dataTable {
+        width: 100% !important;
+    }
+
+    table.dataTable.no-footer {
+        border-bottom: none !important;
+        border-color: #e9ecef !important
     }
 
     #bookingTable_paginate {
         border: 1px solid #ccc;
-        border-radius: 5px;
+        border-radius: 20px;
         padding-block: 0rem;
         margin-block: 1rem;
     }

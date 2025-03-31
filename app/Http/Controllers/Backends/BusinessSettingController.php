@@ -115,8 +115,10 @@ class BusinessSettingController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            $setting = BusinessSetting::where('type', 'web_header_logo')->first();
-            $old_logo_path = $setting['value'];
+            $setting_web_header_logo = BusinessSetting::where('type', 'web_header_logo')->first();
+            $setting_fav_icon = BusinessSetting::where('type', 'fav_icon')->first();
+            $old_web_header_logo_path = $setting_web_header_logo['value'];
+            $old_fav_icon_path = $setting_fav_icon['value'];
 
             $all_input = $request->all();
             foreach ($all_input as $input_name => $input_value) {
@@ -269,11 +271,22 @@ class BusinessSettingController extends Controller
                 $web_header_logo = $request->file('web_header_logo');
                 $imageName = Carbon::now()->toDateString() . "-" . uniqid() . "." . $web_header_logo->getClientOriginalExtension();
 
-                if ($old_logo_path && File::exists(public_path('uploads/business_settings/' . $old_logo_path))) {
-                    File::delete(public_path('uploads/business_settings/' . $old_logo_path));
+                if ($old_web_header_logo_path && File::exists(public_path('uploads/business_settings/' . $old_web_header_logo_path))) {
+                    File::delete(public_path('uploads/business_settings/' . $old_web_header_logo_path));
                 }
 
-                $setting->web_header_logo = $imageName;
+                $setting_web_header_logo->web_header_logo = $imageName;
+            }
+
+            if ($request->hasFile('fav_icon')) {
+                $fav_logo = $request->file('fav_icon');
+                $imageName = Carbon::now()->toDateString() . "-" . uniqid() . "." . $fav_logo->getClientOriginalExtension();
+
+                if ($old_fav_icon_path && File::exists(public_path('uploads/business_settings/' . $old_fav_icon_path))) {
+                    File::delete(public_path('uploads/business_settings/' . $old_fav_icon_path));
+                }
+
+                $setting_fav_icon->fav_icon = $imageName;
             }
 
             $contact = [];

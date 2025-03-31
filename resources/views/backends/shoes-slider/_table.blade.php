@@ -50,7 +50,7 @@
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('shoes-slider.edit'))
                             <a href="#" data-href="{{ route('admin.shoes-slider.edit', $shoesslider->id) }}"
-                                class="text-secondary font-weight-bold text-xs btn-modal btn-edit pe-1" data-toggle="modal" data-container=".modal_form">
+                                class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1" data-toggle="modal" data-container=".modal_form">
                                 {{ __('Edit') }}
                             </a>
                         @endif
@@ -59,7 +59,7 @@
                             <form action="{{ route('admin.shoes-slider.destroy', $shoesslider->id) }}" class="d-inline-block form-delete-{{ $shoesslider->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" data-id="{{ $shoesslider->id }}" data-href="{{ route('admin.shoes-slider.destroy', $shoesslider->id) }}" class="text-secondary font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
+                                <button type="button" data-id="{{ $shoesslider->id }}" data-href="{{ route('admin.shoes-slider.destroy', $shoesslider->id) }}" class="text-danger font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
                                     <i class="fa fa-trash-alt"></i>
                                 </button>
                             </form>

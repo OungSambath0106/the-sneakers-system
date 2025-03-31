@@ -5,10 +5,9 @@
                 <td>
                     <input type="text" class="form-control" name="payment[title][]" value="{{ $row['title'] ?? null }}">
                 </td>
-                <td>
+                <td class="ps-5">
                     <input type="file" class="d-none payment_icon_input_{{ $key }}" name="payment[icon][]">
                     <img src="{{ $row['icon'] ? asset('uploads/social_media/'. $row['icon']) : asset('uploads/image/default.png') }}" height="auto" width="60px" style="margin-bottom: 6px; cursor:pointer; border:none !important" alt="" class="avatar-md mt-1 mb-0 border payment_icon payment_icon_{{ $key }}">
-
                     <input type="hidden" name="payment[old_icon][]" value="{{ $row['icon'] ?? null }}">
                 </td>
                 <td>

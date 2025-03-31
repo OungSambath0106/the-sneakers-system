@@ -43,7 +43,7 @@
                     </td>
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('user.edit'))
-                            <a href="{{ route('admin.user.edit', $user->id) }}" class="text-secondary font-weight-bold text-xs btn-edit pe-1">
+                            <a href="{{ route('admin.user.edit', $user->id) }}" class="text-primary font-weight-bold text-xs btn-edit pe-1">
                                 {{ __('Edit') }}
                             </a>
                         @endif
@@ -52,7 +52,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" data-id="{{ $user->id }}" data-username="{{ @$user->first_name }} {{ @$user->last_name ?? 'N/A' }}"
-                                    data-href="{{ route('admin.user.destroy', $user->id) }}" class="text-secondary font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
+                                    data-href="{{ route('admin.user.destroy', $user->id) }}" class="text-danger font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
                                     <i class="fa fa-trash-alt"></i>
                                 </button>
                             </form>

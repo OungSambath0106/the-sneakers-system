@@ -5,26 +5,14 @@
                 <td>
                     <input type="text" class="form-control" name="contact[title][]" value="{{ $row['title'] ?? null }}">
                 </td>
-                {{-- <td>
-                    <input type="file" class="d-none contact_icon_input_{{ $key }}"
-                        name="contact[icon][]">
-                    <img src="{{ $row['icon'] ? asset('uploads/social_media/' . $row['icon']) : asset('uploads/image/default.png') }}"
-                        height="auto" width="60px" style="margin-bottom: 6px; cursor:pointer; border:none !important"
-                        alt="" class="avatar border social_media_icon contact_icon_{{ $key }}">
-
-                    <input type="hidden" name="contact[old_icon][]" value="{{ $row['icon'] ?? null }}">
-                </td> --}}
-                <td>
+                <td class="ps-5">
                     <input type="file" class="d-none contact_icon_input_{{ $key }}" name="contact[icon][]">
-
                     @php
                         $icon = $row['icon'] ?? 'default.png';
                     @endphp
-
                     <img src="{{ asset('uploads/social_media/' . $icon) }}"
                         height="auto" width="60px" style="margin-bottom: 6px; cursor:pointer; border:none !important"
                         alt="" class="avatar border social_media_icon contact_icon_{{ $key }}">
-
                     <input type="hidden" name="contact[old_icon][]" value="{{ $icon }}">
                 </td>
                 <td>
@@ -98,5 +86,4 @@
             @endpush
         @endforeach
     @endif
-
 </tbody>

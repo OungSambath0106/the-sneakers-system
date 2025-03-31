@@ -12,10 +12,9 @@
                         <option value="fab fa-linkedin" @if($row['title'] == 'fab fa-linkedin') selected @endif>Linkedin</option>
                     </select> --}}
                 </td>
-                <td>
+                <td class="ps-5">
                     <input type="file" class="d-none social_media_icon_input_{{ $key }}" name="social_media[icon][]">
                     <img src="{{ $row['icon'] ? asset('uploads/social_media/'. $row['icon']) : asset('uploads/image/default.png') }}" height="auto" width="60px" style="margin-bottom: 6px; cursor:pointer; border:none !important" alt="" class="avatar border social_media_icon social_media_icon_{{ $key }}">
-
                     <input type="hidden" name="social_media[old_icon][]" value="{{ $row['icon'] ?? null }}">
                 </td>
                 <td>

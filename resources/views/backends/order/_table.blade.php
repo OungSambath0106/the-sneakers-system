@@ -45,10 +45,10 @@
                         <p class="text-sm font-weight-bold mb-0"> {{ ucwords($item->payment_status) }} </p>
                     </td>
                     <td class="align-middle">
-                        <a href="{{ route('admin.order.show', $product->id) }}" class="text-secondary font-weight-bold text-xs btn-modal btn-edit pe-1">
+                        <a href="{{ route('admin.order.show', $product->id) }}" class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1">
                             {{ __('View') }}
                         </a>
-                        <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4">
+                        <button class="btn btn-link text-danger text-sm mb-0 px-0 ms-4">
                             <i class="fas fa-file-pdf text-lg me-1"></i>
                             {{ __('PDF') }}
                         </button>

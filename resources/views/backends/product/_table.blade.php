@@ -73,7 +73,7 @@
                     </td>
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('product.edit'))
-                            <a href="{{ route('admin.product.edit', $product->id) }}" class="text-secondary font-weight-bold text-xs btn-modal btn-edit pe-1">
+                            <a href="{{ route('admin.product.edit', $product->id) }}" class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1">
                                 {{ __('Edit') }}
                             </a>
                         @endif
@@ -82,7 +82,7 @@
                             <form action="{{ route('admin.product.destroy', $product->id) }}" class="d-inline-block form-delete-{{ $product->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" data-id="{{ $product->id }}" data-href="{{ route('admin.product.destroy', $product->id) }}" class="text-secondary font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
+                                <button type="button" data-id="{{ $product->id }}" data-href="{{ route('admin.product.destroy', $product->id) }}" class="text-danger font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
                                     <i class="fa fa-trash-alt"></i>
                                 </button>
                             </form>
