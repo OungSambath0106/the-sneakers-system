@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\ApiController;
+use App\Http\Controllers\API\Auth\AuthApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -58,13 +59,11 @@ Route::middleware(['auth:api'])->group(function () {
     // (Get User)
     Route::get('get_users', [ApiController::class, 'getUser']);
     // (logout)
-    Route::get('logout', [ApiController::class, 'logout']);
+    Route::get('logout', [AuthApiController::class, 'logout']);
 });
-
 // (Customer Register)
-Route::post('customer_register', [ApiController::class, 'customerRegister']);
 // (Customer Login)
-Route::post('customer_login', [ApiController::class, 'customerLogin']);
+Route::post('customer_login', [AuthApiController::class, 'customerLogin']);
 
 Route::middleware(['auth:customer'])->group(function () {
     Route::post('/orders', [ApiController::class, 'storeOrder']);
@@ -73,7 +72,11 @@ Route::middleware(['auth:customer'])->group(function () {
 });
 
 // (Generate OTP)
-Route::post('/generate-otp',[ApiController::class,'generateOTP']);
+// Route::post('/generate-otp',[AuthApiController::class,'generateOTP']);
+Route::post('/register-with-phone',[AuthApiController::class,'registerPhoneOTP']);
+Route::post('/verify-otp',[AuthApiController::class,'verifyOTP']);
+Route::post('register-customer', [AuthApiController::class, 'registerCustomer']);
+Route::post('login-with-phone', [AuthApiController::class, 'loginPhoneOTP']);
 
-Route::post('register-with-phone', [ApiController::class, 'customerRegisterWithPhone']);
-Route::post('verify-otp-and-register', [ApiController::class, 'verifyOtpAndRegister']);
+// Route::post('register-with-phone', [ApiController::class, 'customerRegisterWithPhone']);
+// Route::post('verify-otp-and-register', [ApiController::class, 'verifyOtpAndRegister']);
