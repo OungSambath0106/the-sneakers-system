@@ -22,12 +22,11 @@ class Customer extends Authenticatable
 
     public function getImageUrlAttribute()
     {
-        if (!empty($this->image_url)) {
-            $image_url = asset('uploads/customers/' . rawurlencode($this->image_url));
+        if (!empty($this->image)) {
+            return asset('uploads/customers/' . rawurlencode($this->image));
         } else {
-            $image_url = null;
+            return asset('uploads/man.png');
         }
-        return $image_url;
     }
 
     /**
@@ -60,10 +59,10 @@ class Customer extends Authenticatable
     /**
      * Automatically hash passwords when set.
      */
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = bcrypt($value);
-    }
+    // public function setPasswordAttribute($value)
+    // {
+    //     $this->attributes['password'] = Hash::make($value);
+    // }
 
     /**
      * The attributes that should be cast.

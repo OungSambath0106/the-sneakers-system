@@ -742,4 +742,61 @@ class ApiController extends Controller
 
         return response()->json($user, 200);
     }
+
+    public function customerProfile(Request $request)
+    {
+        $customer = [
+            'id' => auth()->user()->id,
+            'image_url' => auth()->user()->image_url,
+            'name' => auth()->user()->name,
+            'phone' => auth()->user()->phone,
+            'email' => auth()->user()->email,
+        ];
+        return response()->json($customer);
+    }
+
+    public function updateCustomerProfile(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['string'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:customers,email,' . auth()->id()],
+            'old_password' => ['nullable', 'string', 'min:6'],
+            'new_password' => ['nullable', 'string', 'min:6'],
+        ]);
+
+        $customer = Customer::find(auth()->id());
+        $customer->name = $request->name;
+        $customer->phone = $request->phone;
+        $customer->email = $request->email;
+
+        if ($request->filled('new_password')) {
+            if (!Hash::check($request->old_password, $customer->password)) {
+                return response()->json(['message' => 'Old password is incorrect.'], 403);
+            }
+            $customer->password = $request->new_password;
+        }
+
+        if ($request->file('image')) {
+            $image_name = time() . '.' . $request->image->extension();
+            if ($customer->image) {
+                if (file_exists(public_path('uploads/customers/' . $customer->image))) {
+                    unlink(public_path('uploads/customers/' . $customer->image));
+                }
+            }
+
+            $request->image->move(public_path('uploads/customers'), $image_name);
+            $customer->image = $image_name;
+        }
+        $customer->save();
+        $customer = [
+            'id' => auth()->id(),
+            'image_url' => $customer->image_url,
+            'name' => $customer->name,
+            'phone' => $customer->phone,
+            'email' => $customer->email,
+        ];
+
+        return response()->json($customer);
+    }
 }

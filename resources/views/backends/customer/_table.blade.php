@@ -17,7 +17,7 @@
         <tbody>
             @forelse ($customers as $customer)
                 <tr>
-                    <td data-order="{{ strtolower(@$customer->first_name) . ' ' . strtolower(@$customer->last_name) }}">
+                    <td data-order="{{ strtolower(@$customer->name) }}">
                         <img src="
                         @if ($customer->image && file_exists(public_path('uploads/customers/' . $customer->image)))
                             {{ asset('uploads/customers/'. $customer->image) }}
@@ -25,12 +25,14 @@
                             {{ asset('uploads/man.png') }}
                         @elseif ($customer->gender=='female')
                             {{ asset('uploads/woman.png') }}
+                        @elseif ($customer->gender==null)
+                            {{ asset('uploads/man.png') }}
                         @endif
                         " alt="" class="avatar avatar-md rounded-circle" style="object-fit: cover; cursor: pointer;"
                         data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
                     </td>
-                    <td data-order="{{ strtolower(@$customer->first_name) . ' ' . strtolower(@$customer->last_name) }}">
-                        <p class="text-sm font-weight-bold mb-0 "> {{ @$customer->first_name }} {{ @$customer->last_name ?? 'N/A' }} </p>
+                    <td data-order="{{ strtolower(@$customer->name) }}">
+                        <p class="text-sm font-weight-bold mb-0 "> {{ @$customer->name ?? 'N/A' }} </p>
                     </td>
                     <td data-order="{{ strtolower(@$customer->gender) }}">
                         <p class="text-sm font-weight-bold mb-0 "> {{ ucfirst(@$customer->gender ?? 'N/A') }} </p>

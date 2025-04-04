@@ -175,129 +175,6 @@ class AuthApiController extends Controller
     //     }
     // }
 
-    public function registerPhoneOTP(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'phone' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
-
-        try {
-            $phone = $request->phone;
-
-            $existingCustomer = Customer::where('phone', $phone)->first();
-            if ($existingCustomer && $existingCustomer->token) {
-                return response()->json(['message' => 'Phone number has already been registered'], 400);
-            }
-
-            if ($existingCustomer) {
-                $otp = rand(100000, 999999);
-                Cache::put('otp_' . $phone, $otp, now()->addMinutes(5));
-                $response = GlobalFunction::sendOTP($phone, $otp);
-
-                if ($response) {
-                    return response()->json(['otp' => $otp], 200);
-                } else {
-                    return response()->json(['message' => 'Failed to send OTP'], 500);
-                }
-            }
-
-            $otp = rand(100000, 999999);
-            Cache::put('otp_' . $phone, $otp, now()->addMinutes(5));
-            $response = GlobalFunction::sendOTP($phone, $otp);
-
-            if ($response) {
-                $customer = new Customer();
-                $customer->name = $phone;
-                $customer->phone = $phone;
-                $customer->password = bcrypt('defaultpassword');
-                $customer->save();
-
-                return response()->json(['otp' => $otp], 200);
-            } else {
-                return response()->json(['message' => 'Failed to send OTP'], 500);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 400);
-        }
-    }
-
-    public function verifyOTP(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'phone' => 'required',
-            'otp' => 'required|numeric',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
-
-        try {
-            $phone = $request->phone;
-            $otp = $request->otp;
-
-            $cachedOtp = Cache::get('otp_' . $phone);
-            if ($otp != $cachedOtp) {
-                return response()->json(['message' => 'Phone and OTP do not match'], 400);
-            }
-
-            $name = $request->name;
-            $password = $request->password;
-            $confirmPassword = $request->confirm_password;
-
-            $additionalValidator = Validator::make($request->all(), [
-                'name' => 'required|string',
-                'password' => 'required|string|min:6',
-                'confirm_password' => 'required|string|min:6',
-            ]);
-
-            if ($additionalValidator->fails()) {
-                return response()->json(['error' => $additionalValidator->errors()], 400);
-            }
-
-            if ($password !== $confirmPassword) {
-                return response()->json(['message' => 'Password and confirm password do not match'], 400);
-            }
-
-            $customer = Customer::where('phone', $phone)->first();
-
-            if (!$customer) {
-                return response()->json(['message' => 'Customer not found'], 404);
-            }
-
-            $customer->name = $name;
-            $customer->password = bcrypt($password);
-            $customer->save();
-
-            $apiToken = Str::random(80);
-            $customer->token = $apiToken;
-            $customer->save();
-
-            Cache::forget('otp_' . $phone);
-
-            $customer_info = [
-                'token' => $customer->token,
-                'id' => $customer->id,
-                'name' => $customer->name,
-                'phone' => $customer->phone,
-                'email' => $customer->email,
-                'image_url' => $customer->image_url,
-            ];
-
-            return response()->json([
-                'message' => 'Registered successfully',
-                'success' => true,
-                'customer_info' => $customer_info,
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 400);
-        }
-    }
 
     // public function verifyOTP(Request $request)
     // {
@@ -376,6 +253,118 @@ class AuthApiController extends Controller
     //     }
     // }
 
+    public function registerPhoneOTP(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+
+        try {
+            $phone = $request->phone;
+
+            $existingCustomer = Customer::where('phone', $phone)->first();
+            if ($existingCustomer && $existingCustomer->token) {
+                return response()->json(['message' => 'Phone number has already been registered'], 400);
+            }
+
+            $otp = rand(100000, 999999);
+            Cache::put('otp_' . $phone, $otp, now()->addMinutes(5));
+
+            $response = GlobalFunction::sendOTP($phone, $otp);
+
+            if ($response) {
+                if (!$existingCustomer) {
+                    $customer = new Customer();
+                    $customer->name = $phone;
+                    $customer->phone = $phone;
+                    $customer->password = Hash::make('default_password');
+                    $customer->save();
+                }
+
+                return response()->json(['otp' => $otp], 200);
+            } else {
+                return response()->json(['message' => 'Failed to send OTP'], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    public function verifyOTP(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required',
+            'otp' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+
+        try {
+            $phone = $request->phone;
+            $otp = $request->otp;
+
+            $cachedOtp = Cache::get('otp_' . $phone);
+            if ($otp != $cachedOtp) {
+                return response()->json(['message' => 'Phone and OTP do not match'], 400);
+            }
+
+            $name = $request->name;
+            $password = $request->password;
+            $confirmPassword = $request->confirm_password;
+
+            $additionalValidator = Validator::make($request->all(), [
+                'name' => 'required|string',
+                'password' => 'required|string|min:6',
+                'confirm_password' => 'required|string|min:6',
+            ]);
+
+            if ($additionalValidator->fails()) {
+                return response()->json(['error' => $additionalValidator->errors()], 400);
+            }
+
+            if ($password !== $confirmPassword) {
+                return response()->json(['message' => 'Password and confirm password do not match'], 400);
+            }
+
+            $customer = Customer::where('phone', $phone)->first();
+            if (!$customer) {
+                $customer = new Customer();
+                $customer->phone = $phone;
+            }
+
+            $customer->name = $name;
+            if (!empty($password)) {
+                $customer->password = $password;
+            }
+            $customer->save();
+
+            $apiToken = $customer->createToken('PhoneLogin')->accessToken;
+            Cache::forget('otp_' . $phone);
+            $customer_info = [
+                'token' => $apiToken,
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'phone' => $customer->phone,
+                'email' => $customer->email,
+                'image_url' => $customer->image_url,
+            ];
+
+            return response()->json([
+                'message' => 'Registered and logged in successfully',
+                'success' => true,
+                'customer_info' => $customer_info,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
     public function loginPhoneOTP(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -388,24 +377,19 @@ class AuthApiController extends Controller
         }
 
         try {
-            $phone = $request->phone;
-            $password = $request->password;
+            $credentials = $request->only('phone', 'password');
+            $customer = Customer::where('phone', $credentials['phone'])->first();
 
-            $customer = Customer::where('phone', $phone)->first();
-            if (!$customer) {
-                return response()->json(['message' => 'Phone number not registered'], 404);
-            }
-
-            \Log::info('Customer: ', [$customer]);
-            \Log::info('Checking password: ' . $password);
-            \Log::info('Stored hashed password: ' . $customer->password);
-            $passwordCheckResult = Hash::check($password, $customer->password);
-            \Log::info('Password check result:', ['result' => $passwordCheckResult]);
-
-            if (!$passwordCheckResult) {
+            if (!$customer || !Hash::check($credentials['password'], $customer->password)) {
                 return response()->json(['message' => 'Invalid credentials'], 401);
             }
+
+            $customer->tokens->each(function ($token) {
+                $token->delete();
+            });
+
             $token = $customer->createToken('PhoneLogin')->accessToken;
+
             $customer_info = [
                 'token' => $token,
                 'id' => $customer->id,
@@ -416,13 +400,30 @@ class AuthApiController extends Controller
             ];
 
             return response()->json([
-                'message' => 'Login successfully',
+                'message' => 'Login successful',
                 'success' => true,
                 'customer_info' => $customer_info,
             ], 200);
-
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 400);
+            return response()->json(['message' => 'An error occurred', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function logoutCustomer(Request $request)
+    {
+        try {
+            $customer = $request->user();
+
+            $customer->tokens->each(function ($token) {
+                $token->delete();
+            });
+
+            return response()->json([
+                'message' => 'Logged out successfully',
+                'success' => true,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred', 'error' => $e->getMessage()], 500);
         }
     }
 }

@@ -65,10 +65,14 @@ Route::middleware(['auth:api'])->group(function () {
 // (Customer Login)
 Route::post('customer_login', [AuthApiController::class, 'customerLogin']);
 
-Route::middleware(['auth:customer'])->group(function () {
+Route::middleware(['auth:customers'])->group(function () {
     Route::post('/orders', [ApiController::class, 'storeOrder']);
     // Route::get('order/{id}', [ApiController::class, 'showOrder']);
     Route::get('customer_dashboard', [ApiController::class, 'customerDashboard']);
+
+    Route::get('customer-profile', [ApiController::class, 'customerProfile']);
+    Route::post('update-profile', [ApiController::class, 'updateCustomerProfile']);
+    Route::post('logout', [AuthApiController::class, 'logoutCustomer']);
 });
 
 // (Generate OTP)

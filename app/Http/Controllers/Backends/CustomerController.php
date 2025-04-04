@@ -59,8 +59,7 @@ class CustomerController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'name' => 'required',
             'phone' => 'required',
             'gender' => 'required',
             'email' => 'required|email|unique:customers,email',
@@ -79,8 +78,7 @@ class CustomerController extends Controller
             DB::beginTransaction();
 
             $customer = new Customer();
-            $customer->first_name = $request->first_name;
-            $customer->last_name = $request->last_name;
+            $customer->name = $request->name;
             $customer->phone = $request->phone;
             $customer->gender = $request->gender;
             $customer->email = $request->email;
@@ -157,8 +155,7 @@ class CustomerController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'name' => 'required',
             'phone' => 'required',
             'gender' => 'required',
             'email' => 'required|email|unique:customers,email,' . $id,
@@ -176,8 +173,7 @@ class CustomerController extends Controller
             DB::beginTransaction();
 
             $customer = Customer::findOrFail($id);
-            $customer->first_name = $request->first_name;
-            $customer->last_name = $request->last_name;
+            $customer->name = $request->name;
             $customer->phone = $request->phone;
             $customer->gender = $request->gender;
             $customer->email = $request->email;

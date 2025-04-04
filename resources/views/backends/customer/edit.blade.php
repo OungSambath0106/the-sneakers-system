@@ -90,20 +90,10 @@
                                     <div class="col-12">
                                         <div class="row">
                                             <div class="form-group col-md-6 ">
-                                                <label class="required_label">{{__('First Name')}}</label>
-                                                <input type="name" class="form-control @error('first_name') is-invalid @enderror" value="{{ old('first_name', $customer->first_name) }}"
-                                                    name="first_name" placeholder="{{__('John')}}">
-                                                @error('first_name')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <label class="required_label">{{__('Last Name')}}</label>
-                                                <input type="name" class="form-control @error('last_name') is-invalid @enderror" value="{{ old('last_name', $customer->last_name) }}"
-                                                    name="last_name" placeholder="{{__('Doe')}}" >
-                                                @error('last_name')
+                                                <label class="required_label">{{__('Name')}}</label>
+                                                <input type="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $customer->name) }}"
+                                                    name="name" placeholder="{{__('John')}}">
+                                                @error('name')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
                                                     </span>
