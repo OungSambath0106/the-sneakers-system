@@ -75,12 +75,11 @@ Route::middleware(['auth:customers'])->group(function () {
     Route::post('logout', [AuthApiController::class, 'logoutCustomer']);
 });
 
-// (Generate OTP)
-// Route::post('/generate-otp',[AuthApiController::class,'generateOTP']);
+// Customer Register
 Route::post('/register-with-phone',[AuthApiController::class,'registerPhoneOTP']);
 Route::post('/verify-otp',[AuthApiController::class,'verifyOTP']);
-Route::post('register-customer', [AuthApiController::class, 'registerCustomer']);
+// Customer Login
 Route::post('login-with-phone', [AuthApiController::class, 'loginPhoneOTP']);
-
-// Route::post('register-with-phone', [ApiController::class, 'customerRegisterWithPhone']);
-// Route::post('verify-otp-and-register', [ApiController::class, 'verifyOtpAndRegister']);
+// Forget Password
+Route::post('forget-password', [AuthApiController::class, 'forgetPassword']);
+Route::post('verify-otp-and-reset-password', [AuthApiController::class, 'verifyOTPAndResetPassword']);

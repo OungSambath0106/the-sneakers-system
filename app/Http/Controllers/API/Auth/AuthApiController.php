@@ -267,7 +267,7 @@ class AuthApiController extends Controller
             $phone = $request->phone;
 
             $existingCustomer = Customer::where('phone', $phone)->first();
-            if ($existingCustomer && $existingCustomer->token) {
+            if ($existingCustomer && $existingCustomer->is_verify == 1) {
                 return response()->json(['message' => 'Phone number has already been registered'], 400);
             }
 
@@ -339,6 +339,7 @@ class AuthApiController extends Controller
             }
 
             $customer->name = $name;
+            $customer->is_verify = 1;
             if (!empty($password)) {
                 $customer->password = $password;
             }
@@ -353,6 +354,7 @@ class AuthApiController extends Controller
                 'phone' => $customer->phone,
                 'email' => $customer->email,
                 'image_url' => $customer->image_url,
+                'is_verify' => $customer->is_verify,
             ];
 
             return response()->json([
@@ -397,6 +399,7 @@ class AuthApiController extends Controller
                 'phone' => $customer->phone,
                 'email' => $customer->email,
                 'image_url' => $customer->image_url,
+                'is_verify' => $customer->is_verify,
             ];
 
             return response()->json([
@@ -425,5 +428,72 @@ class AuthApiController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'An error occurred', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    public function forgetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+
+        $phone = $request->phone;
+        $customer = Customer::where('phone', $phone)->first();
+
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
+
+        $otp = rand(100000, 999999);
+        Cache::put('otp_' . $phone, $otp, now()->addMinutes(5));
+
+        $response = GlobalFunction::sendOTP($phone, $otp);
+        if ($response) {
+            return response()->json(['otp' => $otp], 200);
+        } else {
+            return response()->json(['message' => 'Failed to send OTP'], 500);
+        }
+    }
+
+    public function verifyOTPAndResetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required|string',
+            'otp' => 'required|numeric',
+            'new_password' => 'required|string|min:6',
+            'confirm_password' => 'required|string|same:new_password',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+
+        $phone = $request->phone;
+        $otp = $request->otp;
+        $newPassword = $request->new_password;
+
+        $cachedOtp = Cache::get('otp_' . $phone);
+
+        if (!$cachedOtp || $cachedOtp != $otp) {
+            return response()->json(['message' => 'Phone number and OTP do not match'], 400);
+        }
+
+        $customer = Customer::where('phone', $phone)->first();
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
+
+        $customer->password = $newPassword;
+        $customer->save();
+
+        Cache::forget('otp_' . $phone);
+
+        return response()->json([
+            'message' => 'Password has been reset successfully',
+            'success' => true,
+        ], 200);
     }
 }
