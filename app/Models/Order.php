@@ -13,17 +13,15 @@ class Order extends Model
         'customer_id',
         'order_amount',
         'discount_amount',
-        'discount_type',
-        'shipping_method',
-        'shipping_address',
-        'shipping_fee',
-        'order_status',
-        'order_note',
-        'payment_status',
+        'delivery_type',
+        'delivery_fee',
         'payment_method',
-        'payment_image',
-        'latitude',
-        'longitude',
+        'address',
+        'pay_slip',
+    ];
+
+    protected $casts = [
+        'address' => 'array'
     ];
 
     public function details()

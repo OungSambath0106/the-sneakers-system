@@ -83,3 +83,5 @@ Route::post('login-with-phone', [AuthApiController::class, 'loginPhoneOTP']);
 // Forget Password
 Route::post('forget-password', [AuthApiController::class, 'forgetPassword']);
 Route::post('verify-otp-and-reset-password', [AuthApiController::class, 'verifyOTPAndResetPassword']);
+// Google Login
+Route::post('google-login', [AuthApiController::class, 'googleLogin']);

@@ -23,8 +23,6 @@ class CreateOrderDetailsTable extends Migration
             $table->string('product_size')->nullable();
             $table->decimal('product_price', 10, 2)->nullable();
             $table->decimal('discount', 10, 2)->nullable();
-            $table->enum('delivery_status', ['pending', 'delivered', 'cancelled'])->default('pending');
-            $table->enum('payment_status', ['unpaid', 'paid'])->nullable();
             $table->string('discount_type')->nullable();
             $table->timestamps();
 

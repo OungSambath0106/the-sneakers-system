@@ -127,6 +127,8 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         // Route Transaction
         Route::post('order/update_status', [OrderController::class, 'updateStatus'])->name('order.update_status');
         Route::resource('order', OrderController::class);
+        Route::get('order/{id}', [OrderController::class, 'show'])->name('order.show');
+        Route::get('order/edit-address', [OrderController::class, 'editAddress'])->name('order.edit-address');
     });
 
 });

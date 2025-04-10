@@ -18,17 +18,12 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->string('order_amount')->nullable();
             $table->string('discount_amount')->nullable();
-            $table->string('discount_type')->nullable();
-            $table->string('shipping_method')->nullable();
-            $table->string('shipping_address')->nullable();
-            $table->string('shipping_fee')->nullable();
+            $table->string('delivery_type')->nullable();
+            $table->string('delivery_fee')->nullable();
             $table->enum('order_status', ['pending', 'confirmed', 'packaging', 'out_for_delivery', 'delivered', 'failed_to_deliver', 'cancelled'])->default('pending');
-            $table->string('order_note')->nullable();
-            $table->enum('payment_status', ['unpaid', 'paid'])->nullable();
             $table->enum('payment_method', ['cash_on_delivery', 'ABA', 'AC'])->nullable();
-            $table->string('payment_image')->nullable();
-            $table->string('latitude')->nullable();
-            $table->string('longitude')->nullable();
+            $table->enum('payment_status', ['unpaid', 'paid'])->nullable();
+            $table->string('pay_slip')->nullable();
             $table->timestamps();
 
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');

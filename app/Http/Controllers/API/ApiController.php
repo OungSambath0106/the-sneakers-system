@@ -604,14 +604,9 @@ class ApiController extends Controller
     {
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'shipping_method' => 'nullable|string',
-            'shipping_address' => 'nullable|string',
-            'shipping_fee' => 'nullable|numeric',
-            'payment_status' => 'required|in:unpaid,paid',
-            'payment_method' => 'required|in:cash_on_delivery,ABA,AC',
-            'order_note' => 'nullable|string',
-            'latitude' => 'nullable|string',
-            'longitude' => 'nullable|string',
+            'delivery_type' => 'nullable|string',
+            'delivery_fee' => 'nullable|numeric',
+            'payment_method' => 'required|in:cash_on_delivery,aba,ac',
             'order_details' => 'required|array',
             'order_details.*.product_id' => 'required|exists:products,id',
             'order_details.*.brand_id' => 'required|exists:brands,id',
@@ -620,6 +615,8 @@ class ApiController extends Controller
             'order_details.*.product_size' => 'required|string',
             'order_details.*.discount' => 'nullable|numeric',
             'order_details.*.discount_type' => 'nullable|in:amount,percent',
+            'address' => 'nullable|array',
+            'pay_slip' => 'nullable|string',
         ]);
 
         try {
@@ -651,6 +648,16 @@ class ApiController extends Controller
 
             $order->invoice_ref = "INV-{$datePrefix}00{$order->id}";
             $order->save();
+
+            if ($validated['address']) {
+                $order->address = $validated['address'];
+                $order->save();
+            }
+
+            if ($validated['pay_slip']) {
+                $order->pay_slip = $validated['pay_slip'];
+                $order->save();
+            }
 
             foreach ($validated['order_details'] as $detail) {
                 $order_detail = new OrderDetail();

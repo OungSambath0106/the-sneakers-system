@@ -47,7 +47,7 @@
                 @elseif (request()->routeIs('admin.promotion*'))
                     <li class="breadcrumb-item text-sm text-white active" aria-current="page">Promotion</li>
                 @elseif (request()->routeIs('admin.order*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Transaction Report</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Sales Report</li>
                 @elseif (request()->routeIs('admin.setting*'))
                     <li class="breadcrumb-item text-sm text-white active" aria-current="page">Settings</li>
                 @elseif (request()->routeIs('admin.show_info'))

@@ -5,10 +5,10 @@
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('SL') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Order ID') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Customer Name') }}</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Product Amount	') }}</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Product Discount') }}</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Shipping Charge') }}</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Order Amount') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Delivery Fee') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Qty') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Discount') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Order Amount') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Payment Method') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Payment Status') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Action') }}</th>
@@ -20,32 +20,38 @@
                     <td>
                         <p class="text-sm font-weight-bold mb-0"> {{ $loop->iteration }} </p>
                     </td>
-                    <td>
+                    <td data-order="{{ strtolower(@$item->invoice_ref) }}">
                         <p class="text-sm font-weight-bold mb-0"> {{ $item->invoice_ref }} </p>
                     </td>
-                    <td data-order="{{ strtolower(@$user->first_name) . ' ' . strtolower(@$user->last_name) }}">
-                        <p class="text-sm font-weight-bold mb-0"> {{ $item->customer->first_name }} {{ $item->customer->last_name }} </p>
+                    <td data-order="{{ strtolower(@$item->customer->name) }}">
+                        <p class="text-sm font-weight-bold mb-0"> {{ @$item->customer->name }} </p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0"> $ {{ $item->order_amount }} </p>
+                        <p class="text-sm font-weight-bold mb-0"> $ {{ $item->delivery_fee ?? 0 }} </p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> {{ $item->details->sum('product_qty') }} </p>
                     </td>
                     <td>
                         <p class="text-sm font-weight-bold mb-0"> $ {{ $item->discount_amount }} </p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0"> $ {{ $item->shipping_fee }} </p>
+                        <p class="text-sm font-weight-bold mb-0"> $ {{ number_format($item->order_amount - $item->discount_amount + $item->delivery_fee, 2) }} </p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0"> $ {{ $item->order_amount }} </p>
+                        <p class="text-sm font-weight-bold mb-0 text-uppercase"> {{ ucwords(str_replace('_', ' ', $item->payment_method)) }} </p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0"> {{ ucwords(str_replace('_', ' ', $item->payment_method)) }} </p>
-                    </td>
-                    <td>
-                        <p class="text-sm font-weight-bold mb-0"> {{ ucwords($item->payment_status) }} </p>
+                        <p class="text-sm font-weight-bold mb-0">
+                            @if ($item->payment_status == 'unpaid')
+                                <span class="badge bg-gradient-danger"> {{ ucwords($item->payment_status) }} </span>
+                            @else
+                                <span class="badge bg-gradient-success"> {{ ucwords($item->payment_status) }} </span>
+                            @endif
+                        </p>
                     </td>
                     <td class="align-middle">
-                        <a href="{{ route('admin.order.show', $product->id) }}" class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1">
+                        <a href="{{ route('admin.order.show', $item->id) }}" class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1">
                             {{ __('View') }}
                         </a>
                         <button class="btn btn-link text-danger text-sm mb-0 px-0 ms-4">

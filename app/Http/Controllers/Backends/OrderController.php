@@ -75,7 +75,13 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        //
+        $order = Order::with('customer', 'details.brand', 'details.product')->findOrFail($id);
+        return view('backends.order.partial.order_detail', compact('order'));
+    }
+
+    public function editAddress()
+    {
+        return view('backends.order.partial.modal_edit_address');
     }
 
     /**

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Socialite\Facades\Socialite;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthApiController extends Controller
 {
@@ -495,5 +497,33 @@ class AuthApiController extends Controller
             'message' => 'Password has been reset successfully',
             'success' => true,
         ], 200);
+    }
+
+    private function findOrCreateCustomer($providerCustomer, $provider)
+    {
+        $customer = Customer::where('email', $providerCustomer->email)->first();
+
+        if (!$customer) {
+            $customer = Customer::create([
+                'image_url' => $providerCustomer->avatar,
+                'name' => $providerCustomer->name,
+                'email' => $providerCustomer->email,
+                'provider' => $provider,
+                'provider_id' => $providerCustomer->id,
+            ]);
+        }
+
+        return $customer;
+    }
+
+    public function googleLogin(Request $request)
+    {
+        $providerCustomer = Socialite::driver('google')->stateless()->customerFromToken($request->access_token);
+
+        $customer = $this->findOrCreateCustomer($providerCustomer, 'google');
+
+        $token = JWTAuth::fromUser($customer);
+
+        return response()->json(compact('token'));
     }
 }

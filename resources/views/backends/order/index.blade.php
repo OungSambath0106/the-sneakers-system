@@ -1,5 +1,5 @@
 @extends('backends.layouts.admin')
-@section('page_title', __('Transaction'))
+@section('page_title', __('Sales Report'))
 @push('css')
     <style>
         .preview {
@@ -76,7 +76,7 @@
                 </div>
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between pb-0">
-                        <h5 class="pb-1">{{ __('Transaction Report') }}</h5>
+                        <h5 class="pb-1">{{ __('Sales Report') }}</h5>
                     </div>
                     <div class="card-body px-3 pt-0 pb-2">
                         <div class="dataTableButtons-container d-flex mx-0 align-items-center pb-2">
