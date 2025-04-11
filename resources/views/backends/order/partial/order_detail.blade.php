@@ -37,7 +37,7 @@
                                 <a href="" class="btn bg-gradient-primary me-2">
                                     <i class="fas fa-map-marker-alt me-2"></i> Show locations on map
                                 </a>
-                                <a href="" class="btn bg-gradient-primary">
+                                <a href="{{ route('admin.order.invoice.pdf', @$order->id) }}" class="btn bg-gradient-primary" target="_blank">
                                     <i class="fas fa-print me-2"></i> Print Invoice
                                 </a>
                             </div>
@@ -175,30 +175,26 @@
                                     <table class="table table-borderless">
                                         <tr>
                                             <td>Item price</td>
-                                            <td class="text-end">${{ number_format($order->order_amount, 2) }}</td>
+                                            <td class="text-end"> $ {{ number_format($order->order_amount, 2) }} </td>
                                         </tr>
                                         <tr>
                                             <td>Item Discount</td>
-                                            <td class="text-end">- ${{ number_format($order->discount_amount, 2) }}
-                                            </td>
+                                            <td class="text-end"> - $ {{ number_format($order->discount_amount, 2) }} </td>
                                         </tr>
                                         <tr>
                                             <td>Sub Total</td>
-                                            <td class="text-end">
-                                                ${{ number_format($order->order_amount - $order->discount_amount, 2) }}
-                                            </td>
+                                            <td class="text-end"> $ {{ number_format($order->order_amount - $order->discount_amount, 2) }} </td>
                                         </tr>
                                         <tr>
                                             <td>Delivery Fee</td>
-                                            <td class="text-end">${{ number_format($order->delivery_fee, 2) }}</td>
+                                            <td class="text-end"> $ {{ number_format($order->delivery_fee, 2) }} </td>
                                         </tr>
                                         @php
-                                            $total =
-                                                $order->order_amount - $order->discount_amount + $order->delivery_fee;
+                                            $total = $order->order_amount - $order->discount_amount + $order->delivery_fee;
                                         @endphp
                                         <tr class="fw-bold">
                                             <td>Total</td>
-                                            <td class="text-end">${{ number_format($total, 2) }}</td>
+                                            <td class="text-end"> $ {{ number_format($total, 2) }} </td>
                                         </tr>
                                     </table>
                                 </div>

@@ -129,6 +129,7 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         Route::resource('order', OrderController::class);
         Route::get('order/{id}', [OrderController::class, 'show'])->name('order.show');
         Route::get('order/edit-address', [OrderController::class, 'editAddress'])->name('order.edit-address');
+        Route::get('order/invoice/pdf/{id}', [OrderController::class, 'invoicePdf'])->name('order.invoice.pdf');
     });
 
 });

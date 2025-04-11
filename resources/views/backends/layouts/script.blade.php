@@ -508,7 +508,8 @@
                 };
 
                 var table = $('#bookingTable').DataTable({
-                    responsive: true,
+                    responsive: false,
+                    scrollX: true,
                     searchDelay: 100,
                     dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
                     buttons: [
@@ -812,28 +813,6 @@
     });
 </script>
 <script>
-    // document.addEventListener("DOMContentLoaded", function() {
-    //     // Find all nav items with submenus
-    //     document.querySelectorAll('.nav-item').forEach(function(navItem) {
-    //         let navLink = navItem.querySelector('.nav-link');
-    //         let subMenu = navItem.querySelector('.nav-treeview');
-
-    //         if (subMenu) {
-    //             // Only handle click for parent with dropdown
-    //             navLink.addEventListener('click', function(e) {
-    //                 e.preventDefault(); // Don't navigate, only toggle
-    //                 navItem.classList.toggle('menu-open');
-
-    //                 // Toggle visibility of submenu
-    //                 if (navItem.classList.contains('menu-open')) {
-    //                     subMenu.style.display = 'block';
-    //                 } else {
-    //                     subMenu.style.display = 'none';
-    //                 }
-    //             });
-    //         }
-    //     });
-    // });
     document.addEventListener("DOMContentLoaded", function() {
         const SPEED = 300; // Animation speed in milliseconds (adjust as needed)
 
@@ -915,52 +894,5 @@
     });
 </script>
 <script>
-    // $(document).ready(function () {
-    //     $('.dropify').dropify();
-    //     const compressor = new window.Compress();
-
-    //     $('.custom-file-input').change(async function (e) {
-    //         const fileInput = $(this);
-    //         const imageNamesHidden = fileInput.closest('.form-group').find('.image_names_hidden');
-
-    //         const file = e.target.files[0];
-    //         const formData = new FormData();
-
-    //         try {
-    //             const options = {
-    //                 maxSizeMB: 0.05,
-    //                 quality: 1.0,
-    //                 maxWidthOrHeight: 1024,
-    //                 useWebWorker: true,
-    //                 fileType: file.type
-    //             };
-
-    //             const compressedFile = await imageCompression(file, options);
-
-    //             formData.append('image', compressedFile);
-    //             formData.append('_token', '{{ csrf_token() }}');
-
-    //             $.post({
-    //                 url: "{{ route('save_temp_file') }}",
-    //                 data: formData,
-    //                 processData: false,
-    //                 contentType: false
-    //             }).done(response => {
-    //                 if (response.status === 1) {
-    //                     imageNamesHidden.val(response.temp_files);
-    //                 } else {
-    //                     toastr.error(response.msg);
-    //                 }
-    //             }).fail(function (jqXHR, textStatus, errorThrown) {
-    //                 toastr.error(`Upload failed: ${jqXHR.status} ${errorThrown}`);
-    //                 console.log(jqXHR.responseText);
-    //             });
-
-    //         } catch (error) {
-    //             toastr.error("Image compression failed.");
-    //             console.error(error);
-    //         }
-    //     });
-    // });
 </script>
 @stack('js')

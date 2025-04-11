@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use PDF;
 
 class OrderController extends Controller
 {
@@ -116,5 +117,16 @@ class OrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function invoicePdf($id)
+    {
+        $order = Order::with('customer', 'details.brand', 'details.product')->findOrFail($id);
+
+        $invoiceRef = $order->invoice_ref ?? 'order-' . $id;
+
+        // $pdf = PDF::loadView('backends.order.partial.invoice_pdf', compact('order'));
+        // return $pdf->download('invoice-' . $invoiceRef . '.pdf');
+        return view('backends.order.partial.invoice_pdf', compact('order'));
     }
 }

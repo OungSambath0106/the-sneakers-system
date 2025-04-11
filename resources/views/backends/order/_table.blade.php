@@ -54,10 +54,10 @@
                         <a href="{{ route('admin.order.show', $item->id) }}" class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1">
                             {{ __('View') }}
                         </a>
-                        <button class="btn btn-link text-danger text-sm mb-0 px-0 ms-4">
+                        <a href="{{ route('admin.order.invoice.pdf', $item->id) }}" class="btn btn-link text-danger text-sm mb-0 px-0 ms-4" target="_blank">
                             <i class="fas fa-file-pdf text-lg me-1"></i>
                             {{ __('PDF') }}
-                        </button>
+                        </a>
                     </td>
                 </tr>
             @empty
