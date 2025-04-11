@@ -1,6 +1,6 @@
 @extends('backends.layouts.admin')
 @section('page_title')
-    Dashboard
+    {{ __('Dashboard') }}
 @endsection
 @push('css')
     <style>
@@ -335,17 +335,33 @@
                                         @if ($customer->image && file_exists(public_path('uploads/customers/' . $customer->image)))
                                             <img src="{{ asset('uploads/customers/' . $customer->image) }}" alt="..."
                                                 class="avatar-img rounded-circle">
+                                        @elseif ($customer->provider=='google')
+                                            <img src="{{ $customer->image }}" alt="..."
+                                                class="avatar-img rounded-circle">
                                         @else
                                             <span class="avatar-title rounded-circle border border-white">
-                                                {{ strtoupper(substr($customer->first_name, 0, 1)) }}{{ strtoupper(substr($customer->last_name, 0, 1)) }}
+                                                @php
+                                                    $nameParts = explode(' ', $customer->name);
+                                                    $initials = '';
+                                                    if (count($nameParts) == 1) {
+                                                        $initials = strtoupper(substr($nameParts[0], 0, 1));
+                                                    } else {
+                                                        $initials = strtoupper(substr($nameParts[0], 0, 1) . substr($nameParts[1], 0, 1));
+                                                    }
+                                                @endphp
+                                                {{ $initials }}
                                             </span>
                                         @endif
                                     </div>
                                     <div class="d-flex flex-column">
                                         <h6 class="mb-1 text-dark text-sm"> <a
                                                 href="{{ route('admin.customer.edit', $customer->id) }}">
-                                                {{ $customer->first_name }} {{ $customer->last_name }} </a> </h6>
-                                        <span class="text-xs">{{ $customer->email }}</span>
+                                                {{ $customer->name }} </a> </h6>
+                                        @if ($customer->email == null)
+                                            <span class="text-xs">{{ $customer->phone }}</span>
+                                        @else
+                                            <span class="text-xs">{{ $customer->email }}</span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="d-flex">

@@ -30,6 +30,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
@@ -604,9 +605,10 @@ class ApiController extends Controller
     {
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
+            'order_type' => 'required|in:pickup,delivery',
             'delivery_type' => 'nullable|string',
             'delivery_fee' => 'nullable|numeric',
-            'payment_method' => 'required|in:cash_on_delivery,aba,ac',
+            'payment_method' => 'nullable|in:cash_on_delivery,aba,ac',
             'order_details' => 'required|array',
             'order_details.*.product_id' => 'required|exists:products,id',
             'order_details.*.brand_id' => 'required|exists:brands,id',
@@ -616,7 +618,7 @@ class ApiController extends Controller
             'order_details.*.discount' => 'nullable|numeric',
             'order_details.*.discount_type' => 'nullable|in:amount,percent',
             'address' => 'nullable|array',
-            'pay_slip' => 'nullable|string',
+            'pay_slip' => 'nullable|file|mimes:jpg,jpeg,png,pdf,webp|max:2048',
         ]);
 
         try {
@@ -654,10 +656,28 @@ class ApiController extends Controller
                 $order->save();
             }
 
-            if ($validated['pay_slip']) {
-                $order->pay_slip = $validated['pay_slip'];
+            if ($validated['order_type'] == 'pickup') {
+                $order->delivery_fee = 0;
+                $order->order_status = null;
+                $order->delivery_type = 'pickup';
                 $order->save();
             }
+
+            if ($request->file('pay_slip')) {
+                $image_name = time() . '.' . $request->pay_slip->extension();
+                if ($order->pay_slip) {
+                    if (file_exists(public_path('uploads/payments/' . $order->pay_slip))) {
+                        unlink(public_path('uploads/payments/' . $order->pay_slip));
+                    }
+                }
+
+                $request->pay_slip->move(public_path('uploads/payments'), $image_name);
+                $order->pay_slip = $image_name;
+                $order->payment_status = 'paid';
+            } else {
+                $order->payment_status = 'unpaid';
+            }
+            $order->save();
 
             foreach ($validated['order_details'] as $detail) {
                 $order_detail = new OrderDetail();
@@ -764,15 +784,40 @@ class ApiController extends Controller
 
     public function updateCustomerProfile(Request $request)
     {
-        $request->validate([
+        $customer = Customer::find(auth()->id());
+
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['string'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:customers,email,' . auth()->id()],
             'old_password' => ['nullable', 'string', 'min:6'],
             'new_password' => ['nullable', 'string', 'min:6'],
-        ]);
+        ];
 
-        $customer = Customer::find(auth()->id());
+        if ($customer->provider === 'phone') {
+            $rules['phone'] = ['required', 'string'];
+        } else {
+            $rules['phone'] = ['nullable', 'string'];
+        }
+
+        if ($customer->provider === 'google') {
+            $rules['email'] = [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('customers', 'email')->ignore($customer->id),
+            ];
+        } else {
+            $rules['email'] = [
+                'nullable',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('customers', 'email')->ignore($customer->id),
+            ];
+        }
+
+        $request->validate($rules);
+
         $customer->name = $request->name;
         $customer->phone = $request->phone;
         $customer->email = $request->email;

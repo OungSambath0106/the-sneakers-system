@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('invoice_ref')->nullable()->after('id');
+            $table->enum('order_type', ['pickup', 'delivery'])->nullable()->after('discount_amount');
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            //
+            $table->dropColumn('order_type');
         });
     }
 };

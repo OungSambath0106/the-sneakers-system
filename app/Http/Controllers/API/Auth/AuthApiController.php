@@ -338,10 +338,12 @@ class AuthApiController extends Controller
             if (!$customer) {
                 $customer = new Customer();
                 $customer->phone = $phone;
+                $customer->provider = 'phone';
             }
 
             $customer->name = $name;
             $customer->is_verify = 1;
+            $customer->provider = 'phone';
             if (!empty($password)) {
                 $customer->password = $password;
             }
@@ -357,6 +359,7 @@ class AuthApiController extends Controller
                 'email' => $customer->email,
                 'image_url' => $customer->image_url,
                 'is_verify' => $customer->is_verify,
+                'provider' => $customer->provider,
             ];
 
             return response()->json([
@@ -499,31 +502,40 @@ class AuthApiController extends Controller
         ], 200);
     }
 
-    private function findOrCreateCustomer($providerCustomer, $provider)
+    public function googleLogin(Request $request)
     {
-        $customer = Customer::where('email', $providerCustomer->email)->first();
+        // dd($request->all());
+        $request->validate([
+            'email' => 'required|email',
+            'displayName' => 'required|string',
+            'photoURL' => 'nullable|string',
+            'uid' => 'required|string',
+        ]);
+
+        $customer = Customer::where('google_uid', $request->uid)
+                    ->select('id','name','email','phone','image','is_verify','google_uid')
+                    ->where('provider', 'google')
+                    ->first()
+                    ->makeHidden('image');
 
         if (!$customer) {
-            $customer = Customer::create([
-                'image_url' => $providerCustomer->avatar,
-                'name' => $providerCustomer->name,
-                'email' => $providerCustomer->email,
-                'provider' => $provider,
-                'provider_id' => $providerCustomer->id,
+            $customer = Customer::updateOrCreate([
+                'google_uid'  => $request->uid,
+            ],[
+                'name'        => $request->displayName,
+                'email'       => $request->email,
+                'provider'    => 'google',
+                'is_verify'   => 1,
+                'image'       => $request->photoURL,
             ]);
         }
 
-        return $customer;
-    }
+        $customer->tokens()->delete();
+        $token = $customer->createToken('google_login')->accessToken;
 
-    public function googleLogin(Request $request)
-    {
-        $providerCustomer = Socialite::driver('google')->stateless()->customerFromToken($request->access_token);
-
-        $customer = $this->findOrCreateCustomer($providerCustomer, 'google');
-
-        $token = JWTAuth::fromUser($customer);
-
-        return response()->json(compact('token'));
+        return response()->json([
+            'token' => $token,
+            'customer' => $customer
+        ]);
     }
 }

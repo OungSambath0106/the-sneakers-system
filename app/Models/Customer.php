@@ -22,10 +22,15 @@ class Customer extends Authenticatable
 
     public function getImageUrlAttribute()
     {
-        if (!empty($this->image)) {
-            return asset('uploads/customers/' . rawurlencode($this->image));
+        //if image is url
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
         } else {
-            return asset('uploads/man.png');
+            if (!empty($this->image)) {
+                return asset('uploads/customers/' . rawurlencode($this->image));
+            } else {
+                return asset('uploads/man.png');
+            }
         }
     }
 
@@ -34,17 +39,16 @@ class Customer extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'gender',
-        'phone',
-        'email',
-        'password',
-        'api_token',
-        'image',
-    ];
-
+    // protected $fillable = [
+    //     'first_name',
+    //     'last_name',
+    //     'gender',
+    //     'phone',
+    //     'email',
+    //     'password',
+    //     'api_token',
+    //     'image',
+    // ];
 
     /**
      * The attributes that should be hidden for serialization.

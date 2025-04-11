@@ -6,14 +6,18 @@
         .form-switch .form-check-input:after {
             top: 0px;
         }
-        .carousel-control-prev, .carousel-control-next {
+
+        .carousel-control-prev,
+        .carousel-control-next {
             width: unset !important;
             height: 2rem !important;
             align-self: center !important;
         }
+
         .carousel-control-prev {
             left: -50px !important;
         }
+
         .carousel-control-next {
             right: -50px !important;
         }
@@ -39,33 +43,44 @@
                             </div>
                         </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-12 text-md-end">
-                                <span class="text-muted pe-2">Status:</span>
-                                @if ($order->order_status == 'pending')
-                                    <span class="badge bg-gradient-warning">{{ @$order->order_status }}</span>
-                                @elseif ($order->order_status == 'confirmed')
-                                    <span class="badge bg-gradient-success">{{ @$order->order_status }}</span>
-                                @elseif ($order->order_status == 'packaging')
-                                    <span class="badge bg-gradient-info">{{ @$order->order_status }}</span>
-                                @elseif ($order->order_status == 'out_for_delivery')
-                                    <span class="badge bg-gradient-primary">{{ @$order->order_status }}</span>
-                                @elseif ($order->order_status == 'delivered')
-                                    <span class="badge bg-gradient-success">{{ @$order->order_status }}</span>
-                                @elseif ($order->order_status == 'failed_to_deliver')
-                                    <span class="badge bg-gradient-danger">{{ @$order->order_status }}</span>
-                                @elseif ($order->order_status == 'cancelled')
-                                    <span class="badge bg-gradient-danger">{{ @$order->order_status }}</span>
-                                @endif
+                        @if ($order->order_type == 'delivery')
+                            <div class="row mb-3">
+                                <div class="col-md-12 text-md-end">
+                                    <span class="text-muted pe-2">Status:</span>
+                                    @if ($order->order_status == 'pending')
+                                        <span class="badge bg-gradient-warning">{{ @$order->order_status }}</span>
+                                    @elseif ($order->order_status == 'confirmed')
+                                        <span class="badge bg-gradient-success">{{ @$order->order_status }}</span>
+                                    @elseif ($order->order_status == 'packaging')
+                                        <span class="badge bg-gradient-info">{{ @$order->order_status }}</span>
+                                    @elseif ($order->order_status == 'out_for_delivery')
+                                        <span class="badge bg-gradient-primary">{{ @$order->order_status }}</span>
+                                    @elseif ($order->order_status == 'delivered')
+                                        <span class="badge bg-gradient-success">{{ @$order->order_status }}</span>
+                                    @elseif ($order->order_status == 'failed_to_deliver')
+                                        <span class="badge bg-gradient-danger">{{ @$order->order_status }}</span>
+                                    @elseif ($order->order_status == 'cancelled')
+                                        <span class="badge bg-gradient-danger">{{ @$order->order_status }}</span>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
                         <div class="row mb-3">
                             <div class="col-md-12 text-md-end">
-                                <span class="text-muted pe-2">Payment Method:</span>
-                                {{ strtoupper(str_replace('_', ' ', @$order->payment_method)) }}
+                                <span class="text-muted pe-2">Order Type:</span>
+                                {{ ucwords(@$order->order_type) }}
                             </div>
                         </div>
+
+                        @if ($order->order_type == 'delivery')
+                            <div class="row mb-3">
+                                <div class="col-md-12 text-md-end">
+                                    <span class="text-muted pe-2">Payment Method:</span>
+                                    {{ strtoupper(str_replace('_', ' ', @$order->payment_method)) }}
+                                </div>
+                            </div>
+                        @endif
 
                         <div class="row mb-4">
                             <div class="col-md-12 text-md-end">
@@ -82,11 +97,16 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">SL</th>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">Item Details</th>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">Item Price</th>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">Item Discount</th>
-                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">Total Price</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">
+                                            SL</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">
+                                            Item Details</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">
+                                            Item Price</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">
+                                            Item Discount</th>
+                                        <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">
+                                            Total Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -108,7 +128,7 @@
 
                                                         @include('backends.order.partial.modal_popup_image')
                                                     @else
-                                                        <img src="{{ !empty($item->product->image[0]) && file_exists(public_path('uploads/products/' . $item->product->image[0])) ? asset('uploads/products/' . $item-> product->image[0]) : asset('uploads/default.png') }}"
+                                                        <img src="{{ !empty($item->product->image[0]) && file_exists(public_path('uploads/products/' . $item->product->image[0])) ? asset('uploads/products/' . $item->product->image[0]) : asset('uploads/default.png') }}"
                                                             alt="Product Image" class="avatar avatar-sm me-3">
                                                     @endif
                                                     <div>
@@ -121,18 +141,22 @@
                                                 </div>
                                             </td>
                                             <td> $ {{ number_format($item->product_price * $item->product_qty, 2) }} </td>
+                                            @php
+                                                $discount_percent = (($item->product_price * $item->discount) / 100) * $item->product_qty;
+                                                $discount_amount = $item->discount * $item->product_qty;
+                                            @endphp
                                             <td>
-                                                @if($item->discount_type == 'percent')
-                                                    $ {{ number_format(($item->product_price * $item->discount / 100) * $item->product_qty, 2) }}
+                                                @if ($item->discount_type == 'percent')
+                                                    $ {{ number_format($discount_percent, 2) }}
                                                 @else
-                                                    $ {{ number_format($item->discount * $item->product_qty, 2) }}
+                                                    $ {{ number_format($discount_amount, 2) }}
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($item->discount_type == 'percent')
-                                                    $ {{ number_format(($item->product_price * $item->discount / 100) * $item->product_qty, 2) }}
+                                                @if ($item->discount_type == 'percent')
+                                                    $ {{ number_format(($item->product_price * $item->product_qty) - $discount_percent, 2) }}
                                                 @else
-                                                    $ {{ number_format($item->product_price * $item->product_qty - $item->discount * $item->product_qty, 2) }}
+                                                    $ {{ number_format($item->product_price * $item->product_qty - $discount_amount, 2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -160,14 +184,17 @@
                                         </tr>
                                         <tr>
                                             <td>Sub Total</td>
-                                            <td class="text-end">${{ number_format($order->order_amount - $order->discount_amount, 2) }}</td>
+                                            <td class="text-end">
+                                                ${{ number_format($order->order_amount - $order->discount_amount, 2) }}
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Delivery Fee</td>
                                             <td class="text-end">${{ number_format($order->delivery_fee, 2) }}</td>
                                         </tr>
                                         @php
-                                            $total = $order->order_amount - $order->discount_amount + $order->delivery_fee;
+                                            $total =
+                                                $order->order_amount - $order->discount_amount + $order->delivery_fee;
                                         @endphp
                                         <tr class="fw-bold">
                                             <td>Total</td>
@@ -186,18 +213,20 @@
                     <div class="card-body">
                         <h6 class="mb-3 text-center">Order & Shipping Info</h6>
 
-                        <div class="mb-3">
-                            <label class="form-label">Change Order Status</label>
-                            <select class="form-select" id="orderStatus">
-                                <option selected>Pending</option>
-                                <option>Confirmed</option>
-                                <option>Packaging</option>
-                                <option>Out for delivery</option>
-                                <option>Delivered</option>
-                                <option>Failed to deliver</option>
-                                <option>Cancelled</option>
-                            </select>
-                        </div>
+                        @if ($order->order_type == 'delivery')
+                            <div class="mb-3">
+                                <label class="form-label">Change Order Status</label>
+                                <select class="form-select" id="orderStatus" onchange="changeOrderStatus(this.value)">
+                                    <option value="pending" {{ @$order->order_status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="confirmed" {{ @$order->order_status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                    <option value="packaging" {{ @$order->order_status == 'packaging' ? 'selected' : '' }}>Packaging</option>
+                                    <option value="out_for_delivery" {{ @$order->order_status == 'out_for_delivery' ? 'selected' : '' }}>Out for delivery</option>
+                                    <option value="delivered" {{ @$order->order_status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                                    <option value="failed_to_deliver" {{ @$order->order_status == 'failed_to_deliver' ? 'selected' : '' }}>Failed to deliver</option>
+                                    <option value="cancelled" {{ @$order->order_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                </select>
+                            </div>
+                        @endif
 
                         <div class="mb-3">
                             <div class="d-flex justify-content-between align-items-center form-control">
@@ -205,22 +234,24 @@
                                     <span>Payment Status</span>
                                 </div>
                                 <div class="right d-flex align-items-center">
-                                    <span class="me-3">Unpaid</span>
+                                    <span class="me-3">{{ ucwords(@$order->payment_status) }}</span>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="paymentStatusSwitch">
+                                        <input class="form-check-input" type="checkbox" id="paymentStatusSwitch" {{ @$order->payment_status == 'paid' ? 'checked' : '' }}>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label">Shipping Method ( No Shipping Method Selected )</label>
-                            <select class="form-select" id="shippingMethod">
+                        @if ($order->order_type == 'delivery')
+                            <div class="mb-4">
+                                <label class="form-label">Shipping Method ( No Shipping Method Selected )</label>
+                                <select class="form-select" id="shippingMethod">
                                 <option selected>Choose Delivery Type</option>
                                 <option> By self delivery method </option>
                                 <option> By third party delivery service </option>
-                            </select>
-                        </div>
+                                </select>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -237,7 +268,9 @@
                                     alt="Customer" class="avatar avatar-lg rounded-circle me-3" style="object-fit: cover;">
                                 <div>
                                     <h6 class="mb-1">{{ @$order->customer->name }}</h6>
-                                    <p class="mb-1 text-muted">{{ App\Models\Order::where('customer_id', @$order->customer->id)->count() }} Orders</p>
+                                    <p class="mb-1 text-muted">
+                                        {{ App\Models\Order::where('customer_id', @$order->customer->id)->count() }} Orders
+                                    </p>
                                     <p class="mb-1">{{ @$order->customer->phone }}</p>
                                     <p class="mb-0">{{ @$order->customer->email }}</p>
                                 </div>
@@ -246,95 +279,61 @@
                     </div>
                 </div>
 
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <div>
-                            <div class="d-flex justify-content-between mb-1">
-                                <div class="d-flex">
-                                    <i class="fas fa-map-marker-alt me-2 pt-1"></i>
-                                    <h6 class="mb-0">Shipping address</h6>
-                                </div>
-                                <a href="#" class="btn btn-sm btn-outline-primary btn-modal" data-toggle="modal" data-target="#editAddressModal">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </div>
+                @if ($order->address)
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
                             <div>
-                                <p class="mb-1"><strong>Name:</strong> {{ @$order->customer->name }} </p>
-                                <p class="mb-1"><strong>Label:</strong> {{ @$order->address['label'] ?? '' }} </p>
-                                <p class="mb-1"><strong>Contact:</strong> {{ @$order->address['phoneNumber'] ?? '' }} </p>
-                                <p class="mb-1"><strong>Province:</strong>
-                                    <i class="fas fa-map-marker-alt me-1"></i>
-                                    {{ @$order->address['province'] ?? '' }}
-                                </p>
-                                <p class="mb-1"><strong>Street Line #1:</strong> {{ @$order->address['streetLine1'] ?? '' }}</p>
-                                <p class="mb-1"><strong>Street Line #2:</strong> {{ @$order->address['streetLine2'] ?? '' }}</p>
-                                <p class="mb-0"><strong>Note:</strong> {{ @$order->address['note'] ?? '' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="editAddressModal" tabindex="-1" role="dialog" aria-labelledby="editAddressModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-body position-relative">
-                    <h5 class="modal-title text-center">{{ __('Edit Shipping Address') }}</h5>
-                    <button type="button" class="close btn-close-modal position-absolute" style="top: 10px; right: 10px; border: none; background: none; font-size: 1.5rem;" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                    <form action="#" enctype="multipart/form-data" class="submit-form mt-4" method="post">
-                        <div class="row">
-                            <!-- Label field -->
-                            <div class="col-md-12 mb-3">
-                                <div class="form-group m-0">
-                                    <button class="btn btn-sm btn-outline-primary mb-0 @if(@$order->address['label'] == 'Home') active @endif" value="Home">Home</button>
-                                    <button class="btn btn-sm btn-outline-primary mb-0 @if(@$order->address['label'] == 'Work') active @endif" value="Work">Work</button>
-                                    <button class="btn btn-sm btn-outline-primary mb-0 @if(@$order->address['label'] == 'Other') active @endif" value="Other">Other</button>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <div class="d-flex">
+                                        <i class="fas fa-map-marker-alt me-2 pt-1"></i>
+                                        <h6 class="mb-0">Shipping address</h6>
+                                    </div>
+                                    <a href="#" class="btn btn-sm btn-outline-primary btn-modal" data-toggle="modal"
+                                        data-target="#editAddressModal">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                                <div>
+                                    <p class="mb-1"><strong>Name:</strong> {{ @$order->customer->name }} </p>
+                                    <p class="mb-1"><strong>Label:</strong> {{ ucwords(@$order->address['label'] ) }} </p>
+                                    <p class="mb-1"><strong>Contact:</strong> {{ @$order->address['phoneNumber'] }}
+                                    </p>
+                                    <p class="mb-1"><strong>Province:</strong>
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        {{ @$order->address['province'] ?? '' }}
+                                    </p>
+                                    <p class="mb-1"><strong>Street Line #1:</strong>
+                                        {{ @$order->address['streetLine1'] ?? '' }}</p>
+                                    <p class="mb-1"><strong>Street Line #2:</strong>
+                                        {{ @$order->address['streetLine2'] ?? '' }}</p>
+                                    <p class="mb-0"><strong>Note:</strong> {{ @$order->address['note'] ?? '' }}</p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                @endif
 
-                            <!-- Phone Number field -->
-                            <div class="col-md-6 mb-3">
-                                <label for="phoneNumber" class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" id="phoneNumber" value="+855 855 964 828">
-                            </div>
-
-                            <!-- Province field -->
-                            <div class="col-md-6 mb-3">
-                                <label for="province" class="form-label">Province</label>
-                                <input type="text" class="form-control" id="province" value="Siem Reap">
-                            </div>
-
-                            <!-- Street Line #1 field -->
-                            <div class="col-md-6 mb-3">
-                                <label for="streetLine1" class="form-label">Street Line #1</label>
-                                <input type="text" class="form-control" id="streetLine1" value="Siem Reap">
-                            </div>
-
-                            <!-- Street Line #2 field -->
-                            <div class="col-md-6 mb-3">
-                                <label for="streetLine2" class="form-label">Street Line #2</label>
-                                <input type="text" class="form-control" id="streetLine2" value="Siem Reap">
-                            </div>
-
-                            <!-- Note field -->
-                            <div class="col-md-12 mb-3">
-                                <label for="deliveryNote" class="form-label">Note</label>
-                                <textarea class="form-control" id="deliveryNote" rows="2">Noted</textarea>
+                @if ($order->pay_slip)
+                    <div class="card shadow-sm mb-2">
+                        <div class="card-body">
+                            <div class="">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-user me-2"></i>
+                                    <h6 class="mb-0">Pay Slip</h6>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ !empty($order->pay_slip) ? asset('uploads/payments/' . $order->pay_slip) : asset('uploads/default1.png') }}"
+                                        alt="payslip" class="w-100 rounded-3" style="object-fit: cover; height: 16rem; object-position: center;">
+                                </div>
                             </div>
                         </div>
-                    </form>
-                    <div class="d-flex justify-content-end gap-2 pt-3">
-                        <button type="button" class="btn bg-gradient-danger btn-sm" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn bg-gradient-primary btn-sm">Update</button>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
+
+    @include('backends.order.partial.modal_edit_address')
 @endsection
 @push('js')
     <script>

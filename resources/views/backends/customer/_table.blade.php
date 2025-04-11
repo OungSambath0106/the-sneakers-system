@@ -16,11 +16,14 @@
         </thead>
         <tbody>
             @forelse ($customers as $customer)
+            {{-- @dd($customer) --}}
                 <tr>
                     <td data-order="{{ strtolower(@$customer->name) }}">
                         <img src="
                         @if ($customer->image && file_exists(public_path('uploads/customers/' . $customer->image)))
                             {{ asset('uploads/customers/'. $customer->image) }}
+                        @elseif ($customer->provider=='google')
+                            {{ $customer->image }}
                         @elseif ($customer->gender=='male')
                             {{ asset('uploads/man.png') }}
                         @elseif ($customer->gender=='female')

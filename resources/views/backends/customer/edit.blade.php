@@ -141,13 +141,20 @@
                                                 <input type="text" class="form-control" value="{{ old('address') }}"
                                                     name="address" placeholder="{{__('Enter Address')}}" >
                                             </div> --}}
+                                            @php
+                                                if ($customer->image && filter_var($customer->image, FILTER_VALIDATE_URL)) {
+                                                    $imageName = time() . '-' . Str::random(5) . '.jpg';
+                                                    file_put_contents(public_path("uploads/customers/{$imageName}"), file_get_contents($customer->image));
+                                                    $customer->image = $imageName;
+                                                }
+                                            @endphp
                                             <div class="form-group col-md-6">
                                                 <label for="dropifyInput">{{ __('Image') }} <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span> </label>
                                                 <input type="hidden" name="image_names" class="image_names_hidden">
                                                 <input type="file" id="dropifyInput" class="dropify custom-file-input" name="image"
                                                         data-default-file="{{ isset($customer) && $customer->image && file_exists(public_path('uploads/customers/' . $customer->image))
                                                         ? asset('uploads/customers/' . $customer->image)
-                                                        : '' }}" accept="image/png, image/jpeg, image/gif, image/webp">
+                                                        : $customer->image }}" accept="image/png, image/jpeg, image/gif, image/webp">
                                                 <div class="progress mt-2" style="height: 10px; display: none;">
                                                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
                                                 </div>
