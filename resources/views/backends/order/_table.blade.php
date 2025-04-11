@@ -9,7 +9,7 @@
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Delivery Fee') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Qty') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Discount') }}</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Order Amount') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Amount') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Payment Status') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Action') }}</th>
             </tr>

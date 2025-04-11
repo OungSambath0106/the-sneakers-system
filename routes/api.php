@@ -52,36 +52,22 @@ Route::get('get_products_by_brand', [ApiController::class, 'getProductByBrand'])
 Route::get('/products/search', [ApiController::class, 'searchProduct']);
 // (Get Product Detail)
 Route::get('get_product_detail', [ApiController::class, 'GetProductDetail']);
-
-Route::middleware(['auth:api'])->group(function () {
-    // (Get Config)
-    Route::get('get_config', [ApiController::class, 'getConfig']);
-    // (Get User)
-    Route::get('get_users', [ApiController::class, 'getUser']);
-    // (logout)
-    Route::get('logout', [AuthApiController::class, 'logout']);
-});
-// (Customer Register)
-// (Customer Login)
-Route::post('customer_login', [AuthApiController::class, 'customerLogin']);
+// Business Setting
+Route::get('get_config', [ApiController::class, 'getConfig']);
 
 Route::middleware(['auth:customers'])->group(function () {
     Route::post('/orders', [ApiController::class, 'storeOrder']);
-    // Route::get('order/{id}', [ApiController::class, 'showOrder']);
-    Route::get('customer_dashboard', [ApiController::class, 'customerDashboard']);
+    Route::get('order/history', [ApiController::class, 'orderHistory']);
+    Route::get('order/detail', [ApiController::class, 'orderDetail']);
 
     Route::get('customer-profile', [ApiController::class, 'customerProfile']);
     Route::post('update-profile', [ApiController::class, 'updateCustomerProfile']);
     Route::post('logout', [AuthApiController::class, 'logoutCustomer']);
 });
 
-// Customer Register
 Route::post('/register-with-phone',[AuthApiController::class,'registerPhoneOTP']);
 Route::post('/verify-otp',[AuthApiController::class,'verifyOTP']);
-// Customer Login
 Route::post('login-with-phone', [AuthApiController::class, 'loginPhoneOTP']);
-// Forget Password
 Route::post('forget-password', [AuthApiController::class, 'forgetPassword']);
 Route::post('verify-otp-and-reset-password', [AuthApiController::class, 'verifyOTPAndResetPassword']);
-// Google Login
 Route::post('google-login', [AuthApiController::class, 'googleLogin']);

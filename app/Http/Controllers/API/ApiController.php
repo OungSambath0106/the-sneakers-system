@@ -741,9 +741,50 @@ class ApiController extends Controller
         }
     }
 
-    public function showOrder($id)
+    public function orderHistory(Request $request)
     {
-        $order = Order::with('details')->find($id);
+        $orders = Order::with('details')
+            ->where('customer_id', auth()->user()->id)
+            ->paginate(10);
+
+        if ($orders->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        $transformedOrders = $orders->getCollection()->map(function ($order) {
+            return [
+                'id' => $order->id,
+                'invoice_ref' => $order->invoice_ref,
+                'customer_id' => $order->customer_id,
+                'order_status' => $order->order_status,
+                'payment_status' => $order->payment_status,
+                'created_at' => $order->created_at,
+                'qty' => $order->details->sum('product_qty'),
+            ];
+        });
+
+        $paginated = $orders->toArray();
+        $paginated['data'] = $transformedOrders;
+
+        return response()->json([
+            'success' => true,
+            'data' => $paginated
+        ], 200);
+    }
+
+    public function orderDetail(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required'
+        ]);
+
+        $order = Order::with(['details.product'])
+            ->where('customer_id', auth()->user()->id)
+            ->where('id', $request->order_id)
+            ->first();
 
         if (!$order) {
             return response()->json([
@@ -752,22 +793,48 @@ class ApiController extends Controller
             ], 404);
         }
 
+        $filteredDetails = $order->details->map(function ($detail) {
+            $images = $detail->product->productgallery->images;
+            
+            $image = $images[0] ?? null;
+            return [
+                'id' => $detail->id,
+                'order_id' => $detail->order_id,
+
+                'product_id' => $detail->product_id,
+                'brand_id' => $detail->brand_id,
+                'product_qty' => $detail->product_qty,
+                'product_size' => $detail->product_size,
+                'product_price' => $detail->product_price,
+                'discount' => $detail->discount,
+                'discount_type' => $detail->discount_type,
+                'image_url' => $image ? asset('uploads/products/' . $image) : null,
+            ];
+        });
+
+        $orderAmount = floatval($order->order_amount);
+        $discountAmount = floatval($order->discount_amount);
+        $deliveryFee = $order->delivery_fee ? floatval($order->delivery_fee) : 0;
+        $total = $orderAmount - $discountAmount + $deliveryFee;
+
+        $filteredOrder = [
+            'id' => $order->id,
+            'invoice_ref' => $order->invoice_ref,
+            'customer_id' => $order->customer_id,
+            'order_status' => $order->order_status,
+            'payment_status' => $order->payment_status,
+            'created_at' => $order->created_at,
+            'order_amount' => $order->order_amount,
+            'discount_amount' => $order->discount_amount,
+            'delivery_fee' => $order->delivery_fee,
+            'total' => number_format($total, 2, '.', ''),
+            'details' => $filteredDetails
+        ];
+
         return response()->json([
             'success' => true,
-            'data' => $order
+            'data' => $filteredOrder
         ], 200);
-    }
-
-    public function getUser(Request $request)
-    {
-        $id = auth()->user()->id;
-        $user = User::findOrFail($id);
-
-        if (!$user) {
-            return response()->json(['message' => 'No records found'], 404);
-        }
-
-        return response()->json($user, 200);
     }
 
     public function customerProfile(Request $request)
