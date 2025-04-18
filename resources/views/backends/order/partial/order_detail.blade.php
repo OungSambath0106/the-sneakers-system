@@ -34,9 +34,9 @@
                                 <p class="text-muted mb-2">{{ @$order->created_at->format('d M, Y, h:i A') }}</p>
                             </div>
                             <div>
-                                <a href="" class="btn bg-gradient-primary me-2">
+                                {{-- <a href="" class="btn bg-gradient-primary me-2">
                                     <i class="fas fa-map-marker-alt me-2"></i> Show locations on map
-                                </a>
+                                </a> --}}
                                 <a href="{{ route('admin.order.invoice.pdf', @$order->id) }}" class="btn bg-gradient-primary" target="_blank">
                                     <i class="fas fa-print me-2"></i> Print Invoice
                                 </a>
@@ -189,12 +189,12 @@
                                             <td>Delivery Fee</td>
                                             <td class="text-end"> $ {{ number_format($order->delivery_fee, 2) }} </td>
                                         </tr>
-                                        @php
-                                            $total = $order->order_amount - $order->discount_amount + $order->delivery_fee;
-                                        @endphp
+                                        <tr>
+                                            <td colspan="2"><hr class="horizontal dark my-0"></td>
+                                        </tr>
                                         <tr class="fw-bold">
                                             <td>Total</td>
-                                            <td class="text-end"> $ {{ number_format($total, 2) }} </td>
+                                            <td class="text-end"> $ {{ number_format($order->final_total, 2) }} </td>
                                         </tr>
                                     </table>
                                 </div>
@@ -241,11 +241,9 @@
                         @if ($order->order_type == 'delivery')
                             <div class="mb-4">
                                 <label class="form-label">Shipping Method ( No Shipping Method Selected )</label>
-                                <select class="form-select" id="shippingMethod">
-                                <option selected>Choose Delivery Type</option>
-                                <option> By self delivery method </option>
-                                <option> By third party delivery service </option>
-                                </select>
+                                <div class="form-control">
+                                    <span>{{ ucwords(str_replace('_', ' ', @$order->delivery_type)) }}</span>
+                                </div>
                             </div>
                         @endif
                     </div>
@@ -282,12 +280,12 @@
                                 <div class="d-flex justify-content-between mb-1">
                                     <div class="d-flex">
                                         <i class="fas fa-map-marker-alt me-2 pt-1"></i>
-                                        <h6 class="mb-0">Shipping address</h6>
+                                        <h6>Shipping address</h6>
                                     </div>
-                                    <a href="#" class="btn btn-sm btn-outline-primary btn-modal" data-toggle="modal"
+                                    {{-- <a href="#" class="btn btn-sm btn-outline-primary btn-modal" data-toggle="modal"
                                         data-target="#editAddressModal">
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </a> --}}
                                 </div>
                                 <div>
                                     <p class="mb-1"><strong>Name:</strong> {{ @$order->customer->name }} </p>

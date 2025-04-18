@@ -214,8 +214,11 @@
 
                                             <div class="form-group col-md-6">
                                                 <label class="required_lable">{{ __('Start Date') }}</label>
-                                                <input type="date" class="form-control @error('start_date') is-invalid @enderror"
-                                                    value="{{ old('start_date', $promotion->start_date) }}" name="start_date">
+                                                <div class="input-group input-group-alternative">
+                                                    <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                                    <input type="date" class="form-control flatpickr @error('start_date') is-invalid @enderror"
+                                                        value="{{ old('start_date', $promotion->start_date) }}" name="start_date" placeholder="Select Start Date">
+                                                </div>
                                                 @error('start_date')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
@@ -224,8 +227,11 @@
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <label class="required_lable">{{ __('End Date') }}</label>
-                                                <input type="date" class="form-control @error('end_date') is-invalid @enderror"
-                                                    value="{{ old('end_date', $promotion->end_date) }}" name="end_date">
+                                                <div class="input-group input-group-alternative">
+                                                    <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                                    <input type="date" class="form-control flatpickr @error('end_date') is-invalid @enderror"
+                                                        value="{{ old('end_date', $promotion->end_date) }}" name="end_date" placeholder="Select End Date">
+                                                </div>
                                                 @error('end_date')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>

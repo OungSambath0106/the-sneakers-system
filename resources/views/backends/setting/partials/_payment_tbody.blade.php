@@ -7,7 +7,7 @@
                 </td>
                 <td class="ps-5">
                     <input type="file" class="d-none payment_icon_input_{{ $key }}" name="payment[icon][]">
-                    <img src="{{ $row['icon'] ? asset('uploads/social_media/'. $row['icon']) : asset('uploads/image/default.png') }}" height="auto" width="60px" style="margin-bottom: 6px; cursor:pointer; border:none !important" alt="" class="avatar-md mt-1 mb-0 border payment_icon payment_icon_{{ $key }}">
+                    <img src="{{ $row['icon'] ? asset('uploads/social_media/'. $row['icon']) : asset('uploads/default1.png') }}" height="auto" width="60px" style="margin-bottom: 6px; cursor:pointer; border:none !important" alt="" class="avatar-md mt-1 mb-0 border payment_icon payment_icon_{{ $key }}">
                     <input type="hidden" name="payment[old_icon][]" value="{{ $row['icon'] ?? null }}">
                 </td>
                 <td>
@@ -41,7 +41,7 @@
                     </label>
                 </td>
                 <td>
-                    <a type="button">
+                    <a type="button" class="btn-delete ps-0" title="Delete" style="background: none; border: none;" data-bs-toggle="tooltip" data-bs-placement="top">
                         <i class="fa fa-trash-alt text-danger delete_payment"></i>
                     </a>
                 </td>

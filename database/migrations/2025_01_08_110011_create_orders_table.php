@@ -22,7 +22,7 @@ class CreateOrdersTable extends Migration
             $table->string('delivery_type')->nullable();
             $table->string('delivery_fee')->nullable();
             $table->enum('order_status', ['pending', 'confirmed', 'packaging', 'out_for_delivery', 'delivered', 'failed_to_deliver', 'cancelled'])->default('pending');
-            $table->enum('payment_method', ['cash_on_delivery', 'ABA', 'AC'])->nullable();
+            $table->enum('payment_method', ['pay_at_store','cash_on_delivery', 'aba', 'wing', 'acleda'])->nullable();
             $table->enum('payment_status', ['unpaid', 'paid'])->nullable();
             $table->string('pay_slip')->nullable();
             $table->timestamps();

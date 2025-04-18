@@ -39,7 +39,7 @@
                         <p class="text-sm font-weight-bold mb-0"> $ {{ $item->discount_amount }} </p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0"> $ {{ number_format($item->order_amount - $item->discount_amount + $item->delivery_fee, 2) }} </p>
+                        <p class="text-sm font-weight-bold mb-0"> $ {{ number_format($item->final_total, 2) }} </p>
                     </td>
                     <td>
                         <p class="text-sm font-weight-bold mb-0">
@@ -51,12 +51,15 @@
                         </p>
                     </td>
                     <td class="align-middle">
-                        <a href="{{ route('admin.order.show', $item->id) }}" class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1">
-                            {{ __('View') }}
+                        <a href="{{ route('admin.order.show', $item->id) }}" class="btn-edit" title="View" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <span class="badge bg-gradient-primary p-2">
+                                <i class="fa-solid fa-eye"></i>
+                            </span>
                         </a>
-                        <a href="{{ route('admin.order.invoice.pdf', $item->id) }}" class="btn btn-link text-danger text-sm mb-0 px-0 ms-4" target="_blank">
-                            <i class="fas fa-file-pdf text-lg me-1"></i>
-                            {{ __('PDF') }}
+                        <a href="{{ route('admin.order.invoice.pdf', $item->id) }}" class="btn-link" title="PDF" data-bs-toggle="tooltip" data-bs-placement="top" target="_blank">
+                            <span class="badge bg-gradient-danger p-2">
+                                <i class="fas fa-file-pdf"></i>
+                            </span>
                         </a>
                     </td>
                 </tr>

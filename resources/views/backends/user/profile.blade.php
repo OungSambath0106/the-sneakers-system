@@ -7,7 +7,6 @@
                 <div class="col-md-12">
                     <form method="POST" action="{{ route('admin.update_info', auth()->user()->id) }}" enctype="multipart/form-data">
                         @csrf
-                        {{-- @method('PUT') --}}
                         <div class="card card-primary">
                             <div class="card-body">
                                 <div class="row">
@@ -33,16 +32,6 @@
                                                     </span>
                                                 @enderror
                                             </div>
-                                            {{-- <div class="form-group col-md-6">
-                                                <label class="required_label">{{__('Username')}}</label>
-                                                <input type="name" class="form-control @error('username') is-invalid @enderror" value="{{ old('username', auth()->user()->name) }}"
-                                                    name="username" placeholder="{{__('Enter Username')}}" >
-                                                @error('username')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
-                                            </div> --}}
                                             <div class="form-group col-md-6">
                                                 <label class="required_label">{{__('Phone Number')}}</label>
                                                 <input type="text" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', auth()->user()->phone) }}"

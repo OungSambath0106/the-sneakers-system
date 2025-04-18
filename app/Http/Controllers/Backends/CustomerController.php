@@ -260,6 +260,10 @@ class CustomerController extends Controller
 
     public function updateStatus(Request $request)
     {
+        if (!auth()->user()->can('customer.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -281,6 +285,10 @@ class CustomerController extends Controller
 
     public function deleteImage(Request $request)
     {
+        if (!auth()->user()->can('customer.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $customer = Customer::find($request->customer_id);
         if ($customer && $customer->image) {
             $imagePath = public_path('uploads/customers/' . $customer->image);

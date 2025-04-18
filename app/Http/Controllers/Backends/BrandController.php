@@ -16,6 +16,10 @@ class BrandController extends Controller
 {
     public function index()
     {
+        if (!auth()->user()->can('brand.view')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $brands = Brand::latest('id')->get();
         return view('backends.brand.index', compact('brands'));
     }
@@ -25,6 +29,10 @@ class BrandController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('brand.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('backends.brand._create');
     }
 
@@ -33,7 +41,10 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        if (!auth()->user()->can('brand.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ]);
@@ -105,7 +116,10 @@ class BrandController extends Controller
      */
     public function edit($id)
     {
-        // dd($id);
+        if (!auth()->user()->can('brand.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $brand = Brand::withoutGlobalScopes()->findOrFail($id);
 
         return view('backends.brand._edit', compact('brand'));
@@ -116,6 +130,10 @@ class BrandController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->can('brand.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ]);
@@ -183,6 +201,10 @@ class BrandController extends Controller
      */
     public function destroy($id)
     {
+        if (!auth()->user()->can('brand.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
             $brand = Brand::findOrFail($id);
@@ -219,6 +241,10 @@ class BrandController extends Controller
 
     public function deleteImage(Request $request)
     {
+        if (!auth()->user()->can('brand.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $brand = Brand::find($request->brand_id);
         if ($brand && $brand->image) {
             $imagePath = public_path('uploads/brand/' . $brand->image);
@@ -238,6 +264,10 @@ class BrandController extends Controller
 
     public function updateStatus(Request $request)
     {
+        if (!auth()->user()->can('brand.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
 

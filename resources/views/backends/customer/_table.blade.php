@@ -2,9 +2,11 @@
     <table id="bookingTable" class="table align-items-center table-responsive mb-0">
         <thead class="text-uppercase">
             <tr>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('SL') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('Image') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Customer Name') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Gender') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Provider') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Phone') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Email') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 text-center">{{ __('Created date') }}</th>
@@ -16,8 +18,10 @@
         </thead>
         <tbody>
             @forelse ($customers as $customer)
-            {{-- @dd($customer) --}}
                 <tr>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> {{ $loop->iteration }} </p>
+                    </td>
                     <td data-order="{{ strtolower(@$customer->name) }}">
                         <img src="
                         @if ($customer->image && file_exists(public_path('uploads/customers/' . $customer->image)))
@@ -39,6 +43,9 @@
                     </td>
                     <td data-order="{{ strtolower(@$customer->gender) }}">
                         <p class="text-sm font-weight-bold mb-0 "> {{ ucfirst(@$customer->gender ?? 'N/A') }} </p>
+                    </td>
+                    <td data-order="{{ strtolower(@$customer->provider) }}">
+                        <p class="text-sm font-weight-bold mb-0 "> {{ ucfirst(@$customer->provider ?? 'N/A') }} </p>
                     </td>
                     <td data-order="{{ strtolower(@$customer->phone) }}">
                         <p class="text-sm font-weight-bold mb-0 "> {{ @$customer->phone ?? 'N/A' }} </p>
@@ -72,8 +79,10 @@
                     </td>
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('customer.edit'))
-                            <a href="{{ route('admin.customer.edit', $customer->id) }}" class="text-primary font-weight-bold text-xs btn-edit pe-1">
-                                {{ __('Edit') }}
+                            <a href="{{ route('admin.customer.edit', $customer->id) }}" class="btn-edit" title="Edit" data-bs-toggle="tooltip" data-bs-placement="top">
+                                <span class="badge bg-gradient-primary p-2">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </span>
                             </a>
                         @endif
                         @if (auth()->user()->can('customer.delete'))
@@ -81,8 +90,10 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" data-id="{{ $customer->id }}" data-username="{{ @$customer->first_name }} {{ @$customer->last_name ?? 'N/A' }}"
-                                    data-href="{{ route('admin.customer.destroy', $customer->id) }}" class="text-danger font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
-                                    <i class="fa fa-trash-alt"></i>
+                                    data-href="{{ route('admin.customer.destroy', $customer->id) }}" class="btn-delete ps-0" title="Delete" style="background: none; border: none;" data-bs-toggle="tooltip" data-bs-placement="top">
+                                    <span class="badge bg-gradient-danger p-2">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </span>
                                 </button>
                             </form>
                         @endif

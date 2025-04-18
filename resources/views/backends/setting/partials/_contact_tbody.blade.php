@@ -8,7 +8,7 @@
                 <td class="ps-5">
                     <input type="file" class="d-none contact_icon_input_{{ $key }}" name="contact[icon][]">
                     @php
-                        $icon = $row['icon'] ?? 'default.png';
+                        $icon = $row['icon'] ?? 'default1.png';
                     @endphp
                     <img src="{{ asset('uploads/social_media/' . $icon) }}"
                         height="auto" width="60px" style="margin-bottom: 6px; cursor:pointer; border:none !important"
@@ -50,7 +50,7 @@
                     </label>
                 </td>
                 <td>
-                    <a type="button">
+                    <a type="button" class="btn-delete ps-0" title="Delete" style="background: none; border: none;" data-bs-toggle="tooltip" data-bs-placement="top">
                         <i class="fa fa-trash-alt text-danger delete_contact"></i>
                     </a>
                 </td>

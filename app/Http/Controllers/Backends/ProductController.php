@@ -22,6 +22,10 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        if (!auth()->user()->can('product.view')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $products = Product::when($request->brand_id, function ($query) use ($request) {
                         $query->where('brand_id', $request->brand_id);
                     })
@@ -54,6 +58,10 @@ class ProductController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('product.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $brands = Brand::all();
         $products = Product::with('brand')->get();
 
@@ -65,6 +73,10 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->can('product.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'brand_id' => 'required',
@@ -181,6 +193,10 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->can('product.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'brand_id' => 'required',
@@ -297,6 +313,10 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
+        if (!auth()->user()->can('product.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -339,6 +359,10 @@ class ProductController extends Controller
 
     public function updateStatus(Request $request)
     {
+        if (!auth()->user()->can('product.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -360,6 +384,10 @@ class ProductController extends Controller
 
     public function uploadNewGallery(Request $request)
     {
+        if (!auth()->user()->can('product.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try{
             \Log::info($request->all());
             DB::beginTransaction();
@@ -403,6 +431,10 @@ class ProductController extends Controller
 
     public function deleteProductGallery(Request $request)
     {
+        if (!auth()->user()->can('product.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $productGallery = ProductGallery::where('product_id', $request->product_id)->first();
         if ($productGallery) {
             $imageNameToDelete = $request->input('name');

@@ -2,6 +2,7 @@
     <table id="bookingTable" class="table align-items-center table-responsive mb-0">
         <thead>
             <tr>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('SL') }} </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-3"> {{ __('Image') }} </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-3"> {{ __('Name') }} </th>
                 <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('Status') }} </th>
@@ -11,13 +12,16 @@
         <tbody>
             @forelse ($shoessliders as $shoesslider)
                 <tr>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0">{{ $loop->iteration }}</p>
+                    </td>
                     <td data-order="{{ strtolower($shoesslider->title) }}">
                         <div class="d-flex px-2 py-1">
                             <img src="
                                 @if ($shoesslider->image && file_exists(public_path('uploads/shoes-slider/' . $shoesslider->image)))
                                     {{ asset('uploads/shoes-slider/'. $shoesslider->image) }}
                                 @else
-                                    {{ asset('uploads/defualt.png') }}
+                                    {{ asset('uploads/default1.png') }}
                                 @endif
                                 " alt="" class="avatar avatar-banner" style="object-fit: contain; cursor: pointer;"
                                 data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
@@ -50,8 +54,10 @@
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('shoes-slider.edit'))
                             <a href="#" data-href="{{ route('admin.shoes-slider.edit', $shoesslider->id) }}"
-                                class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1" data-toggle="modal" data-container=".modal_form">
-                                {{ __('Edit') }}
+                                class="btn-edit" data-bs-toggle="tooltip" title="Edit" data-bs-placement="top">
+                                <span class="badge bg-gradient-primary p-2">
+                                    <i class="fa fa-pen-to-square"></i>
+                                </span>
                             </a>
                         @endif
 
@@ -59,8 +65,10 @@
                             <form action="{{ route('admin.shoes-slider.destroy', $shoesslider->id) }}" class="d-inline-block form-delete-{{ $shoesslider->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" data-id="{{ $shoesslider->id }}" data-href="{{ route('admin.shoes-slider.destroy', $shoesslider->id) }}" class="text-danger font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
-                                    <i class="fa fa-trash-alt"></i>
+                                <button type="button" data-id="{{ $shoesslider->id }}" data-href="{{ route('admin.shoes-slider.destroy', $shoesslider->id) }}" class="btn-delete ps-0" title="Delete" style="background: none; border: none;" data-bs-toggle="tooltip" data-bs-placement="top">
+                                    <span class="badge bg-gradient-danger p-2">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </span>
                                 </button>
                             </form>
                         @endif

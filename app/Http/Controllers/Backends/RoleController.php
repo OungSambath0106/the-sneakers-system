@@ -16,16 +16,28 @@ class RoleController extends Controller
 {
     public function index()
     {
-       $roles = Role::paginate(10);
-       return view('backends.role.index',compact('roles'));
+        if (!auth()->user()->can('role.view')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $roles = Role::paginate(10);
+        return view('backends.role.index',compact('roles'));
     }
     public function create()
     {
+        if (!auth()->user()->can('role.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('backends.role.create');
     }
 
     public function store(Request $request)
     {
+        if (!auth()->user()->can('role.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $this->validate($request,[
             'name' => 'required',
             'permissions' => 'required'
@@ -64,6 +76,10 @@ class RoleController extends Controller
 
     public function edit($id)
     {
+        if (!auth()->user()->can('role.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $role = Role::with(['permissions'])->find($id);
 
         $role_permissions = [];
@@ -75,6 +91,9 @@ class RoleController extends Controller
 
     public function update(Request $request,$id)
     {
+        if (!auth()->user()->can('role.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $this->validate($request,[
             'name' => 'required'
@@ -110,9 +129,13 @@ class RoleController extends Controller
     }
     public function destroy($id)
     {
+        if (!auth()->user()->can('role.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
-            $role = Role::find($id);
+            $role = Role::findOrFail($id);
             $role->delete();
 
             $roles = Role::paginate(10);
@@ -120,15 +143,16 @@ class RoleController extends Controller
 
             DB::commit();
             $output = [
-                'status' => 1,
-                'view' => $view,
+                'success' => 1,
+                'view'  => $view,
                 'msg' => __('Deleted successfully')
             ];
         } catch (Exception $e) {
             DB::rollBack();
+
             $output = [
-                'status' => 0,
-                'msg' => __('Something went wrong')
+                'success' => 0,
+                'msg' => __('Something when wrong')
             ];
         }
 

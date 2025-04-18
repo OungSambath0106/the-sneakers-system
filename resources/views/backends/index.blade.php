@@ -144,51 +144,26 @@
     </style>
 @endpush
 @section('contents')
-    <div class="row">
+    <div class="row px-2">
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
                 <div class="card-body p-3">
                     <div class="row">
                         <div class="col-8">
                             <div class="numbers">
-                                <p class="text-sm mb-0 text-uppercase font-weight-bold">{{ __('Total Users') }}</p>
-                                <h5 class="font-weight-bolder">
-                                    {{ $users->count() }}
+                                <p class="text-sm mb-0 text-uppercase font-weight-bold">{{ __('Total Customers') }}</p>
+                                <h5 class="font-weight-bolder count-up">
+                                    {{ $totalCustomers }}
                                 </h5>
                                 <p class="mb-0">
-                                    <span class="text-success text-sm font-weight-bolder">+3%</span>
+                                    <span class="text-success text-sm font-weight-bolder count-up">+{{ $totalCustomers - $totalCustomersLastWeek }}%</span>
                                     since last week
                                 </p>
                             </div>
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle">
-                                <i class="ni ni-world text-lg opacity-10" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="numbers">
-                                <p class="text-sm mb-0 text-uppercase font-weight-bold">{{ __('Total Brands') }}</p>
-                                <h5 class="font-weight-bolder">
-                                    {{ $brands->count() }}
-                                </h5>
-                                <p class="mb-0">
-                                    <span class="text-danger text-sm font-weight-bolder">-2%</span>
-                                    since last quarter
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-4 text-end">
-                            <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
-                                <i class="ni ni-paper-diploma text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -202,18 +177,43 @@
                         <div class="col-8">
                             <div class="numbers">
                                 <p class="text-sm mb-0 text-uppercase font-weight-bold">{{ __('Total Products') }}</p>
-                                <h5 class="font-weight-bolder">
+                                <h5 class="font-weight-bolder count-up">
                                     {{ $products->count() }}
                                 </h5>
                                 <p class="mb-0">
-                                    <span class="text-success text-sm font-weight-bolder">+55%</span>
+                                    <span class="text-danger text-sm font-weight-bolder count-up">-{{ $products->count() - $productsLastWeek }}%</span>
+                                    since last quarter
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-4 text-end">
+                            <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
+                                <i class="ni ni-app text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="numbers">
+                                <p class="text-sm mb-0 text-uppercase font-weight-bold">{{ __('Total Sales Report') }}</p>
+                                <h5 class="font-weight-bolder count-up">
+                                    {{ $totalSalesReport }}
+                                </h5>
+                                <p class="mb-0">
+                                    <span class="text-success text-sm font-weight-bolder count-up">+{{ $totalSalesReport - $totalSalesReportLastDay }}%</span>
                                     since yesterday
                                 </p>
                             </div>
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
-                                <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="ni ni-paper-diploma text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -226,19 +226,19 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="numbers">
-                                <p class="text-sm mb-0 text-uppercase font-weight-bold">Sales</p>
-                                <h5 class="font-weight-bolder">
-                                    $103,430
+                                <p class="text-sm mb-0 text-uppercase font-weight-bold">{{ __('Total Income') }}</p>
+                                <h5 class="font-weight-bolder count-up for-income">
+                                    $ {{ $totalIncome }}
                                 </h5>
                                 <p class="mb-0">
-                                    <span class="text-success text-sm font-weight-bolder">+5%</span> than last
+                                    <span class="text-success text-sm font-weight-bolder count-up for-income"> $ +{{ $totalIncome - $totalIncomeLastMonth }}% </span> than last
                                     month
                                 </p>
                             </div>
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
-                                <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -246,7 +246,7 @@
             </div>
         </div>
     </div>
-    <div class="row mt-4">
+    <div class="row mt-4 px-2">
         <div class="col-lg-7 mb-lg-0">
             <div class="card">
                 <div class="card-header pb-0 p-3">
@@ -320,7 +320,7 @@
             </div>
         </div>
     </div>
-    <div class="row mt-4">
+    <div class="row mt-4 px-2">
         <div class="col-lg-5 mb-4">
             <div class="card z-index-2 h-100">
                 <div class="card-header pb-0 p-3">
@@ -382,7 +382,7 @@
         <div class="col-lg-7 mb-lg-0 mb-4">
             <div class="card">
                 <div class="card-header pb-0">
-                    <h6>{{ __('Transaction History') }}</h6>
+                    <h6>{{ __('Sales Report History') }}</h6>
                 </div>
                 <div class="card-body px-0 pt-0 pb-2">
                     <div class="table-responsive p-0">
@@ -391,31 +391,47 @@
                                 <tr>
                                     <th class="text-uppercase text-xs font-weight-bolder opacity-7"> {{ __('Payment Ref') }} </th>
                                     <th class="text-uppercase text-xs font-weight-bolder opacity-7 ps-2"> {{ __('Amount') }} </th>
+                                    <th class="text-uppercase text-xs font-weight-bolder opacity-7 ps-2"> {{ __('Order Type') }} </th>
                                     <th class="text-center text-uppercase text-xs font-weight-bolder opacity-7"> {{ __('Status') }} </th>
                                     <th class="opacity-7"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="py-1">
-                                            <div class="d-flex flex-column">
-                                                <a href="#" class="mb-1 text-dark font-weight-bold text-sm">December, 15, 2024</a>
-                                                <span class="text-xs">#TSK-415646</span>
+                                @forelse ($transactions as $transaction)
+                                    <tr>
+                                        <td>
+                                            <div class="py-1">
+                                                <div class="d-flex flex-column">
+                                                    <a href="{{ route('admin.order.show', $transaction->id) }}" class="mb-1 text-dark font-weight-bold text-sm">{{ $transaction->created_at->format('F, d, Y') }}</a>
+                                                    <span class="text-xs">#{{ $transaction->invoice_ref }}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <p class="text-xs font-weight-bold mb-0">$ 180.00</p>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm bg-gradient-success">Paid</span>
-                                        {{-- <span class="badge badge-sm bg-gradient-secondary">Unpaid</span> --}}
-                                    </td>
-                                    <td class="align-middle">
-                                        <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4"><i class="fas fa-file-pdf text-lg me-1"></i> PDF</button>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">$ {{ number_format($transaction->final_total, 2) }}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">{{ ucwords($transaction->order_type) }}</p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            @if ($transaction->order_status == 'paid')
+                                                <span class="badge badge-sm bg-gradient-success">{{ ucwords($transaction->order_status) }}</span>
+                                            @else
+                                                <span class="badge badge-sm bg-gradient-danger">{{ ucwords($transaction->order_status) }}</span>
+                                            @endif
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="{{ route('admin.order.invoice.pdf', $transaction->id) }}" class="btn btn-link text-danger text-sm mb-0 px-0 ms-4" title="PDF" data-bs-toggle="tooltip" data-bs-placement="top" target="_blank">
+                                                <i class="fas fa-file-pdf text-lg me-1"></i>
+                                                {{ __('PDF') }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center">No data found</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -425,6 +441,24 @@
     </div>
 @endsection
 @push('js')
+    <script>
+        $('.count-up').each(function() {
+            var isIncome = $(this).hasClass('for-income');
+            $(this).prop('Counter', 0).animate({
+                Counter: $(this).text().replace(/[^0-9.]/g, '')
+            }, {
+                duration: 1500,
+                easing: 'swing',
+                step: function(now) {
+                    if (isIncome) {
+                        $(this).text('$ ' + Math.ceil(now).toLocaleString());
+                    } else {
+                        $(this).text(Math.ceil(now).toLocaleString());
+                    }
+                }
+            });
+        });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const carousels = document.querySelectorAll(".custom-carousel");

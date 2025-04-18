@@ -187,8 +187,11 @@
 
                                             <div class="form-group col-md-6">
                                                 <label class="required_label">{{__('Start Date')}}</label>
-                                                <input type="date" class="form-control flatpickr @error('start_date') is-invalid @enderror" value="{{ old('start_date') }}"
-                                                    name="start_date" >
+                                                <div class="input-group input-group-alternative">
+                                                    <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                                    <input type="date" class="form-control flatpickr @error('start_date') is-invalid @enderror" value="{{ old('start_date') }}"
+                                                        name="start_date" placeholder="Select Start Date" >
+                                                </div>
                                                 @error('start_date')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
@@ -197,8 +200,11 @@
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <label class="required_label">{{__('End Date')}}</label>
-                                                <input type="date" class="form-control flatpickr @error('end_date') is-invalid @enderror" value="{{ old('end_date') }}"
-                                                    name="end_date" >
+                                                <div class="input-group input-group-alternative">
+                                                    <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                                    <input type="date" class="form-control flatpickr @error('end_date') is-invalid @enderror" value="{{ old('end_date') }}"
+                                                        name="end_date" placeholder="Select End Date" >
+                                                </div>
                                                 @error('end_date')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
@@ -465,7 +471,7 @@
                         const imageBox = $(`
                             <div class="image-box">
                                 <img src="${e.target.result}" alt="Uploaded Image">
-                                <button type="button" class="remove-image">&times;</button>
+                                <button type="button" class="remove-image close-btn">&times;</button>
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0"
                                         aria-valuemin="0" aria-valuemax="100">0%</div>

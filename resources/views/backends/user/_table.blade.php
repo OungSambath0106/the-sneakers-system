@@ -2,6 +2,7 @@
     <table id="bookingTable" class="table align-items-center table-responsive mb-0">
         <thead>
             <tr>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('SL') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('Image') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Username') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Gender') }}</th>
@@ -16,6 +17,9 @@
         <tbody>
             @forelse ($users as $user)
                 <tr>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0"> {{ $loop->iteration }} </p>
+                    </td>
                     <td data-order="{{ strtolower(@$user->first_name) . ' ' . strtolower(@$user->last_name) }}">
                         <img src="
                             @if ($user->image && file_exists(public_path('uploads/users/' . $user->image)))
@@ -43,8 +47,10 @@
                     </td>
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('user.edit'))
-                            <a href="{{ route('admin.user.edit', $user->id) }}" class="text-primary font-weight-bold text-xs btn-edit pe-1">
-                                {{ __('Edit') }}
+                            <a href="{{ route('admin.user.edit', $user->id) }}" class="btn-edit" title="Edit" data-bs-toggle="tooltip" data-bs-placement="top">
+                                <span class="badge bg-gradient-primary p-2">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </span>
                             </a>
                         @endif
                         @if (auth()->user()->can('user.delete'))
@@ -52,8 +58,10 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" data-id="{{ $user->id }}" data-username="{{ @$user->first_name }} {{ @$user->last_name ?? 'N/A' }}"
-                                    data-href="{{ route('admin.user.destroy', $user->id) }}" class="text-danger font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
-                                    <i class="fa fa-trash-alt"></i>
+                                    data-href="{{ route('admin.user.destroy', $user->id) }}" class="btn-delete ps-0" title="Delete" style="background: none; border: none;" data-bs-toggle="tooltip" data-bs-placement="top">
+                                    <span class="badge bg-gradient-danger p-2">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </span>
                                 </button>
                             </form>
                         @endif

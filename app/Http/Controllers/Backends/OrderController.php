@@ -18,6 +18,10 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
+        if (!auth()->user()->can('sale_report.view')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $products = Product::all();
         $query = Order::with('customer', 'details.brand', 'details.product');
 
@@ -76,12 +80,20 @@ class OrderController extends Controller
      */
     public function show($id)
     {
+        if (!auth()->user()->can('sale_report.view')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $order = Order::with('customer', 'details.brand', 'details.product')->findOrFail($id);
         return view('backends.order.partial.order_detail', compact('order'));
     }
 
     public function editAddress()
     {
+        if (!auth()->user()->can('sale_report.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('backends.order.partial.modal_edit_address');
     }
 
@@ -121,12 +133,13 @@ class OrderController extends Controller
 
     public function invoicePdf($id)
     {
-        $order = Order::with('customer', 'details.brand', 'details.product')->findOrFail($id);
+        if (!auth()->user()->can('sale_report.view')) {
+            abort(403, 'Unauthorized action.');
+        }
 
+        $order = Order::with('customer', 'details.brand', 'details.product')->findOrFail($id);
         $invoiceRef = $order->invoice_ref ?? 'order-' . $id;
 
-        // $pdf = PDF::loadView('backends.order.partial.invoice_pdf', compact('order'));
-        // return $pdf->download('invoice-' . $invoiceRef . '.pdf');
         return view('backends.order.partial.invoice_pdf', compact('order'));
     }
 }

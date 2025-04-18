@@ -41,9 +41,10 @@
                                 {{ __('Filter') }}
                             </h5>
                         </div>
-                        <div class="card-body">
-                            <div class="d-flex col-12">
-                                <div class="col-sm-6 filter tab-content" id="custom-content-below-tabContent">
+                        <div class="card-body pt-1">
+                            <div class="d-flex col-lg-12 col-md-12 col-sm-12">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-12 filter tab-content" id="custom-content-below-tabContent">
+                                    <label for="brand_id">{{ __('Brand') }}</label>
                                     <select name="brand_id" id="brand_id" class="form-control select2">
                                         <option value="" class="form-control"
                                             {{ !request()->filled('brands') ? 'selected' : '' }}>

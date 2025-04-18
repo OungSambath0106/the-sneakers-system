@@ -21,7 +21,7 @@ class ShoesSliderController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->can('shoes-slider.view')) {
+        if (!auth()->user()->can('shoes_slider.view')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -37,6 +37,10 @@ class ShoesSliderController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('shoes_slider.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('backends.shoes-slider.create');
     }
 
@@ -48,6 +52,10 @@ class ShoesSliderController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->can('shoes_slider.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'title' => 'required',
         ]);
@@ -122,6 +130,10 @@ class ShoesSliderController extends Controller
      */
     public function edit($id)
     {
+        if (!auth()->user()->can('shoes_slider.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $shoesslider = ShoesSlider::withoutGlobalScopes()->findOrFail($id);
         return view('backends.shoes-slider.edit', compact('shoesslider'));
     }
@@ -135,6 +147,10 @@ class ShoesSliderController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->can('shoes_slider.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'title' => 'required',
         ]);
@@ -195,6 +211,10 @@ class ShoesSliderController extends Controller
 
     public function updateStatus(Request $request)
     {
+        if (!auth()->user()->can('shoes_slider.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -222,6 +242,10 @@ class ShoesSliderController extends Controller
      */
     public function destroy($id)
     {
+        if (!auth()->user()->can('shoes_slider.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
             $shoesslider = ShoesSlider::findOrFail($id);
@@ -260,6 +284,10 @@ class ShoesSliderController extends Controller
 
     public function deleteImage(Request $request)
     {
+        if (!auth()->user()->can('shoes_slider.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $shoesslider = ShoesSlider::find($request->shoesslider_id);
         if ($shoesslider && $shoesslider->image) {
             $imagePath = public_path('uploads/shoes-slider/' . $shoesslider->image);

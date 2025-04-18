@@ -56,6 +56,10 @@ class BanerController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->can('banner.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ]);
@@ -132,6 +136,10 @@ class BanerController extends Controller
      */
     public function edit($id)
     {
+        if (!auth()->user()->can('banner.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $baner = Baner::withoutGlobalScopes()->findOrFail($id);
         return view('backends.banner-slider._edit', compact('baner'));
     }
@@ -145,6 +153,10 @@ class BanerController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->can('banner.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ]);
@@ -213,6 +225,10 @@ class BanerController extends Controller
      */
     public function destroy($id)
     {
+        if (!auth()->user()->can('banner.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
             $baner = Baner::findOrFail($id);
@@ -249,6 +265,10 @@ class BanerController extends Controller
 
     public function deleteImage(Request $request)
     {
+        if (!auth()->user()->can('banner.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $baner = Baner::find($request->baner_id);
         if ($baner && $baner->image) {
             $imagePath = public_path('uploads/banner-slider/' . $baner->image);
@@ -268,6 +288,10 @@ class BanerController extends Controller
 
     public function updateStatus(Request $request)
     {
+        if (!auth()->user()->can('banner.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
 

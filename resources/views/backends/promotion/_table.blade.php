@@ -3,6 +3,9 @@
         <thead>
             <tr>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">
+                    {{ __('SL') }}
+                </th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">
                     {{ __('Image') }}
                 </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">
@@ -28,6 +31,9 @@
         <tbody>
             @forelse ($promotions as $promotion)
                 <tr>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0 "> {{ $loop->iteration }} </p>
+                    </td>
                     <td data-order="{{ strtolower($promotion->title) }}">
                         <div class="d-flex">
                             @if ($promotion->promotiongallery && count($promotion->promotiongallery->images) > 0)
@@ -36,13 +42,13 @@
                                     $allImages = $promotion->promotiongallery->images;
                                 @endphp
 
-                                <img src="{{ file_exists(public_path('uploads/promotions/' . $firstImage)) ? asset('uploads/promotions/' . $firstImage) : asset('uploads/default.png') }}"
+                                <img src="{{ file_exists(public_path('uploads/promotions/' . $firstImage)) ? asset('uploads/promotions/' . $firstImage) : asset('uploads/default1.png') }}"
                                     alt="promotion Image" class="avatar avatar-banner me-3"
                                     style="object-fit: contain; cursor: pointer;"
                                     onclick="openGalleryModal({{ $promotion->id }})">
                                 @include('backends.promotion.partial.modal_popup_image')
                             @else
-                                <img src="{{ !empty($promotion->image[0]) && file_exists(public_path('uploads/promotions/' . $promotion->image[0])) ? asset('uploads/promotions/' . $promotion->image[0]) : asset('uploads/default.png') }}"
+                                <img src="{{ !empty($promotion->image[0]) && file_exists(public_path('uploads/promotions/' . $promotion->image[0])) ? asset('uploads/promotions/' . $promotion->image[0]) : asset('uploads/default1.png') }}"
                                     alt="promotion Image" class="avatar avatar-banner me-3">
                             @endif
                         </div>
@@ -54,19 +60,20 @@
                         <p class="text-sm font-weight-bold mb-0 "> {{ $promotion->discount_type ?? 'Null' }} </p>
                     </td>
                     <td data-order="{{ strtolower($promotion->start_date) }}">
-                        <p class="text-sm font-weight-bold mb-0 ">
+                        <p class="text-sm font-weight-bold mb-0 text-center">
                             {{ \Carbon\Carbon::parse($promotion->start_date)->format('F d, Y') }}
                         </p>
                     </td>
                     <td data-order="{{ strtolower($promotion->end_date) }}">
-                        <p class="text-sm font-weight-bold mb-0 ">
+                        <p class="text-sm font-weight-bold mb-0 text-center">
                             {{ \Carbon\Carbon::parse($promotion->end_date)->format('F d, Y') }}
                         </p>
                     </td>
                     <td class="align-middle text-center text-sm" style="justify-items: center;">
                         <label for="status_{{ $promotion->id }}" class="switch">
                             <input type="checkbox" class="status" id="status_{{ $promotion->id }}"
-                                data-id="{{ $promotion->id }}" {{ $promotion->status == 1 ? 'checked' : '' }} name="status">
+                                data-id="{{ $promotion->id }}" {{ $promotion->status == 1 ? 'checked' : '' }}
+                                name="status">
                             <div class="slider">
                                 <div class="circle">
                                     <svg class="cross" xml:space="preserve" style="enable-background:new 0 0 512 512"
@@ -79,10 +86,10 @@
                                             </path>
                                         </g>
                                     </svg>
-                                    <svg class="checkmark" xml:space="preserve" style="enable-background:new 0 0 512 512"
-                                        viewBox="0 0 24 24" y="0" x="0" height="10" width="10"
-                                        xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
-                                        xmlns="http://www.w3.org/2000/svg">
+                                    <svg class="checkmark" xml:space="preserve"
+                                        style="enable-background:new 0 0 512 512" viewBox="0 0 24 24" y="0" x="0"
+                                        height="10" width="10" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                        version="1.1" xmlns="http://www.w3.org/2000/svg">
                                         <g>
                                             <path class="" data-original="#000000" fill="currentColor"
                                                 d="M9.707 19.121a.997.997 0 0 1-1.414 0l-5.646-5.647a1.5 1.5 0 0 1 0-2.121l.707-.707a1.5 1.5 0 0 1 2.121 0L9 14.171l9.525-9.525a1.5 1.5 0 0 1 2.121 0l.707.707a1.5 1.5 0 0 1 0 2.121z">
@@ -95,9 +102,11 @@
                     </td>
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('promotion.edit'))
-                            <a href="{{ route('admin.promotion.edit', $promotion->id) }}"
-                                class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1">
-                                {{ __('Edit') }}
+                            <a href="{{ route('admin.promotion.edit', $promotion->id) }}" class="btn-edit"
+                                title="Edit" data-bs-toggle="tooltip" data-bs-placement="top">
+                                <span class="badge bg-gradient-primary p-2">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </span>
                             </a>
                         @endif
 
@@ -106,11 +115,11 @@
                                 class="d-inline-block form-delete-{{ $promotion->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" data-id="{{ $promotion->id }}"
-                                    data-href="{{ route('admin.promotion.destroy', $promotion->id) }}"
-                                    class="text-danger font-weight-bold text-xs btn-delete" title="Delete"
-                                    style="background: none; border: none;">
-                                    <i class="fa fa-trash-alt"></i>
+                                <button type="button" data-id="{{ $promotion->id }}" data-href="{{ route('admin.promotion.destroy', $promotion->id) }}"
+                                    class="btn-delete ps-0" style="background: none; border: none;" title="Delete" data-bs-toggle="tooltip" data-bs-placement="top">
+                                    <span class="badge bg-gradient-danger p-2">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </span>
                                 </button>
                             </form>
                         @endif

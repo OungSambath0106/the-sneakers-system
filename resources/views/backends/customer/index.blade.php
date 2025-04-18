@@ -44,22 +44,27 @@
                                 {{ __('Filter') }}
                             </h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body pt-1">
                             <div class="col-md-12">
                                 <div class="tab-content" id="custom-content-below-tabContent">
                                     <form method="GET" action="{{ route('admin.customer.index') }}">
                                         <div class="row">
                                             <div class="col-md-6 filter">
                                                 <label for="start_date">{{ __('Start Date') }}</label>
-                                                <input type="date" id="start_date" class="form-control flatpickr"
-                                                    placeholder="Select Date" name="start_date"
-                                                    value="{{ request('start_date') }}">
+                                                <div class="input-group input-group-alternative">
+                                                    <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                                    <input type="date" id="start_date" class="form-control flatpickr"
+                                                        placeholder="Select Start Date" name="start_date" value="{{ request('start_date') }}">
+                                                </div>
                                             </div>
                                             <div class="col-md-6 filter">
                                                 <label for="end_date">{{ __('End Date') }}</label>
-                                                <input type="date" id="end_date" class="form-control flatpickr"
-                                                    placeholder="Select Date" name="end_date"
-                                                    value="{{ request('end_date') }}">
+                                                <div class="input-group input-group-alternative">
+                                                    <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                                    <input type="date" id="end_date" class="form-control flatpickr"
+                                                        placeholder="Select End Date" name="end_date"
+                                                        value="{{ request('end_date') }}">
+                                                </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-end col-md-12 mt-4"
                                                 style="gap: 10px">

@@ -56,6 +56,10 @@ class PromotionController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('promotion.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $brands = Brand::with('products')->get();
         $products = Product::where('status', 1)->orderBy('name')->get();
         return view('backends.promotion.create', compact('brands', 'products'));
@@ -69,6 +73,10 @@ class PromotionController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->can('promotion.create')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'start_date' => 'required',
@@ -178,6 +186,10 @@ class PromotionController extends Controller
      */
     public function edit($id)
     {
+        if (!auth()->user()->can('promotion.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $promotion = Promotion::withoutGlobalScopes()->with('products', 'brands', 'promotiongallery')->findOrFail($id);
 
         $brands = Brand::with('products')->get();
@@ -206,6 +218,10 @@ class PromotionController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->can('promotion.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'start_date' => 'required',
@@ -314,30 +330,24 @@ class PromotionController extends Controller
      */
     function updateImage($request, $promotion, $imageFieldName)
     {
-        // Check if a new image is uploaded
+        if (!auth()->user()->can('promotion.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         if ($request->hasFile($imageFieldName)) {
-            // Delete the old image if it exists
             if ($promotion->{$imageFieldName}) {
                 $oldImagePath = public_path('uploads/promotions/' . $promotion->{$imageFieldName});
 
                 if (file_exists($oldImagePath)) {
-                    unlink($oldImagePath); // Delete the old image file
+                    unlink($oldImagePath);
                 }
             }
 
-            // Upload and save the new image
             $image = $request->file($imageFieldName);
-
-            // Generate a unique filename based on current date and unique identifier
             $imageName = now()->format('Y-m-d') . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
-
-            // Move the uploaded file to the promotions directory
             $image->move(public_path('uploads/promotions'), $imageName);
-
-            // Update the image attribute of the promotion model
             $promotion->{$imageFieldName} = $imageName;
 
-            // Save the updated promotion model
             $promotion->save();
         }
     }
@@ -350,6 +360,10 @@ class PromotionController extends Controller
      */
     public function destroy($id)
     {
+        if (!auth()->user()->can('promotion.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -391,6 +405,10 @@ class PromotionController extends Controller
     }
     public function updateStatus(Request $request)
     {
+        if (!auth()->user()->can('promotion.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -412,6 +430,10 @@ class PromotionController extends Controller
 
     public function deletePromotionGallery(Request $request)
     {
+        if (!auth()->user()->can('promotion.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $promotionGallery = PromotionGallery::where('promotion_id', $request->promotion_id)->first();
         if ($promotionGallery) {
             $imageNameToDelete = $request->input('name');

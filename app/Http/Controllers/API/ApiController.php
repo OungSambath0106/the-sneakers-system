@@ -626,6 +626,7 @@ class ApiController extends Controller
 
             $order_amount = 0;
             $discount_amount = 0;
+            $final_total = 0;
 
             foreach ($validated['order_details'] as $detail) {
                 $subtotal = $detail['product_price'] * $detail['product_qty'];
@@ -646,6 +647,7 @@ class ApiController extends Controller
             $order = Order::create(array_merge($validated, [
                 'order_amount' => $order_amount,
                 'discount_amount' => $discount_amount,
+                'final_total' => $order_amount - $discount_amount + $validated['delivery_fee'],
             ]));
 
             $order->invoice_ref = "INV-{$datePrefix}00{$order->id}";
@@ -795,7 +797,7 @@ class ApiController extends Controller
 
         $filteredDetails = $order->details->map(function ($detail) {
             $images = $detail->product->productgallery->images;
-            
+
             $image = $images[0] ?? null;
             return [
                 'id' => $detail->id,
@@ -815,7 +817,6 @@ class ApiController extends Controller
         $orderAmount = floatval($order->order_amount);
         $discountAmount = floatval($order->discount_amount);
         $deliveryFee = $order->delivery_fee ? floatval($order->delivery_fee) : 0;
-        $total = $orderAmount - $discountAmount + $deliveryFee;
 
         $filteredOrder = [
             'id' => $order->id,
@@ -827,7 +828,7 @@ class ApiController extends Controller
             'order_amount' => $order->order_amount,
             'discount_amount' => $order->discount_amount,
             'delivery_fee' => $order->delivery_fee,
-            'total' => number_format($total, 2, '.', ''),
+            'final_total' => $order->final_total,
             'details' => $filteredDetails
         ];
 

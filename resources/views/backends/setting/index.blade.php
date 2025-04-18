@@ -254,7 +254,7 @@
                                                                 <th>{{ __('Status') }}</th>
                                                                 <th>
                                                                     <button type="button"
-                                                                        class="btn bg-gradient-success btn_add_contact">
+                                                                        class="btn bg-gradient-success btn_add_contact" title="Add Contact" data-bs-toggle="tooltip" data-bs-placement="top">
                                                                         <i class="fa fa-plus-circle"></i>
                                                                     </button>
                                                                 </th>
@@ -286,7 +286,7 @@
                                                                 <th>{{ __('Status') }}</th>
                                                                 <th>
                                                                     <button type="button"
-                                                                        class="btn bg-gradient-success btn-sm btn_add_social_media">
+                                                                        class="btn bg-gradient-success btn-sm btn_add_social_media" title="Add Social Media" data-bs-toggle="tooltip" data-bs-placement="top">
                                                                         <i class="fa fa-plus-circle"></i>
                                                                     </button>
                                                                 </th>
@@ -317,7 +317,7 @@
                                                                 <th>{{ __('Status') }}</th>
                                                                 <th>
                                                                     <button type="button"
-                                                                        class="btn bg-gradient-success btn-sm btn_add_payment">
+                                                                        class="btn bg-gradient-success btn-sm btn_add_payment" title="Add Payment" data-bs-toggle="tooltip" data-bs-placement="top">
                                                                         <i class="fa fa-plus-circle"></i>
                                                                     </button>
                                                                 </th>

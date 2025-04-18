@@ -39,20 +39,26 @@
                                 {{ __('Filter') }}
                             </h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body pt-1">
                             <div class="col-md-12">
                                 <div class="tab-content" id="custom-content-below-tabContent">
                                     <form method="GET" action="{{ route('admin.promotion.index') }}">
                                         <div class="row">
                                             <div class="col-md-6 filter">
                                                 <label for="start_date">{{ __('Start Date') }}</label>
-                                                <input type="date" id="start_date" class="form-control flatpickr"
-                                                    placeholder="Select Date" name="start_date" value="{{ request('start_date') }}">
+                                                <div class="input-group input-group-alternative">
+                                                    <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                                    <input type="date" id="start_date" class="form-control flatpickr"
+                                                        placeholder="Select Start Date" name="start_date" value="{{ request('start_date') }}">
+                                                </div>
                                             </div>
                                             <div class="col-md-6 filter">
                                                 <label for="end_date">{{ __('End Date') }}</label>
-                                                <input type="date" id="end_date" class="form-control flatpickr"
-                                                    placeholder="Select Date" name="end_date" value="{{ request('end_date') }}">
+                                                <div class="input-group input-group-alternative">
+                                                    <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                                    <input type="date" id="end_date" class="form-control flatpickr"
+                                                        placeholder="Select End Date" name="end_date" value="{{ request('end_date') }}">
+                                                </div>
                                             </div>
                                             <div class="col-md-6 mt-3">
                                                 <label for="discount_type">{{ __('Discount Type') }}</label>
@@ -73,9 +79,9 @@
                                                     <i class="fa fa-filter" aria-hidden="true"></i>
                                                     {{ __('Filter') }}
                                                 </button>
-                                                <a href="{{ route('admin.promotion.index') }}"
-                                                    class=" btn btn-danger btn-sm mb-0">
-                                                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                                                <a href="javascript:void(0);" class="btn btn-danger btn-sm mb-0"
+                                                    id="resetButton">
+                                                    <i class="fas fa-sync-alt" id="resetIcon"></i>
                                                     {{ __('Reset') }}
                                                 </a>
                                             </div>
@@ -110,6 +116,14 @@
     @include('backends.promotion.partial.delete_promotion_modal')
 @endsection
 @push('js')
+    <script>
+        document.getElementById('resetButton').addEventListener('click', function () {
+            let icon = document.getElementById('resetIcon');
+            icon.classList.add('fa-spin');
+
+            window.location.href = "{{ route('admin.customer.index') }}";
+        });
+    </script>
     <script>
         function openGalleryModal(promotionId) {
             let modal = new bootstrap.Modal(document.getElementById('imageGalleryModal-' + promotionId), {

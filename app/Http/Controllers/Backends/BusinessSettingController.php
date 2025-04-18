@@ -18,6 +18,10 @@ class BusinessSettingController extends Controller
 {
     public function index ()
     {
+        if (!auth()->user()->can('setting.view')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $data = [];
         $language = BusinessSetting::where('type', 'language')->first();
         $data['language'] = $language->value ?? null;
@@ -109,10 +113,14 @@ class BusinessSettingController extends Controller
 
     public function update (Request $request)
     {
-        // dd($request->all());
+        if (!auth()->user()->can('setting.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
 
         ]);
+
         try {
             DB::beginTransaction();
             $setting_web_header_logo = BusinessSetting::where('type', 'web_header_logo')->first();

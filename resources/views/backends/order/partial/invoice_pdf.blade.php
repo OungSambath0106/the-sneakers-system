@@ -4,6 +4,17 @@
 <head>
     <meta charset="utf-8">
     <title>Invoice #{{ $order->invoice_ref }}</title>
+    @php
+        $setting = \App\Models\BusinessSetting::all();
+        $data['fav_icon'] = @$setting->where('type', 'fav_icon')->first()->value ?? '';
+        $data['email'] = @$setting->where('type', 'email')->first()->value ?? '';
+    @endphp
+    <link rel="icon" type="image/x-icon" href="
+        @if ($data['fav_icon'] && file_exists('uploads/business_settings/' . $data['fav_icon']))
+            {{ asset('uploads/business_settings/' . $data['fav_icon']) }}
+        @else
+            {{ asset('uploads/image/default.png') }}
+        @endif">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -395,7 +406,7 @@
             </div>
             <div class="invoice-meta">
                 <div>Date: {{ $order->created_at->format('d M, Y, h:i A') }}</div>
-                <div>Order Type: {{ $order->order_type }}</div>
+                <div>Order Type: {{ ucwords(str_replace('_', ' ', $order->order_type)) }}</div>
                 <div>Payment Status: <span
                         class="status {{ strtolower($order->payment_status) }}">{{ $order->payment_status }}</span>
                 </div>
@@ -480,19 +491,16 @@
                     <td>Delivery Fee:</td>
                     <td align="right" id="deliveryFee"> $ {{ number_format($order->delivery_fee, 2) }} </td>
                 </tr>
-                @php
-                    $total = $order->order_amount - $order->discount_amount + $order->delivery_fee;
-                @endphp
                 <tr>
                     <td>Total:</td>
-                    <td align="right" id="total"> $ {{ number_format($total, 2) }} </td>
+                    <td align="right" id="total"> $ {{ number_format($order->final_total, 2) }} </td>
                 </tr>
             </table>
         </div>
 
         <div class="footer">
             <p>Thank you and have a great day!</p>
-            <p>Questions? Contact us at <span style="color: var(--primary-color);">thesneakers@gmail.com</span></p>
+            <p>Questions? Contact us at <span style="color: var(--primary-color);">{{ $data['email'] }}</span></p>
         </div>
     </div>
 

@@ -2,6 +2,7 @@
     <table id="bookingTable" class="table align-items-center table-responsive mb-0">
         <thead>
             <tr>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('SL') }} </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('Image') }} </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7"> {{ __('Name') }} </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7"> {{ __('Brand') }} </th>
@@ -15,6 +16,9 @@
         <tbody>
             @forelse ($products as $product)
                 <tr>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0">{{ $loop->iteration }}</p>
+                    </td>
                     <td data-order="{{ strtolower($product->name) }}">
                         <div class="d-flex">
                             @if ($product->productgallery && count($product->productgallery->images) > 0)
@@ -23,32 +27,32 @@
                                     $allImages = $product->productgallery->images;
                                 @endphp
 
-                                <img src="{{ file_exists(public_path('uploads/products/' . $firstImage)) ? asset('uploads/products/' . $firstImage) : asset('uploads/default.png') }}"
+                                <img src="{{ file_exists(public_path('uploads/products/' . $firstImage)) ? asset('uploads/products/' . $firstImage) : asset('uploads/default1.png') }}"
                                     alt="Product Image" class="avatar avatar-md me-3"
                                     style="object-fit: contain; cursor: pointer;"
                                     onclick="openGalleryModal({{ $product->id }})">
 
                                 @include('backends.product.partial.modal_popup_image')
                             @else
-                                <img src="{{ !empty($product->image[0]) && file_exists(public_path('uploads/products/' . $product->image[0])) ? asset('uploads/products/' . $product->image[0]) : asset('uploads/default.png') }}"
+                                <img src="{{ !empty($product->image[0]) && file_exists(public_path('uploads/products/' . $product->image[0])) ? asset('uploads/products/' . $product->image[0]) : asset('uploads/default1.png') }}"
                                     alt="Product Image" class="avatar avatar-sm me-3">
                             @endif
                         </div>
                     </td>
-                    <td data-order="{{ strtolower($product->name) }}">
+                    <td data-order="{{ strtolower($product->name) }}" class="@if ($product->total_qty == 0) text-danger @endif">
                         <p class="text-sm font-weight-bold mb-0"> {{ $product->name ?? 'Null' }} </p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0">{{ $product->brand->name ?? 'Null' }}</p>
+                        <p class="text-sm font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif">{{ $product->brand->name ?? 'Null' }}</p>
                     </td>
                     <td>
-                        <p class="text-sm text-center font-weight-bold mb-0">{{ $product->count_product_sale ?? '0' }}</p>
+                        <p class="text-sm text-center font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif">{{ $product->count_product_sale ?? '0' }}</p>
                     </td>
                     <td>
-                        <p class="text-sm text-center font-weight-bold mb-0">{{ $product->total_qty ?? '0' }}</p>
+                        <p class="text-sm text-center font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif">{{ $product->total_qty == 0 ? 'Out of Stock' : $product->total_qty }}</p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0">{{ $product->createdBy->name ?? 'Null' }}</p>
+                        <p class="text-sm font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif">{{ $product->createdBy->name ?? 'Null' }}</p>
                     </td>
                     <td class="align-middle text-center text-sm" style="justify-items: center;">
                         <label for="status_{{ $product->id }}" class="switch">
@@ -73,8 +77,10 @@
                     </td>
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('product.edit'))
-                            <a href="{{ route('admin.product.edit', $product->id) }}" class="text-primary font-weight-bold text-xs btn-modal btn-edit pe-1">
-                                {{ __('Edit') }}
+                            <a href="{{ route('admin.product.edit', $product->id) }}" class="btn-edit" data-bs-toggle="tooltip" title="Edit" data-bs-placement="top">
+                                <span class="badge bg-gradient-primary p-2">
+                                    <i class="fa fa-pen-to-square"></i>
+                                </span>
                             </a>
                         @endif
 
@@ -82,8 +88,10 @@
                             <form action="{{ route('admin.product.destroy', $product->id) }}" class="d-inline-block form-delete-{{ $product->id }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" data-id="{{ $product->id }}" data-href="{{ route('admin.product.destroy', $product->id) }}" class="text-danger font-weight-bold text-xs btn-delete" title="Delete" style="background: none; border: none;">
-                                    <i class="fa fa-trash-alt"></i>
+                                <button type="button" data-id="{{ $product->id }}" data-href="{{ route('admin.product.destroy', $product->id) }}" class="btn-delete ps-0" title="Delete" style="background: none; border: none;" data-bs-toggle="tooltip" data-bs-placement="top">
+                                    <span class="badge bg-gradient-danger p-2">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </span>
                                 </button>
                             </form>
                         @endif

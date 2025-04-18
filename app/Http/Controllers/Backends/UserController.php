@@ -44,6 +44,7 @@ class UserController extends Controller
         if (!auth()->user()->can('user.create')) {
             abort(403, 'Unauthorized action.');
         }
+
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -121,6 +122,7 @@ class UserController extends Controller
         if (!auth()->user()->can('user.edit')) {
             abort(403, 'Unauthorized action.');
         }
+
         $user = User::findOrFail($id);
         $roles = Role::select('name','id')
                 ->pluck('name','id');
@@ -212,6 +214,7 @@ class UserController extends Controller
         if (!auth()->user()->can('user.delete')) {
             abort(403, 'Unauthorized action.');
         }
+
         try {
             DB::beginTransaction();
             $user = User::findOrFail($id);
@@ -242,6 +245,10 @@ class UserController extends Controller
 
     public function deleteImage(Request $request)
     {
+        if (!auth()->user()->can('user.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $user = User::find($request->user_id);
         if ($user && $user->image) {
             $imagePath = public_path('uploads/users/' . $user->image);
@@ -263,10 +270,18 @@ class UserController extends Controller
 
     public function showProfile()
     {
+        if (!auth()->user()->can('user.view')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('backends.user.profile');
     }
     public function updateProfile(Request $request)
     {
+        if (!auth()->user()->can('user.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
