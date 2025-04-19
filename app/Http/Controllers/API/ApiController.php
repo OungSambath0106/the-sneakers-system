@@ -860,23 +860,11 @@ class ApiController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'old_password' => ['nullable', 'string', 'min:6'],
             'new_password' => ['nullable', 'string', 'min:6'],
+            'phone' => ['nullable', 'string'],
+            'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('customers', 'email')->ignore($customer->id)],
         ];
 
-        if ($customer->provider === 'phone') {
-            $rules['phone'] = ['required', 'string'];
-        } else {
-            $rules['phone'] = ['nullable', 'string'];
-        }
-
         if ($customer->provider === 'google') {
-            $rules['email'] = [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('customers', 'email')->ignore($customer->id),
-            ];
-        } else {
             $rules['email'] = [
                 'nullable',
                 'string',
@@ -889,8 +877,14 @@ class ApiController extends Controller
         $request->validate($rules);
 
         $customer->name = $request->name;
-        $customer->phone = $request->phone;
-        $customer->email = $request->email;
+
+        if ($request->has('phone') && $request->phone !== null) {
+            $customer->phone = $request->phone;
+        }
+
+        if ($request->has('email') && $request->email !== null) {
+            $customer->email = $request->email;
+        }
 
         if ($request->filled('new_password')) {
             if (!Hash::check($request->old_password, $customer->password)) {
@@ -910,7 +904,9 @@ class ApiController extends Controller
             $request->image->move(public_path('uploads/customers'), $image_name);
             $customer->image = $image_name;
         }
+
         $customer->save();
+
         $customer = [
             'id' => auth()->id(),
             'image_url' => $customer->image_url,
