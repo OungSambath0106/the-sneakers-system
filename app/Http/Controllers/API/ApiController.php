@@ -617,8 +617,7 @@ class ApiController extends Controller
             'order_details.*.product_size' => 'required|string',
             'order_details.*.discount' => 'nullable|numeric',
             'order_details.*.discount_type' => 'nullable|in:amount,percent',
-            'address' => 'nullable|array',
-            'pay_slip' => 'nullable|file|mimes:jpg,jpeg,png,pdf,webp|max:2048',
+            'pay_slip' => 'nullable|file|mimes:jpg,jpeg,png,pdf,webp',
         ]);
 
         try {
@@ -765,6 +764,7 @@ class ApiController extends Controller
                 'payment_status' => $order->payment_status,
                 'created_at' => $order->created_at,
                 'qty' => $order->details->sum('product_qty'),
+                'total' => $order->final_total,
             ];
         });
 
@@ -846,6 +846,8 @@ class ApiController extends Controller
             'name' => auth()->user()->name,
             'phone' => auth()->user()->phone,
             'email' => auth()->user()->email,
+            'provider' => auth()->user()->provider,
+            'is_google_login' => auth()->user()->provider == 'google' ? 1 : 0,
         ];
         return response()->json($customer);
     }

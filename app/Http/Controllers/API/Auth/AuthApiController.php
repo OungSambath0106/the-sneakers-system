@@ -121,6 +121,7 @@ class AuthApiController extends Controller
                 'image_url' => $customer->image_url,
                 'is_verify' => $customer->is_verify,
                 'provider' => $customer->provider,
+                'is_google_login' => $customer->provider == 'google' ? 1 : 0,
             ];
 
             return response()->json([
@@ -166,6 +167,8 @@ class AuthApiController extends Controller
                 'email' => $customer->email,
                 'image_url' => $customer->image_url,
                 'is_verify' => $customer->is_verify,
+                'provider' => $customer->provider,
+                'is_google_login' => $customer->provider == 'google' ? 1 : 0,
             ];
 
             return response()->json([
@@ -296,7 +299,8 @@ class AuthApiController extends Controller
 
         return response()->json([
             'token' => $token,
-            'customer' => $customer
+            'customer' => $customer,
+            'is_google_login' => 1,
         ]);
     }
 }
