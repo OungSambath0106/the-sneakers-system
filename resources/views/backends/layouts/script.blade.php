@@ -47,11 +47,43 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="{{ asset('dist/js/dropify.min.js') }}"></script>
 <script src="{{ asset('dist/js/dropify.js') }}"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 {{ Session::has('message') }}
 
 
 <script src="https://cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+{{-- <script type="text/javascript">
+    $(function() {
+
+        var start = moment().subtract(29, 'days');
+        var end = moment();
+
+        function cb(start, end) {
+            $('#reportrange span').html(start.format('D MMM, YYYY') + ' - ' + end.format('D MMM, YYYY'));
+        }
+
+        $('#reportrange').daterangepicker({
+            startDate: start,
+            endDate: end,
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1,
+                    'month').endOf('month')]
+            }
+        }, cb);
+
+        cb(start, end);
+
+    });
+</script> --}}
 <script>
     function toggleTheme() {
         let darkMode = document.body.classList.toggle("dark-version");
@@ -61,11 +93,15 @@
         let aside = document.querySelector("aside");
 
         if (darkMode) {
-            $.cookie("dark-version" , 1 , { expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000) }, '/');
+            $.cookie("dark-version", 1, {
+                expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000)
+            }, '/');
             aside.classList.add("bg-default");
             aside.classList.remove("bg-white");
         } else {
-            $.cookie("dark-version" , 0 , { expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000) }, '/');
+            $.cookie("dark-version", 0, {
+                expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000)
+            }, '/');
             aside.classList.add("bg-white");
             aside.classList.remove("bg-default");
         }
@@ -73,7 +109,7 @@
         localStorage.setItem("theme", darkMode ? "dark" : "light");
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         let theme = localStorage.getItem("theme") || "light";
         let darkMode = theme === "dark";
 
@@ -84,11 +120,15 @@
         let aside = document.querySelector("aside");
 
         if (darkMode) {
-            $.cookie("dark-version" , 1 , { expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000) }, '/');
+            $.cookie("dark-version", 1, {
+                expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000)
+            }, '/');
             aside.classList.add("bg-default");
             aside.classList.remove("bg-white");
         } else {
-            $.cookie("dark-version" , 0 , { expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000) }, '/');
+            $.cookie("dark-version", 0, {
+                expires: new Date().getTime() + (10 * 365 * 24 * 60 * 60 * 1000)
+            }, '/');
             aside.classList.add("bg-white");
             aside.classList.remove("bg-default");
         }
@@ -99,89 +139,6 @@
 <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
 <script src="{{ asset('assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
 <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
-{{-- <script>
-    var ctx1 = document.getElementById("chart-line").getContext("2d");
-
-    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-
-    gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-    gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-    gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
-    new Chart(ctx1, {
-        type: "line",
-        data: {
-            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets: [{
-                label: "Mobile apps",
-                tension: 0.4,
-                borderWidth: 0,
-                pointRadius: 0,
-                borderColor: "#5e72e4",
-                backgroundColor: gradientStroke1,
-                borderWidth: 3,
-                fill: true,
-                data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-                maxBarThickness: 6
-
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        display: true,
-                        padding: 10,
-                        color: '#fbfbfb',
-                        font: {
-                            size: 11,
-                            family: "Open Sans",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#ccc',
-                        padding: 20,
-                        font: {
-                            size: 11,
-                            family: "Open Sans",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
-</script> --}}
 <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -198,214 +155,12 @@
 
 
 <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('.dropify').dropify();
     });
 </script>
-{{-- <script>
-    $(document).ready(function () {
-        initDataTable();
-    });
-
-    function initDataTable() {
-        if ($('#bookingTable').length && $('#dataTableButtons').length) {
-            if ($.fn.DataTable.isDataTable('#bookingTable')) {
-                $('#bookingTable').DataTable().clear().destroy();
-                $('#bookingTable').empty();
-            }
-
-            let thCount = $('#bookingTable thead th').length;
-            let tdCount = $('#bookingTable tbody tr:first td').length;
-
-            $('#bookingTable_wrapper .dataTables_info').remove();
-            $('#bookingTable_wrapper .dataTables_paginate').remove();
-            $('#dataTableButtons .dt-buttons').remove();
-            $('#dataTableButtons .dataTables_filter').remove();
-            $('#dataTableButtons .dataTables_length').remove();
-
-            if (thCount !== tdCount) {
-                console.error("Mismatch detected! Thead columns:", thCount, "Tbody columns:", tdCount);
-                return;
-            }
-
-            if ($('#bookingTable tbody tr').length === 0) {
-                console.warn("No data found in table. Skipping DataTables initialization.");
-                return;
-            }
-
-            setTimeout(function () {
-                $.fn.dataTable.ext.search.length = 0;
-
-                let actionColumnIndex = -1;
-                let usernameColumnIndex = -1;
-                let emailColumnIndex = -1;
-                let statusColumnIndex = -1;
-
-                let ignoredColumns = [];
-
-                $('#bookingTable thead th').each(function (index) {
-                    let columnText = $(this).text().trim().toLowerCase();
-                    if (columnText.includes('action')) {
-                        actionColumnIndex = index;
-                    }
-                    if (columnText.includes('username') || columnText.includes('customer name')) {
-                        usernameColumnIndex = index;
-                    }
-                    if (columnText.includes('email')) {
-                        emailColumnIndex = index;
-                    }
-                    if (columnText.includes('status')) {
-                        statusColumnIndex = index;
-                    }
-                    if (columnText === 'image' || columnText === 'images') {
-                        ignoredColumns.push(index);
-                    }
-                });
-
-                // Custom search filter to ignore "image" and "images" columns
-                $.fn.dataTable.ext.search.push(function (settings, searchData, index, rowData, counter) {
-                    let searchTerm = $('#bookingTable_filter input').val().toLowerCase();
-
-                    if (!searchTerm) {
-                        return true;
-                    }
-
-                    for (let i = 0; i < searchData.length; i++) {
-                        if (ignoredColumns.includes(i)) {
-                            continue;
-                        }
-                        if (searchData[i].toLowerCase().includes(searchTerm)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-
-                // Custom sorting to ensure first names sort numerically
-                $.fn.dataTable.ext.type.order['custom-username-asc'] = function (a, b) {
-                    return a.localeCompare(b, undefined, { numeric: true });
-                };
-                $.fn.dataTable.ext.type.order['custom-username-desc'] = function (a, b) {
-                    return b.localeCompare(a, undefined, { numeric: true });
-                };
-
-                // Custom sorting to ensure emails sort numerically
-                $.fn.dataTable.ext.type.order['custom-email-asc'] = function (a, b) {
-                    return a.localeCompare(b, undefined, { numeric: true });
-                };
-                $.fn.dataTable.ext.type.order['custom-email-desc'] = function (a, b) {
-                    return b.localeCompare(a, undefined, { numeric: true });
-                }
-
-                // Custom sorting for status (numeric)
-                $.fn.dataTable.ext.order['custom-status-asc'] = function (a, b) {
-                    return a - b;
-                };
-                $.fn.dataTable.ext.order['custom-status-desc'] = function (a, b) {
-                    return b - a;
-                };
-
-                var table = $('#bookingTable').DataTable({
-                    responsive: true,
-                    searchDelay: 100,
-                    dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
-                    buttons: [
-                        {
-                            extend: 'csv',
-                            text: '<i class="fas fa-file-csv"></i> Export to CSV',
-                            exportOptions: {
-                                columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' }
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: '<i class="fas fa-file-excel"></i> Export to Excel',
-                            exportOptions: {
-                                columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' }
-                            }
-                        },
-                        {
-                            extend: 'pdf',
-                            text: '<i class="fas fa-file-pdf"></i> Export to PDF',
-                            exportOptions: {
-                                columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' }
-                            }
-                        },
-                        {
-                            extend: 'print',
-                            text: '<i class="fas fa-print"></i> Print',
-                            exportOptions: {
-                                columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' }
-                            }
-                        },
-                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Column Visibility' }
-                    ],
-                    columnDefs: [
-                        {
-                            targets: actionColumnIndex,
-                            orderable: false
-                        },
-                        {
-                            targets: usernameColumnIndex,
-                            type: 'custom-username'
-                        },
-                        {
-                            targets: emailColumnIndex,
-                            type: 'custom-email'
-                        },
-                        { targets: statusColumnIndex,
-                            type: 'custom-status'
-                        }
-                    ],
-                    language: {
-                        search: "",
-                        searchPlaceholder: "Search...",
-                        paginate: {
-                            first: "<<",
-                            previous: "<",
-                            next: ">",
-                            last: ">>"
-                        },
-                        processing: "Loading...",
-                        aria: {
-                            sortAscending: " 🠕",
-                            sortDescending: " 🠗"
-                        }
-                    },
-                    pagingType: "full_numbers"
-                });
-
-                $('#bookingTable_filter input').off('keyup').on('keyup', function () {
-                    table.search(this.value).draw();
-                });
-
-                // Move elements correctly
-                if ($('#dataTableButtons').length) {
-                    $('.dataTables_length').prependTo('#dataTableButtons');
-                    table.buttons().container().appendTo('#dataTableButtons');
-                    $('.dataTables_filter').appendTo('#dataTableButtons');
-                } else {
-                    console.error("Div #dataTableButtons not found.");
-                }
-            }, 100);
-        }
-    }
-
-    function refreshTable(response) {
-        $('#bookingTable').replaceWith(response.view);
-        toastr.success(response.msg);
-
-        setTimeout(function () {
-            initDataTable();
-        }, 500);
-    }
-</script> --}}
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         initDataTable();
     });
 
@@ -435,7 +190,7 @@
                 return;
             }
 
-            setTimeout(function () {
+            setTimeout(function() {
                 // Clear old search filters (in case table was destroyed/rebuilt)
                 $.fn.dataTable.ext.search.length = 0;
 
@@ -446,7 +201,7 @@
 
                 let ignoredColumns = [];
 
-                $('#bookingTable thead th').each(function (index) {
+                $('#bookingTable thead th').each(function(index) {
                     let columnText = $(this).text().trim().toLowerCase();
                     if (columnText.includes('action')) {
                         actionColumnIndex = index;
@@ -466,7 +221,7 @@
                 });
 
                 // 🔥 Custom global search: Ignore content in "image" and "images" columns
-                $.fn.dataTable.ext.search.push(function (settings, searchData, index, rowData, counter) {
+                $.fn.dataTable.ext.search.push(function(settings, searchData, index, rowData, counter) {
                     let searchTerm = $('#bookingTable_filter input').val().toLowerCase().trim();
 
                     if (searchTerm === "") {
@@ -486,24 +241,32 @@
                 });
 
                 // Custom sorting
-                $.fn.dataTable.ext.type.order['custom-username-asc'] = function (a, b) {
-                    return a.localeCompare(b, undefined, { numeric: true });
+                $.fn.dataTable.ext.type.order['custom-username-asc'] = function(a, b) {
+                    return a.localeCompare(b, undefined, {
+                        numeric: true
+                    });
                 };
-                $.fn.dataTable.ext.type.order['custom-username-desc'] = function (a, b) {
-                    return b.localeCompare(a, undefined, { numeric: true });
-                };
-
-                $.fn.dataTable.ext.type.order['custom-email-asc'] = function (a, b) {
-                    return a.localeCompare(b, undefined, { numeric: true });
-                };
-                $.fn.dataTable.ext.type.order['custom-email-desc'] = function (a, b) {
-                    return b.localeCompare(a, undefined, { numeric: true });
+                $.fn.dataTable.ext.type.order['custom-username-desc'] = function(a, b) {
+                    return b.localeCompare(a, undefined, {
+                        numeric: true
+                    });
                 };
 
-                $.fn.dataTable.ext.order['custom-status-asc'] = function (a, b) {
+                $.fn.dataTable.ext.type.order['custom-email-asc'] = function(a, b) {
+                    return a.localeCompare(b, undefined, {
+                        numeric: true
+                    });
+                };
+                $.fn.dataTable.ext.type.order['custom-email-desc'] = function(a, b) {
+                    return b.localeCompare(a, undefined, {
+                        numeric: true
+                    });
+                };
+
+                $.fn.dataTable.ext.order['custom-status-asc'] = function(a, b) {
                     return a - b;
                 };
-                $.fn.dataTable.ext.order['custom-status-desc'] = function (a, b) {
+                $.fn.dataTable.ext.order['custom-status-desc'] = function(a, b) {
                     return b - a;
                 };
 
@@ -512,13 +275,14 @@
                     scrollX: true,
                     searchDelay: 100,
                     dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
-                    buttons: [
-                        {
+                    buttons: [{
                             extend: 'csv',
                             text: '<i class="fas fa-file-csv"></i> Export to CSV',
                             exportOptions: {
                                 columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' }
+                                modifier: {
+                                    page: 'current'
+                                }
                             }
                         },
                         {
@@ -526,7 +290,9 @@
                             text: '<i class="fas fa-file-excel"></i> Export to Excel',
                             exportOptions: {
                                 columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' }
+                                modifier: {
+                                    page: 'current'
+                                }
                             }
                         },
                         {
@@ -534,7 +300,9 @@
                             text: '<i class="fas fa-file-pdf"></i> Export to PDF',
                             exportOptions: {
                                 columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' }
+                                modifier: {
+                                    page: 'current'
+                                }
                             }
                         },
                         {
@@ -542,20 +310,36 @@
                             text: '<i class="fas fa-print"></i> Print',
                             exportOptions: {
                                 columns: ':visible:not(:last-child)',
-                                modifier: { page: 'current' }
+                                modifier: {
+                                    page: 'current'
+                                }
                             }
                         },
-                        { extend: 'colvis', text: '<i class="fas fa-columns"></i> Column Visibility' }
+                        {
+                            extend: 'colvis',
+                            text: '<i class="fas fa-columns"></i> Column Visibility'
+                        }
                     ],
-                    columnDefs: [
-                        { targets: actionColumnIndex, orderable: false },
-                        { targets: usernameColumnIndex, type: 'custom-username' },
-                        { targets: emailColumnIndex, type: 'custom-email' },
-                        { targets: statusColumnIndex, type: 'custom-status' }
+                    columnDefs: [{
+                            targets: actionColumnIndex,
+                            orderable: false
+                        },
+                        {
+                            targets: usernameColumnIndex,
+                            type: 'custom-username'
+                        },
+                        {
+                            targets: emailColumnIndex,
+                            type: 'custom-email'
+                        },
+                        {
+                            targets: statusColumnIndex,
+                            type: 'custom-status'
+                        }
                     ],
                     language: {
                         search: "",
-                        searchPlaceholder: "Search...",
+                        searchPlaceholder: "{{ __('Search...') }}",
                         paginate: {
                             first: "<<",
                             previous: "<",
@@ -571,7 +355,7 @@
                     pagingType: "full_numbers"
                 });
 
-                $('#bookingTable_filter input').off('keyup').on('keyup', function () {
+                $('#bookingTable_filter input').off('keyup').on('keyup', function() {
                     table.search(this.value).draw();
                 });
 
@@ -589,7 +373,7 @@
     function refreshTable(response) {
         $('#bookingTable').replaceWith(response.view);
         toastr.success(response.msg);
-        setTimeout(function () {
+        setTimeout(function() {
             initDataTable();
         }, 500);
     }
@@ -636,12 +420,12 @@
 
         // init summernote
         $('.summernote').summernote({
-            placeholder: '{{ __("Type something") }}',
+            placeholder: '{{ __('Type something') }}',
             tabsize: 2,
             height: $('.summernote').data('height') ?? 300
         });
         $('.in_kind_support_summernote').summernote({
-            placeholder: '{{ __("Type something") }}',
+            placeholder: '{{ __('Type something') }}',
             tabsize: 2,
             height: 100,
             width: 500
@@ -657,7 +441,7 @@
     });
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         flatpickr(".current-flatpickr", {
             dateFormat: "Y-m-d", // Stored format (for database)
             altInput: true,
@@ -717,7 +501,7 @@
 
 <script>
     function initializeStatusInput(url) {
-        $('input.status').off('change').on('change', function () {
+        $('input.status').off('change').on('change', function() {
             const id = $(this).data('id');
             console.log(id);
 
@@ -729,7 +513,7 @@
                     _token: "{{ csrf_token() }}"
                 },
                 dataType: "json",
-                success: function (response) {
+                success: function(response) {
                     console.log(response);
                     const Toast = Swal.mixin({
                         toast: true,
@@ -755,7 +539,7 @@
                         });
                     }
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     console.log("AJAX error: " + status + "\nError: " + error);
                 }
             });
@@ -763,7 +547,7 @@
     }
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const searchInput = document.getElementById("sidebar-search");
         const suggestionsBox = document.getElementById("search-suggestions");
         const menuLinks = Array.from(document.querySelectorAll(".navbar-nav .nav-link"))
@@ -772,7 +556,7 @@
                 url: link.href
             }));
 
-        searchInput.addEventListener("input", function () {
+        searchInput.addEventListener("input", function() {
             const query = searchInput.value.toLowerCase();
             suggestionsBox.innerHTML = "";
 
@@ -789,7 +573,7 @@
                     suggestionItem.classList.add("list-group-item", "list-group-item-action");
                     suggestionItem.innerText = item.name;
                     suggestionItem.href = item.url;
-                    suggestionItem.addEventListener("click", function (e) {
+                    suggestionItem.addEventListener("click", function(e) {
                         e.preventDefault();
                         window.location.href = item.url;
                     });
@@ -805,7 +589,7 @@
             }
         });
 
-        document.addEventListener("click", function (event) {
+        document.addEventListener("click", function(event) {
             if (!searchInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
                 suggestionsBox.style.display = "none";
             }
@@ -839,7 +623,8 @@
                     if (navItem.classList.contains('menu-open')) {
                         closeMenu(navItem, subMenu, arrowIcon);
                     } else {
-                        document.querySelectorAll('.nav-item.menu-open').forEach(function(openItem) {
+                        document.querySelectorAll('.nav-item.menu-open').forEach(function(
+                            openItem) {
                             let openSubMenu = openItem.querySelector('.nav-treeview');
                             let openArrow = openItem.querySelector('.menu-arrow');
                             if (openSubMenu && openItem !== navItem) {
@@ -893,6 +678,5 @@
         }
     });
 </script>
-<script>
-</script>
+<script></script>
 @stack('js')

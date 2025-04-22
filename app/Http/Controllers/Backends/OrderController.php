@@ -5,6 +5,7 @@ namespace App\Http\Controllers\backends;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use PDF;
@@ -23,32 +24,44 @@ class OrderController extends Controller
         }
 
         $products = Product::all();
+        $customers = Customer::all();
         $query = Order::with('customer', 'details.brand', 'details.product');
 
-        if ($request->has('filter')) {
-            switch ($request->filter) {
-                case 'today':
-                    $query->whereDate('created_at', Carbon::today());
-                    break;
-
-                case 'this_week':
-                    $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
-                    break;
-
-                case 'this_month':
-                    $query->whereMonth('created_at', Carbon::now()->month)
-                        ->whereYear('created_at', Carbon::now()->year);
-                    break;
-
-                case 'this_year':
-                    $query->whereYear('created_at', Carbon::now()->year);
-                    break;
-            }
+        // Date range filter
+        if ($request->filled('date_from') && $request->filled('date_to')) {
+            $query->whereBetween('created_at', [
+                Carbon::parse($request->date_from)->startOfDay(),
+                Carbon::parse($request->date_to)->endOfDay(),
+            ]);
         }
 
-        $orders = $query->latest('id')->paginate(10);
+        // Customer filter
+        if ($request->filled('customer_id') && $request->customer_id !== "") {
+            $query->where('customer_id', $request->customer_id);
+        }
 
-        return view('backends.order.index', compact('orders', 'products'));
+        // Order type filter
+        if ($request->filled('order_type') && $request->order_type !== "") {
+            $query->where('order_type', $request->order_type);
+        }
+
+        // Payment status filter
+        if ($request->filled('payment_status') && $request->payment_status !== "") {
+            $query->where('payment_status', $request->payment_status);
+        }
+
+        // Payment method filter
+        if ($request->filled('payment_method') && $request->payment_method !== "") {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        $orders = $query->latest('id')->get();
+
+        if ($request->ajax()) {
+            return view('backends.order._table', compact('orders'))->render();
+        }
+
+        return view('backends.order.index', compact('orders', 'products', 'customers'));
     }
 
     /**

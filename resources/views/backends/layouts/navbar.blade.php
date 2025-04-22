@@ -10,55 +10,55 @@
             <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6">
                 <li class="breadcrumb-item text-sm">
                     <a class="opacity-5 text-white" style="color: #fff !important;" href="{{ route('admin.dashboard') }}">
-                        Pages
+                        {{ __('Pages') }}
                     </a>
                 </li>
 
                 {{-- Parent Menu Detection --}}
                 @if (request()->routeIs('admin.brand*') || request()->routeIs('admin.product*'))
                     <li class="breadcrumb-item text-sm text-white">
-                        <a href="#" class="opacity-5 text-white" style="color: #fff !important;">Product Management</a>
+                        <a href="#" class="opacity-5 text-white" style="color: #fff !important;">{{ __('Product Management') }}</a>
                     </li>
                 @elseif (request()->routeIs('admin.baner-slider*') || request()->routeIs('admin.shoes-slider*'))
                     <li class="breadcrumb-item text-sm text-white">
-                        <a href="#" class="opacity-5 text-white" style="color: #fff !important;">Banner Slider</a>
+                        <a href="#" class="opacity-5 text-white" style="color: #fff !important;">{{ __('Banner Slider') }}</a>
                     </li>
                 @elseif (request()->routeIs('admin.user*') || request()->routeIs('admin.customer*') || request()->routeIs('admin.roles*'))
                     <li class="breadcrumb-item text-sm text-white">
-                        <a href="#" class="opacity-5 text-white" style="color: #fff !important;">User Management</a>
+                        <a href="#" class="opacity-5 text-white" style="color: #fff !important;">{{ __('User Management') }}</a>
                     </li>
                 @endif
 
                 {{-- Submenu Detection --}}
                 @if (request()->routeIs('admin.brand*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Brand</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Brand') }}</li>
                 @elseif (request()->routeIs('admin.product*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Product</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Product') }}</li>
                 @elseif (request()->routeIs('admin.baner-slider*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Banner</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Banner') }}</li>
                 @elseif (request()->routeIs('admin.shoes-slider*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Shoes Slider</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Shoes Slider') }}</li>
                 @elseif (request()->routeIs('admin.user*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Users</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Users') }}</li>
                 @elseif (request()->routeIs('admin.customer*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Customers</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Customers') }}</li>
                 @elseif (request()->routeIs('admin.roles*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Roles</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Roles') }}</li>
                 @elseif (request()->routeIs('admin.promotion*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Promotion</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Promotion') }}</li>
                 @elseif (request()->routeIs('admin.order*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Sales Report</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Sales Report') }}</li>
                 @elseif (request()->routeIs('admin.setting*'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Settings</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Settings') }}</li>
                 @elseif (request()->routeIs('admin.show_info'))
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Profile</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Profile') }}</li>
                 @else
-                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Dashboard</li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">{{ __('Dashboard') }}</li>
                 @endif
             </ol>
 
             <h6 class="font-weight-bolder text-white mb-0">
-                @yield('page_title', 'Dashboard')
+                @yield('page_title', __('Dashboard'))
             </h6>
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">

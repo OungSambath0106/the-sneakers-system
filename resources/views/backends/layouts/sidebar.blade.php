@@ -18,7 +18,7 @@
     <hr class="horizontal dark mt-0">
     <div class="input-group ition-relative p-2 pt-0">
         <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-        <input type="text" class="form-control sidebar-search-menu" id="sidebar-search" placeholder="Search menu...">
+        <input type="text" class="form-control sidebar-search-menu" id="sidebar-search" placeholder="{{ __('Search menu...') }}">
         <div id="search-suggestions" class="list-group position-absolute search-menu-suggestions" style="width: 94%;"></div>
     </div>
     <div class="collapse navbar-collapse pt-1  w-auto " id="sidenav-collapse-main">

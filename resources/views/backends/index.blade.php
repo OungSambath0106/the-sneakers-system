@@ -157,7 +157,7 @@
                                 </h5>
                                 <p class="mb-0">
                                     <span class="text-success text-sm font-weight-bolder count-up">+{{ $totalCustomers - $totalCustomersLastWeek }}%</span>
-                                    since last week
+                                    {{ __('since last week') }}
                                 </p>
                             </div>
                         </div>
@@ -182,7 +182,7 @@
                                 </h5>
                                 <p class="mb-0">
                                     <span class="text-danger text-sm font-weight-bolder count-up">-{{ $products->count() - $productsLastWeek }}%</span>
-                                    since last quarter
+                                    {{ __('since last quarter') }}
                                 </p>
                             </div>
                         </div>
@@ -207,7 +207,7 @@
                                 </h5>
                                 <p class="mb-0">
                                     <span class="text-success text-sm font-weight-bolder count-up">+{{ $totalSalesReport - $totalSalesReportLastDay }}%</span>
-                                    since yesterday
+                                    {{ __('since yesterday') }}
                                 </p>
                             </div>
                         </div>
@@ -231,8 +231,8 @@
                                     $ {{ $totalIncome }}
                                 </h5>
                                 <p class="mb-0">
-                                    <span class="text-success text-sm font-weight-bolder count-up for-income"> $ +{{ $totalIncome - $totalIncomeLastMonth }}% </span> than last
-                                    month
+                                    <span class="text-success text-sm font-weight-bolder count-up for-income"> $ +{{ $totalIncome - $totalIncomeLastMonth }}% </span>
+                                    {{ __('than last month') }}
                                 </p>
                             </div>
                         </div>
