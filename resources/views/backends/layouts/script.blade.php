@@ -555,7 +555,7 @@
                     ],
                     language: {
                         search: "",
-                        searchPlaceholder: "Search...",
+                        searchPlaceholder: "{{ __('Search...') }}",
                         paginate: {
                             first: "<<",
                             previous: "<",

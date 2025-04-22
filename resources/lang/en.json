@@ -386,5 +386,24 @@
     "Best Selling Products" : "Best Selling Products",
     "in stock" : "in stock",
     "sold" : "sold",
-    "Hi" : "Hi"
- }
+    "Hello" : "Hello",
+    "Page" : "Page",
+    "Sales Report" : "Sales Report",
+    "Shoes Slider" : "Shoes Slider",
+    "Search menu..." : "Search menu...",
+    "Total Customers" : "Total Customers",
+    "Total Sales Report" : "Total Sales Report",
+    "Total Income" : "Total Income",
+    "since last week" : "since last week",
+    "since last quarter" : "since last quarter",
+    "since yesterday" : "since yesterday",
+    "than last month" : "since last quarter",
+    "Sales Report History" : "Sales Report History",
+    "Payment Ref" : "Payment Ref",
+    "Order Type" : "Order Type",
+    "Brands Table" : "Brands Table",
+    "Search..." : "Search...",
+    "No Actions" : "No Actions",
+    "Brands are not available." : "Brands are not available.",
+    "SL" : "SL"
+}

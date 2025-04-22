@@ -58,7 +58,7 @@
                     <td class="align-middle text-center">
                         @if (auth()->user()->can('brand.edit'))
                             <a href="#" data-href="{{ route('admin.brand.edit', $brand->id) }}"
-                                class="btn-edit" data-bs-toggle="tooltip" title="Edit" data-bs-placement="top">
+                                class="btn-edit" data-bs-toggle="tooltip" title="{{ __('Edit') }}" data-bs-placement="top">
                                 <span class="badge bg-gradient-primary p-2">
                                     <i class="fa fa-pen-to-square"></i>
                                 </span>
@@ -70,7 +70,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" data-id="{{ $brand->id }}" data-href="{{ route('admin.brand.destroy', $brand->id) }}"
-                                    class="btn-delete ps-0" title="Delete" style="background: none; border: none;" data-bs-toggle="tooltip" data-bs-placement="top">
+                                    class="btn-delete ps-0" title="{{ __('Delete') }}" style="background: none; border: none;" data-bs-toggle="tooltip" data-bs-placement="top">
                                     <span class="badge bg-gradient-danger p-2">
                                         <i class="fa fa-trash-alt"></i>
                                     </span>
@@ -79,7 +79,7 @@
                         @endif
 
                         @if (!auth()->user()->can('brand.edit') && !auth()->user()->can('brand.delete'))
-                            <span class="text-muted">No Actions</span>
+                            <span class="text-muted">{{ __('No Actions') }}</span>
                         @endif
                     </td>
                 </tr>

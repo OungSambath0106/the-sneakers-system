@@ -3,6 +3,16 @@
 
 <head>
     <title>BeFree Store</title>
+    @php
+        $setting = \App\Models\BusinessSetting::all();
+        $data['fav_icon'] = @$setting->where('type', 'fav_icon')->first()->value ?? '';
+    @endphp
+    <link rel="icon" type="image/x-icon" href="
+        @if ($data['fav_icon'] && file_exists('uploads/business_settings/' . $data['fav_icon']))
+            {{ asset('uploads/business_settings/' . $data['fav_icon']) }}
+        @else
+            {{ asset('uploads/image/default.png') }}
+        @endif">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 

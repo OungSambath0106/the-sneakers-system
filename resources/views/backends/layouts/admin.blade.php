@@ -10,7 +10,6 @@
 
     <main class="main-content position-relative border-radius-lg ">
         <!-- Navbar -->
-
         @include('backends.layouts.navbar')
 
         <!-- End Navbar -->
@@ -23,7 +22,6 @@
     </main>
 
     {{-- @include('backends.layouts.setting_configuration') --}}
-
     <!--   Core JS Files   -->
     @include('backends.layouts.script')
 </body>
