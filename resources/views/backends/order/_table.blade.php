@@ -2,7 +2,7 @@
     <table id="bookingTable" class="table align-items-center table-responsive mb-0">
         <thead>
             <tr>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('SL') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder ps-2 opacity-7">{{ __('SL') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Order ID') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Customer Name') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Order Type') }}</th>
@@ -10,6 +10,7 @@
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Qty') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Discount') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Total Amount') }}</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Payment Method') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Payment Status') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder px-2 opacity-7">{{ __('Action') }}</th>
             </tr>
@@ -40,6 +41,9 @@
                     </td>
                     <td>
                         <p class="text-sm font-weight-bold mb-0"> $ {{ number_format($item->final_total, 2) }} </p>
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0 text-uppercase"> {{ ucwords(str_replace('_', ' ', $item->payment_method)) }} </p>
                     </td>
                     <td>
                         <p class="text-sm font-weight-bold mb-0">
