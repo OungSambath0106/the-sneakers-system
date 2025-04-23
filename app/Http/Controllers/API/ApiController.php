@@ -608,7 +608,7 @@ class ApiController extends Controller
             'order_type' => 'required|in:pickup,delivery',
             'delivery_type' => 'nullable|string',
             'delivery_fee' => 'nullable|numeric',
-            'payment_method' => 'nullable|in:cash_on_delivery,aba,ac',
+            'address' => 'nullable|array',
             'order_details' => 'required|array',
             'order_details.*.product_id' => 'required|exists:products,id',
             'order_details.*.brand_id' => 'required|exists:brands,id',
@@ -621,6 +621,7 @@ class ApiController extends Controller
         ]);
 
         try {
+            // dd($request->all());
             DB::beginTransaction();
 
             $order_amount = 0;
@@ -661,6 +662,11 @@ class ApiController extends Controller
                 $order->delivery_fee = 0;
                 $order->order_status = null;
                 $order->delivery_type = 'pickup';
+                $order->save();
+            }else{
+                $order->delivery_fee = $validated['delivery_fee'];
+                $order->order_status = 'pending';
+                $order->delivery_type = 'delivery';
                 $order->save();
             }
 
@@ -913,6 +919,8 @@ class ApiController extends Controller
             'name' => $customer->name,
             'phone' => $customer->phone,
             'email' => $customer->email,
+            'provider' => $customer->provider,
+            'is_google_login' => $customer->provider == 'google' ? 1 : 0,
         ];
 
         return response()->json($customer);

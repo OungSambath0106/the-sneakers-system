@@ -13,12 +13,10 @@ use App\Http\Controllers\Backends\DashboardController;
 use App\Http\Controllers\Backends\FileManagerController;
 use App\Http\Controllers\Backends\BusinessSettingController;
 use App\Http\Controllers\Backends\CustomerController;
-use App\Http\Controllers\Backends\OnboardController;
-use App\Http\Controllers\backends\OrderController;
+use App\Http\Controllers\Backends\OrderController;
 use App\Http\Controllers\Backends\ProductController;
 use App\Http\Controllers\Backends\PromotionController;
 use App\Http\Controllers\Backends\ShoesSliderController;
-use App\Http\Controllers\Backends\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
