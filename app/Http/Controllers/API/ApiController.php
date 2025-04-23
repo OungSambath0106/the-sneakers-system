@@ -654,7 +654,7 @@ class ApiController extends Controller
             $order->invoice_ref = "INV-{$datePrefix}00{$order->id}";
             $order->save();
 
-            if ($validated['address']) {
+            if (isset($validated['address']) && !empty($validated['address'])) {
                 $order->address = $validated['address'];
                 $order->save();
             }
