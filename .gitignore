@@ -7,5 +7,5 @@
 /public/uploads/*
 /vendor
 node_modules
-/.env.backup
+# /.env.backup
 /temp
