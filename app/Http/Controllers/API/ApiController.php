@@ -609,6 +609,7 @@ class ApiController extends Controller
             'delivery_type' => 'nullable|string',
             'delivery_fee' => 'nullable|numeric',
             'address' => 'nullable|array',
+            'payment_method' => 'nullable|in:pay_at_store,cash_on_delivery,aba,wing,acleda',
             'order_details' => 'required|array',
             'order_details.*.product_id' => 'required|exists:products,id',
             'order_details.*.brand_id' => 'required|exists:brands,id',
