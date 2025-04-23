@@ -279,8 +279,8 @@ class AuthApiController extends Controller
         $customer = Customer::where('google_uid', $request->uid)
                     ->select('id','name','email','phone','image','is_verify','google_uid')
                     ->where('provider', 'google')
-                    ->first()
-                    ->makeHidden('image');
+                    ->first();
+                    // ->makeHidden('image');
 
         if (!$customer) {
             $customer = Customer::updateOrCreate([
