@@ -17,6 +17,7 @@ class Order extends Model
         'delivery_type',
         'delivery_fee',
         'payment_method',
+        'order_status',
         'address',
         'final_total',
         'pay_slip',

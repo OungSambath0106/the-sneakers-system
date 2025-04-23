@@ -69,7 +69,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="10" class="text-center data-not-available" style="background-color: ghostwhite">
+                    <td colspan="11" class="text-center data-not-available" style="background-color: ghostwhite">
                         {{ __('Transactions are not available.') }}
                     </td>
                 </tr>

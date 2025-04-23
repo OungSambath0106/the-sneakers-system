@@ -131,7 +131,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ auth()->user()->can('promotion.edit') || auth()->user()->can('promotion.delete') ? 7 : 6 }}"
+                    <td colspan="{{ auth()->user()->can('promotion.edit') || auth()->user()->can('promotion.delete') ? 8 : 7 }}"
                         class="text-center data-not-available" style="background-color: ghostwhite">
                         {{ __('Promotions are not available.') }}
                     </td>
