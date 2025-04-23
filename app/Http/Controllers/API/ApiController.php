@@ -913,6 +913,7 @@ class ApiController extends Controller
             'name' => $customer->name,
             'phone' => $customer->phone,
             'email' => $customer->email,
+            'is_google_login' => auth()->user()->provider == 'google' ? 1 : 0,
         ];
 
         return response()->json($customer);
