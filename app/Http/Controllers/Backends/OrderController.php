@@ -111,6 +111,44 @@ class OrderController extends Controller
     }
 
     /**
+     * Update the payment status of the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updatePaymentStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $order->payment_status = $request->payment_status === 'true' ? 'paid' : 'unpaid';
+        $order->save();
+
+        return response()->json([
+            'success' => true,
+            'new_status' => $order->payment_status
+        ]);
+    }
+
+    /**
+     * Update the order status of the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateOrderStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $order->order_status = $request->order_status;
+        $order->save();
+
+        return response()->json([
+            'success' => true,
+            'new_status' => $order->order_status
+        ]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
