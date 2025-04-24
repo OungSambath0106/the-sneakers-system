@@ -128,6 +128,8 @@ Route::middleware(['auth','CheckUserLogin', 'SetSessionData'])->group(function (
         Route::get('order/{id}', [OrderController::class, 'show'])->name('order.show');
         Route::get('order/edit-address', [OrderController::class, 'editAddress'])->name('order.edit-address');
         Route::get('order/invoice/pdf/{id}', [OrderController::class, 'invoicePdf'])->name('order.invoice.pdf');
+        Route::post('order/update_payment_status/{id}', [OrderController::class, 'updatePaymentStatus'])->name('order.update_payment_status');
+        Route::post('order/update_order_status/{id}', [OrderController::class, 'updateOrderStatus'])->name('order.update_order_status');
     });
 
 });

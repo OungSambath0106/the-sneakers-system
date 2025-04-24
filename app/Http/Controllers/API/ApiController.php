@@ -648,7 +648,7 @@ class ApiController extends Controller
             $order = Order::create(array_merge($validated, [
                 'order_amount' => $order_amount,
                 'discount_amount' => $discount_amount,
-                'final_total' => $order_amount - $discount_amount + $validated['delivery_fee'],
+                'final_total' => 0,
             ]));
 
             $order->invoice_ref = "INV-{$datePrefix}00{$order->id}";
@@ -663,11 +663,13 @@ class ApiController extends Controller
                 $order->delivery_fee = 0;
                 $order->order_status = null;
                 $order->delivery_type = 'pickup';
+                $order->final_total = $order_amount - $discount_amount;
                 $order->save();
-            }else{
+            } else {
                 $order->delivery_fee = $validated['delivery_fee'];
                 $order->order_status = 'pending';
-                $order->delivery_type = 'delivery';
+                $order->delivery_type = $validated['delivery_type'];
+                $order->final_total = $order_amount - $discount_amount + $validated['delivery_fee'];
                 $order->save();
             }
 

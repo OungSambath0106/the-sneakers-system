@@ -46,22 +46,17 @@
                         @if ($order->order_type == 'delivery')
                             <div class="row mb-3">
                                 <div class="col-md-12 text-md-end">
-                                    <span class="text-muted pe-2">Status:</span>
-                                    @if ($order->order_status == 'pending')
-                                        <span class="badge bg-gradient-warning">{{ @$order->order_status }}</span>
-                                    @elseif ($order->order_status == 'confirmed')
-                                        <span class="badge bg-gradient-success">{{ @$order->order_status }}</span>
-                                    @elseif ($order->order_status == 'packaging')
-                                        <span class="badge bg-gradient-info">{{ @$order->order_status }}</span>
-                                    @elseif ($order->order_status == 'out_for_delivery')
-                                        <span class="badge bg-gradient-primary">{{ @$order->order_status }}</span>
-                                    @elseif ($order->order_status == 'delivered')
-                                        <span class="badge bg-gradient-success">{{ @$order->order_status }}</span>
-                                    @elseif ($order->order_status == 'failed_to_deliver')
-                                        <span class="badge bg-gradient-danger">{{ @$order->order_status }}</span>
-                                    @elseif ($order->order_status == 'cancelled')
-                                        <span class="badge bg-gradient-danger">{{ @$order->order_status }}</span>
-                                    @endif
+                                    <span class="text-muted pe-2">{{ __('Order Status') }}:</span>
+                                    <span id="order-status-badge" class="badge
+                                        {{ $order->order_status == 'pending' ? 'bg-gradient-warning' : '' }}
+                                        {{ $order->order_status == 'confirmed' ? 'bg-gradient-success' : '' }}
+                                        {{ $order->order_status == 'packaging' ? 'bg-gradient-info' : '' }}
+                                        {{ $order->order_status == 'out_for_delivery' ? 'bg-gradient-primary' : '' }}
+                                        {{ $order->order_status == 'delivered' ? 'bg-gradient-success' : '' }}
+                                        {{ $order->order_status == 'failed_to_deliver' ? 'bg-gradient-danger' : '' }}
+                                        {{ $order->order_status == 'cancelled' ? 'bg-gradient-danger' : '' }}">
+                                        {{ str_replace('_', ' ', $order->order_status) }}
+                                    </span>
                                 </div>
                             </div>
                         @endif
@@ -85,11 +80,9 @@
                         <div class="row mb-4">
                             <div class="col-md-12 text-md-end">
                                 <span class="text-muted pe-2">Payment Status:</span>
-                                @if ($order->payment_status == 'paid')
-                                    <span class="text-success">{{ ucwords(@$order->payment_status) }}</span>
-                                @else
-                                    <span class="text-danger">{{ ucwords(@$order->payment_status) }}</span>
-                                @endif
+                                <span id="payment-status-label" class="{{ $order->payment_status == 'paid' ? 'text-success' : 'text-danger' }}">
+                                    {{ ucwords($order->payment_status) }}
+                                </span>
                             </div>
                         </div>
 
@@ -231,9 +224,35 @@
                                 </div>
                                 <div class="right d-flex align-items-center">
                                     <span class="me-3">{{ ucwords(@$order->payment_status) }}</span>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="paymentStatusSwitch" {{ @$order->payment_status == 'paid' ? 'checked' : '' }}>
-                                    </div>
+                                    <label for="status_{{ $order->id }}" class="switch pt-0">
+                                        <input type="checkbox" class="status" id="status_{{ $order->id }}"
+                                            data-id="{{ $order->id }}" {{ $order->payment_status == 'paid' ? 'checked' : '' }}
+                                            name="payment_status">
+                                        <div class="slider">
+                                            <div class="circle">
+                                                <svg class="cross" xml:space="preserve" style="enable-background:new 0 0 512 512"
+                                                    viewBox="0 0 365.696 365.696" y="0" x="0" height="6" width="6"
+                                                    xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <g>
+                                                        <path data-original="#000000" fill="currentColor"
+                                                            d="M243.188 182.86 356.32 69.726c12.5-12.5 12.5-32.766 0-45.247L341.238 9.398c-12.504-12.503-32.77-12.503-45.25 0L182.86 122.528 69.727 9.374c-12.5-12.5-32.766-12.5-45.247 0L9.375 24.457c-12.5 12.504-12.5 32.77 0 45.25l113.152 113.152L9.398 295.99c-12.503 12.503-12.503 32.769 0 45.25L24.48 356.32c12.5 12.5 32.766 12.5 45.247 0l113.132-113.132L295.99 356.32c12.503 12.5 32.769 12.5 45.25 0l15.081-15.082c12.5-12.504 12.5-32.77 0-45.25zm0 0">
+                                                        </path>
+                                                    </g>
+                                                </svg>
+                                                <svg class="checkmark" xml:space="preserve"
+                                                    style="enable-background:new 0 0 512 512" viewBox="0 0 24 24" y="0" x="0"
+                                                    height="10" width="10" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                    version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                                    <g>
+                                                        <path class="" data-original="#000000" fill="currentColor"
+                                                            d="M9.707 19.121a.997.997 0 0 1-1.414 0l-5.646-5.647a1.5 1.5 0 0 1 0-2.121l.707-.707a1.5 1.5 0 0 1 2.121 0L9 14.171l9.525-9.525a1.5 1.5 0 0 1 2.121 0l.707.707a1.5 1.5 0 0 1 0 2.121z">
+                                                        </path>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -330,6 +349,126 @@
     @include('backends.order.partial.modal_edit_address')
 @endsection
 @push('js')
+    {{-- Update Payment Status --}}
+    <script>
+        $(document).on('change', '.status', function () {
+            var checkbox = $(this);
+            var orderId = checkbox.data('id');
+            var isChecked = checkbox.is(':checked');
+
+            $.ajax({
+                url: '{{ route('admin.order.update_payment_status', $order->id) }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    payment_status: isChecked
+                },
+                success: function (response) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+
+                    if (response.success) {
+                        const statusText = response.new_status.charAt(0).toUpperCase() + response.new_status.slice(1);
+                        const statusLabel = $('#payment-status-label');
+
+                        checkbox.closest('.right').find('span').text(statusText);
+                        statusLabel.text(statusText);
+
+                        if (response.new_status === 'paid') {
+                            statusLabel.removeClass('text-danger').addClass('text-success');
+                        } else {
+                            statusLabel.removeClass('text-success').addClass('text-danger');
+                        }
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Updated to ' + response.new_status
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Failed to update payment status'
+                        });
+                    }
+                },
+                error: function () {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Something went wrong while updating payment status.'
+                    });
+                }
+            });
+        });
+    </script>
+    {{-- Update Order Status --}}
+    <script>
+        function changeOrderStatus(newStatus) {
+            $.ajax({
+                url: '{{ route('admin.order.update_order_status', $order->id) }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    order_status: newStatus
+                },
+                success: function (response) {
+                    if (response.success) {
+                        const formattedStatus = response.new_status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                        $('#order-status-badge')
+                            .text(formattedStatus)
+                            .removeClass('bg-gradient-warning bg-gradient-success bg-gradient-info bg-gradient-primary bg-gradient-danger')
+                            .addClass(getGradientBadgeClass(response.new_status));
+
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Failed to update order status.'
+                        });
+                    }
+                },
+                error: function () {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'An error occurred while updating order status.'
+                    });
+                }
+            });
+        }
+
+        function getBadgeClass(status) {
+            switch (status) {
+                case 'delivered': return 'bg-success';
+                case 'failed_to_deliver': return 'bg-danger';
+                case 'cancelled': return 'bg-danger';
+                case 'out_for_delivery': return 'bg-info';
+                case 'packaging': return 'bg-warning';
+                case 'confirmed': return 'bg-primary';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function getGradientBadgeClass(status) {
+            switch (status) {
+                case 'pending': return 'bg-gradient-warning';
+                case 'confirmed': return 'bg-gradient-success';
+                case 'packaging': return 'bg-gradient-info';
+                case 'out_for_delivery': return 'bg-gradient-primary';
+                case 'delivered': return 'bg-gradient-success';
+                case 'failed_to_deliver': return 'bg-gradient-danger';
+                case 'cancelled': return 'bg-gradient-danger';
+                default: return 'bg-gradient-secondary';
+            }
+        }
+    </script>
     <script>
         function openGalleryModal(productId) {
             let modal = new bootstrap.Modal(document.getElementById('imageGalleryModal-' + productId), {
