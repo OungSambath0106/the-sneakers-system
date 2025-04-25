@@ -414,10 +414,19 @@
                                             <p class="text-xs font-weight-bold mb-0">{{ ucwords($transaction->order_type) }}</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
-                                            @if ($transaction->order_status == 'paid')
-                                                <span class="badge badge-sm bg-gradient-success">{{ ucwords($transaction->order_status) }}</span>
+                                            @if ($transaction->order_status != null)
+                                                <span class="badge
+                                                    {{ $transaction->order_status == 'pending' ? 'bg-gradient-warning' : '' }}
+                                                    {{ $transaction->order_status == 'confirmed' ? 'bg-gradient-success' : '' }}
+                                                    {{ $transaction->order_status == 'packaging' ? 'bg-gradient-info' : '' }}
+                                                    {{ $transaction->order_status == 'out_for_delivery' ? 'bg-gradient-primary' : '' }}
+                                                    {{ $transaction->order_status == 'delivered' ? 'bg-gradient-success' : '' }}
+                                                    {{ $transaction->order_status == 'failed_to_deliver' ? 'bg-gradient-danger' : '' }}
+                                                    {{ $transaction->order_status == 'cancelled' ? 'bg-gradient-danger' : '' }}">
+                                                    {{ str_replace('_', ' ', $transaction->order_status) }}
+                                                </span>
                                             @else
-                                                <span class="badge badge-sm bg-gradient-danger">{{ ucwords($transaction->order_status) }}</span>
+                                                <span class="badge bg-gradient-info"> Pickup </span>
                                             @endif
                                         </td>
                                         <td class="align-middle">

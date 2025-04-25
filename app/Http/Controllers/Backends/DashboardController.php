@@ -29,7 +29,7 @@ class DashboardController extends Controller
         $totalSalesReportLastDay = Order::where('created_at', '<', now()->subDay())->count();
         $totalIncome = Order::sum('final_total');
         $totalIncomeLastMonth = Order::where('created_at', '<', now()->subMonth())->sum('final_total');
-        $transactions = Order::get()->take(5);
+        $transactions = Order::latest('id')->take(5)->get();
         $count_pro_sale = Product::select('*')
             ->orderByRaw('CAST(count_product_sale AS UNSIGNED) DESC')
             ->take(5)

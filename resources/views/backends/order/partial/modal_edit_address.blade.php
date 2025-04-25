@@ -11,9 +11,9 @@
                         <!-- Label field -->
                         <div class="col-md-12 mb-3">
                             <div class="form-group m-0">
-                                <button class="btn btn-sm btn-outline-primary mb-0 @if(@$order->address['label'] == 'home') active @endif" value="home">Home</button>
+                                {{-- <button class="btn btn-sm btn-outline-primary mb-0 @if(@$order->address['label'] == 'home') active @endif" value="home">Home</button>
                                 <button class="btn btn-sm btn-outline-primary mb-0 @if(@$order->address['label'] == 'work') active @endif" value="work">Work</button>
-                                <button class="btn btn-sm btn-outline-primary mb-0 @if(@$order->address['label'] == 'other') active @endif" value="other">Other</button>
+                                <button class="btn btn-sm btn-outline-primary mb-0 @if(@$order->address['label'] == 'other') active @endif" value="other">Other</button> --}}
                             </div>
                         </div>
 

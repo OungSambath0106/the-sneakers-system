@@ -306,7 +306,7 @@
                                         <i class="fas fa-edit"></i>
                                     </a> --}}
                                 </div>
-                                <div>
+                                {{-- <div>
                                     <p class="mb-1"><strong>Name:</strong> {{ @$order->customer->name }} </p>
                                     <p class="mb-1"><strong>Label:</strong> {{ ucwords(@$order->address['label'] ) }} </p>
                                     <p class="mb-1"><strong>Contact:</strong> {{ @$order->address['phoneNumber'] }}
@@ -320,6 +320,22 @@
                                     <p class="mb-1"><strong>Street Line #2:</strong>
                                         {{ @$order->address['streetLine2'] ?? '' }}</p>
                                     <p class="mb-0"><strong>Note:</strong> {{ @$order->address['note'] ?? '' }}</p>
+                                </div> --}}
+                                @php
+                                    $address = is_string($order->address) ? json_decode($order->address, true) : $order->address;
+                                @endphp
+
+                                <div>
+                                    <p class="mb-1"><strong>Name:</strong> {{ @$order->customer->name }} </p>
+                                    <p class="mb-1"><strong>Label:</strong> {{ ucwords(@$address['label']) }} </p>
+                                    <p class="mb-1"><strong>Contact:</strong> {{ @$address['phoneNumber'] }} </p>
+                                    <p class="mb-1"><strong>Province:</strong>
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        {{ @$address['province'] ?? '' }}
+                                    </p>
+                                    <p class="mb-1"><strong>Street Line #1:</strong> {{ @$address['streetLine1'] ?? '' }}</p>
+                                    <p class="mb-1"><strong>Street Line #2:</strong> {{ @$address['streetLine2'] ?? '' }}</p>
+                                    <p class="mb-0"><strong>Note:</strong> {{ @$address['note'] ?? '' }}</p>
                                 </div>
                             </div>
                         </div>

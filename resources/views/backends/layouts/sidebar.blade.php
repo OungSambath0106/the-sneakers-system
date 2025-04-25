@@ -6,16 +6,16 @@
         $company_name = $setting->where('type', 'company_name')->first()->value ?? '';
     @endphp
 
+    {{-- @dd($web_header_logo) --}}
     <div class="sidenav-header">
         <a class="navbar-brand m-0" href="{{ route('admin.dashboard') }}">
-            <img src="@if ($web_header_logo && file_exists('uploads/business_settings/' . $web_header_logo)) {{ asset('uploads/business_settings/' . $web_header_logo) }}
-            @else
-                {{ asset('uploads/image/default.png') }}
-            @endif" width="26px" height="26px" class="navbar-brand-img h-100" alt="main_logo">
+            <img src="{{ ($web_header_logo && file_exists(public_path('uploads/business_settings/' . $web_header_logo))) 
+                ? asset('uploads/business_settings/' . $web_header_logo) 
+                : asset('uploads/image/default.png') }}" width="26px" height="26px" class="navbar-brand-img h-100" alt="main_logo">
             <span class="ms-1 font-weight-bold company-name" style="font-size: 16px">{{ $company_name }}</span>
         </a>
     </div>
-    <hr class="horizontal dark mt-0">
+    <hr class="horizontal dark mt-0"></hr>
     <div class="input-group ition-relative p-2 pt-0">
         <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
         <input type="text" class="form-control sidebar-search-menu" id="sidebar-search" placeholder="{{ __('Search menu...') }}">
@@ -176,7 +176,7 @@
             @endif
 
             <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Account pages</h6>
+                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">{{ __('Account pages') }}</h6>
             </li>
             <li class="nav-item">
                 <a class="nav-link mx-0 @if (request()->routeIs('admin.show_info*')) active @endif" href="{{ route('admin.show_info', auth()->user()->id) }}">

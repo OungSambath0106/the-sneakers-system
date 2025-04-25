@@ -388,6 +388,7 @@
     "sold" : "sold",
     "Hello" : "Hello",
     "Page" : "Page",
+    "Pages" : "Pages",
     "Sales Report" : "Sales Report",
     "Shoes Slider" : "Shoes Slider",
     "Search menu..." : "Search menu...",
@@ -405,5 +406,6 @@
     "Search..." : "Search...",
     "No Actions" : "No Actions",
     "Brands are not available." : "Brands are not available.",
+    "Account pages" : "Account pages",
     "SL" : "SL"
 }
