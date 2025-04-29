@@ -162,49 +162,57 @@
     </script>
     <script>
         $(function() {
+            // Date-range callback
+            function cb(start, end) {
+                $('#reportrange span')
+                .text(start.format('D MMM, YYYY') + ' - ' + end.format('D MMM, YYYY'));
+                $('#date_from').val(start.format('YYYY-MM-DD'));
+                $('#date_to').val(end.format('YYYY-MM-DD'));
+                fetchFilteredData();
+            }
+
+            // Initialize the picker
+            $('#reportrange').daterangepicker({
+                startDate: moment().subtract(29, 'days'),
+                endDate:   moment(),
+                ranges: {
+                    'Today':       [moment(), moment()],
+                    'Yesterday':   [moment().subtract(1,'days'), moment().subtract(1,'days')],
+                    'Last 7 Days': [moment().subtract(6,'days'), moment()],
+                    'Last 30 Days':[moment().subtract(29,'days'), moment()],
+                    'This Month':  [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month':  [moment().subtract(1,'month').startOf('month'), moment().subtract(1,'month').endOf('month')]
+                }
+            }, cb);
+
+            // Re-fetch when any filter input/select changes
+            $('#filterForm').on('change', 'select, input', fetchFilteredData);
+
+            // Initial load
+            cb(moment().subtract(29, 'days'), moment());
+
+
+            // AJAX replace table HTML & re-init DataTable
             function fetchFilteredData() {
                 const formData = $('#filterForm').serialize();
-
                 $.ajax({
                     url: "{{ route('admin.order.index') }}",
                     method: 'GET',
                     data: formData,
-                    success: function(response) {
-                        $('.table-wrapper').html(response);
+                    success: function(html) {
+                        // Inject new table
+                        $('.table-wrapper').html(html);
+                        // Destroy old table (if any) & re-initialize
+                        if ($.fn.DataTable.isDataTable('#bookingTable')) {
+                            $('#bookingTable').DataTable().clear().destroy();
+                        }
+                        initDataTable();
                     },
                     error: function() {
                         alert('Failed to fetch filtered data.');
                     }
                 });
             }
-
-            function cb(start, end) {
-                $('#reportrange span').html(start.format('D MMM, YYYY') + ' - ' + end.format('D MMM, YYYY'));
-                $('#date_from').val(start.format('YYYY-MM-DD'));
-                $('#date_to').val(end.format('YYYY-MM-DD'));
-
-                fetchFilteredData();
-            }
-
-            $('#reportrange').daterangepicker({
-                startDate: moment().subtract(29, 'days'),
-                endDate: moment(),
-                ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1,
-                        'month').endOf('month')]
-                }
-            }, cb);
-
-            cb(moment().subtract(29, 'days'), moment());
-
-            $('#customer_id, #order_type, #payment_status, #payment_method').on('change', function() {
-                fetchFilteredData();
-            });
         });
     </script>
     <script>
