@@ -36,4 +36,19 @@ class Order extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(OrderStatusHistory::class)
+                    ->orderBy('created_at', 'asc');
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($order) {
+            $order->statusHistories()->create([
+                'status' => 'pending',
+            ]);
+        });
+    }
 }

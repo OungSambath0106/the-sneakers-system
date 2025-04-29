@@ -138,13 +138,32 @@ class OrderController extends Controller
      */
     public function updateOrderStatus(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
-        $order->order_status = $request->order_status;
-        $order->save();
+        $data = $request->validate([
+            'order_status' => 'required|string',
+        ]);
 
+        $order = Order::findOrFail($id);
+
+        // Only act if the status is different
+        if ($order->order_status !== $data['order_status']) {
+            $order->order_status = $data['order_status'];
+            $order->save();
+
+            // Record the change in the history table
+            $order->statusHistories()->create([
+                'status' => $data['order_status'],
+            ]);
+        }
+
+        // Return success
         return response()->json([
-            'success' => true,
-            'new_status' => $order->order_status
+            'success'    => true,
+            'new_status' => $order->order_status,
+            // optional: include entire tracking back to the client
+            // 'tracking'   => $order->statusHistories->map(fn($h) => [
+            //     'status'    => $h->status,
+            //     'timestamp' => $h->updated_at->format('Y-m-d H:i:s'),
+            // ])->values(),
         ]);
     }
 

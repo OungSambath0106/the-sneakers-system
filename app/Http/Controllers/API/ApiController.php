@@ -150,9 +150,10 @@ class ApiController extends Controller
 
         $products->getCollection()->transform(function ($product) {
             $firstProductInfo = $product->product_info[0] ?? null;
-
+            
             if ($firstProductInfo) {
                 $product->price = $firstProductInfo['product_price'] ?? null;
+                $product->price = $firstProductInfo['product_qty'] ?? null;
                 $product->product_info = [$firstProductInfo];
             } else {
                 $product->price = null;
@@ -603,6 +604,7 @@ class ApiController extends Controller
     // Order
     public function storeOrder(Request $request)
     {
+        // dd($request->all());
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'order_type' => 'required|in:pickup,delivery',
@@ -625,6 +627,7 @@ class ApiController extends Controller
             // dd($request->all());
             DB::beginTransaction();
 
+            // Calculate totals
             $order_amount = 0;
             $discount_amount = 0;
             $final_total = 0;
@@ -643,36 +646,39 @@ class ApiController extends Controller
                 }
             }
 
-            $datePrefix = now()->format('ymd');
-
+            // Create the base Order
             $order = Order::create(array_merge($validated, [
                 'order_amount' => $order_amount,
                 'discount_amount' => $discount_amount,
                 'final_total' => 0,
             ]));
 
+            // Generate invoice reference
+            $datePrefix = now()->format('ymd');
             $order->invoice_ref = "INV-{$datePrefix}00{$order->id}";
             $order->save();
 
+            // Optional address override
             if (isset($validated['address']) && !empty($validated['address'])) {
                 $order->address = $validated['address'];
                 $order->save();
             }
 
+            // Set delivery vs pickup logic
             if ($validated['order_type'] == 'pickup') {
                 $order->delivery_fee = 0;
                 $order->order_status = null;
                 $order->delivery_type = 'pickup';
                 $order->final_total = $order_amount - $discount_amount;
-                $order->save();
             } else {
                 $order->delivery_fee = $validated['delivery_fee'];
                 $order->order_status = 'pending';
                 $order->delivery_type = $validated['delivery_type'];
                 $order->final_total = $order_amount - $discount_amount + $validated['delivery_fee'];
-                $order->save();
             }
+            $order->save();
 
+            // Handle pay_slip upload & payment_status
             if ($request->file('pay_slip')) {
                 $image_name = time() . '.' . $request->pay_slip->extension();
                 if ($order->pay_slip) {
@@ -689,6 +695,7 @@ class ApiController extends Controller
             }
             $order->save();
 
+            // Create OrderDetail rows & adjust inventory
             foreach ($validated['order_details'] as $detail) {
                 $order_detail = new OrderDetail();
                 $order_detail->order_id = $order->id;
@@ -772,8 +779,8 @@ class ApiController extends Controller
                 'order_status' => $order->order_status,
                 'payment_status' => $order->payment_status,
                 'created_at' => $order->created_at,
-                'qty' => $order->details->sum('product_qty'),
                 'total' => $order->final_total,
+                'product_count' => $order->details->count(),
             ];
         });
 
@@ -792,7 +799,7 @@ class ApiController extends Controller
             'order_id' => 'required'
         ]);
 
-        $order = Order::with(['details.product'])
+        $order = Order::with(['details.product', 'statusHistories'])
             ->where('customer_id', auth()->user()->id)
             ->where('id', $request->order_id)
             ->first();
@@ -806,44 +813,54 @@ class ApiController extends Controller
 
         $filteredDetails = $order->details->map(function ($detail) {
             $images = $detail->product->productgallery->images;
+            $image  = $images[0] ?? null;
 
-            $image = $images[0] ?? null;
             return [
-                'id' => $detail->id,
-                'order_id' => $detail->order_id,
-
-                'product_id' => $detail->product_id,
-                'brand_id' => $detail->brand_id,
-                'product_qty' => $detail->product_qty,
-                'product_size' => $detail->product_size,
-                'product_price' => $detail->product_price,
-                'discount' => $detail->discount,
-                'discount_type' => $detail->discount_type,
-                'image_url' => $image ? asset('uploads/products/' . $image) : null,
+                'id'             => $detail->id,
+                'order_id'       => $detail->order_id,
+                'product_id'     => $detail->product_id,
+                'brand_id'       => $detail->brand_id,
+                'product_qty'    => $detail->product_qty,
+                'product_size'   => $detail->product_size,
+                'product_price'  => $detail->product_price,
+                'discount'       => $detail->discount,
+                'discount_type'  => $detail->discount_type,
+                'image_url'      => $image ? asset('uploads/products/' . $image) : null,
             ];
         });
 
-        $orderAmount = floatval($order->order_amount);
-        $discountAmount = floatval($order->discount_amount);
-        $deliveryFee = $order->delivery_fee ? floatval($order->delivery_fee) : 0;
-
         $filteredOrder = [
-            'id' => $order->id,
-            'invoice_ref' => $order->invoice_ref,
-            'customer_id' => $order->customer_id,
-            'order_status' => $order->order_status,
-            'payment_status' => $order->payment_status,
-            'created_at' => $order->created_at,
-            'order_amount' => $order->order_amount,
-            'discount_amount' => $order->discount_amount,
-            'delivery_fee' => $order->delivery_fee,
-            'final_total' => $order->final_total,
-            'details' => $filteredDetails
+            'id'              => $order->id,
+            'invoice_ref'     => $order->invoice_ref,
+            'customer_id'     => $order->customer_id,
+            'order_status'    => $order->order_status,
+            'payment_status'  => $order->payment_status,
+            'created_at'      => $order->created_at->toDateTimeString(),
+            'order_amount'    => floatval($order->order_amount),
+            'discount_amount' => floatval($order->discount_amount),
+            'delivery_fee'    => $order->delivery_fee ? floatval($order->delivery_fee) : 0,
+            'final_total'     => floatval($order->final_total),
+            'details'         => $filteredDetails,
         ];
+
+        // only for delivery orders, include tracking history
+        if ($order->order_type === 'delivery') {
+            $filteredOrder['tracking'] = $order->statusHistories
+                ->map(function ($h) {
+                    return [
+                        'status'    => $h->status,
+                        'timestamp' => $h->updated_at->format('Y-m-d H:i:s'),
+                    ];
+                })
+                ->values()
+                ->toArray();
+        } else {
+            $filteredOrder['tracking'] = [];
+        }
 
         return response()->json([
             'success' => true,
-            'data' => $filteredOrder
+            'data'    => $filteredOrder
         ], 200);
     }
 
