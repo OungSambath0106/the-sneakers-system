@@ -119,9 +119,9 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group d-flex align-items-center mb-0 gap-2">
-                                                <label for="user_create" class="switch pt-0">
-                                                    <input type="checkbox" id="user_create" name="permissions[]"
-                                                        value="user.create">
+                                                <label for="customer_create" class="switch pt-0">
+                                                    <input type="checkbox" id="customer_create" name="permissions[]"
+                                                        value="customer.create">
                                                     {!! $slider !!}
                                                 </label>
                                                 <label class="ml-2 m-0" for="customer_create">{{ __('Create Customer') }}</label>
@@ -139,7 +139,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group d-flex align-items-center mb-0 gap-2">
-                                                <label for="user_delete" class="switch pt-0">
+                                                <label for="customer_delete" class="switch pt-0">
                                                     <input type="checkbox" id="customer_delete" name="permissions[]"
                                                         value="customer.delete">
                                                     {!! $slider !!}
@@ -187,7 +187,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group d-flex align-items-center mb-0 gap-2">
-                                                <label for="user_delete" class="switch pt-0">
+                                                <label for="brand_delete" class="switch pt-0">
                                                     <input type="checkbox" id="brand_delete" name="permissions[]"
                                                         value="brand.delete">
                                                     {!! $slider !!}
@@ -235,7 +235,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group d-flex align-items-center mb-0 gap-2">
-                                                <label for="user_delete" class="switch pt-0">
+                                                <label for="product_delete" class="switch pt-0">
                                                     <input type="checkbox" id="product_delete" name="permissions[]"
                                                         value="product.delete">
                                                     {!! $slider !!}
