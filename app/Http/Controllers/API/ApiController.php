@@ -667,7 +667,7 @@ class ApiController extends Controller
             // Set delivery vs pickup logic
             if ($validated['order_type'] == 'pickup') {
                 $order->delivery_fee = 0;
-                $order->order_status = null;
+                $order->order_status = 'pending';
                 $order->delivery_type = 'pickup';
                 $order->final_total = $order_amount - $discount_amount;
             } else {
@@ -820,6 +820,7 @@ class ApiController extends Controller
                 'order_id'       => $detail->order_id,
                 'product_id'     => $detail->product_id,
                 'brand_id'       => $detail->brand_id,
+                'product_name'   => $detail->product->name,
                 'product_qty'    => $detail->product_qty,
                 'product_size'   => $detail->product_size,
                 'product_price'  => $detail->product_price,
@@ -834,6 +835,8 @@ class ApiController extends Controller
             'invoice_ref'     => $order->invoice_ref,
             'customer_id'     => $order->customer_id,
             'order_status'    => $order->order_status,
+            'delivery_type'   => $order->delivery_type,
+            'payment_method'  => $order->payment_method,
             'payment_status'  => $order->payment_status,
             'created_at'      => $order->created_at->toDateTimeString(),
             'order_amount'    => floatval($order->order_amount),
@@ -843,20 +846,15 @@ class ApiController extends Controller
             'details'         => $filteredDetails,
         ];
 
-        // only for delivery orders, include tracking history
-        if ($order->order_type === 'delivery') {
-            $filteredOrder['tracking'] = $order->statusHistories
-                ->map(function ($h) {
-                    return [
-                        'status'    => $h->status,
-                        'timestamp' => $h->updated_at->format('Y-m-d H:i:s'),
-                    ];
-                })
-                ->values()
-                ->toArray();
-        } else {
-            $filteredOrder['tracking'] = [];
-        }
+        $filteredOrder['tracking'] = $order->statusHistories
+            ->map(function ($h) {
+                return [
+                    'status'    => $h->status,
+                    'timestamp' => $h->updated_at->format('Y-m-d H:i:s'),
+                ];
+            })
+            ->values()
+            ->toArray();
 
         return response()->json([
             'success' => true,

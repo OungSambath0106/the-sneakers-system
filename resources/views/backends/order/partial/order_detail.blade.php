@@ -59,6 +59,20 @@
                                     </span>
                                 </div>
                             </div>
+                        @else
+                            <div class="row mb-3">
+                                <div class="col-md-12 text-md-end">
+                                    <span class="text-muted pe-2">{{ __('Order Status') }}:</span>
+                                    <span id="order-status-badge" class="badge
+                                        {{ $order->order_status == 'pending' ? 'bg-gradient-warning' : '' }}
+                                        {{ $order->order_status == 'confirmed' ? 'bg-gradient-success' : '' }}
+                                        {{ $order->order_status == 'preparing' ? 'bg-gradient-info' : '' }}
+                                        {{ $order->order_status == 'picked_up' ? 'bg-gradient-primary' : '' }}
+                                        {{ $order->order_status == 'cancelled' ? 'bg-gradient-danger' : '' }}">
+                                        {{ str_replace('_', ' ', $order->order_status) }}
+                                    </span>
+                                </div>
+                            </div>
                         @endif
 
                         <div class="row mb-3">
@@ -212,6 +226,17 @@
                                     <option value="out_for_delivery" {{ @$order->order_status == 'out_for_delivery' ? 'selected' : '' }}>Out for delivery</option>
                                     <option value="delivered" {{ @$order->order_status == 'delivered' ? 'selected' : '' }}>Delivered</option>
                                     <option value="failed_to_deliver" {{ @$order->order_status == 'failed_to_deliver' ? 'selected' : '' }}>Failed to deliver</option>
+                                    <option value="cancelled" {{ @$order->order_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                </select>
+                            </div>
+                        @else
+                            <div class="mb-3">
+                                <label class="form-label">Change Order Status</label>
+                                <select class="form-select" id="orderStatus" onchange="changeOrderStatus(this.value)">
+                                    <option value="pending" {{ @$order->order_status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="confirmed" {{ @$order->order_status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                    <option value="preparing" {{ @$order->order_status == 'preparing' ? 'selected' : '' }}>Preparing</option>
+                                    <option value="picked_up" {{ @$order->order_status == 'picked_up' ? 'selected' : '' }}>Picked up</option>
                                     <option value="cancelled" {{ @$order->order_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                 </select>
                             </div>
@@ -481,6 +506,8 @@
                 case 'delivered': return 'bg-gradient-success';
                 case 'failed_to_deliver': return 'bg-gradient-danger';
                 case 'cancelled': return 'bg-gradient-danger';
+                case 'preparing': return 'bg-gradient-info';
+                case 'picked_up': return 'bg-gradient-primary';
                 default: return 'bg-gradient-secondary';
             }
         }
