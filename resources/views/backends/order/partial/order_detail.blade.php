@@ -49,11 +49,10 @@
                                     <span class="text-muted pe-2">{{ __('Order Status') }}:</span>
                                     <span id="order-status-badge" class="badge
                                         {{ $order->order_status == 'pending' ? 'bg-gradient-warning' : '' }}
-                                        {{ $order->order_status == 'confirmed' ? 'bg-gradient-success' : '' }}
-                                        {{ $order->order_status == 'packaging' ? 'bg-gradient-info' : '' }}
-                                        {{ $order->order_status == 'out_for_delivery' ? 'bg-gradient-primary' : '' }}
-                                        {{ $order->order_status == 'delivered' ? 'bg-gradient-success' : '' }}
-                                        {{ $order->order_status == 'failed_to_deliver' ? 'bg-gradient-danger' : '' }}
+                                        {{ $order->order_status == 'preparing' ? 'bg-gradient-secondary' : '' }}
+                                        {{ $order->order_status == 'packed' ? 'bg-gradient-info' : '' }}
+                                        {{ $order->order_status == 'shipped' ? 'bg-gradient-primary' : '' }}
+                                        {{ $order->order_status == 'completed' ? 'bg-gradient-success' : '' }}
                                         {{ $order->order_status == 'cancelled' ? 'bg-gradient-danger' : '' }}">
                                         {{ str_replace('_', ' ', $order->order_status) }}
                                     </span>
@@ -65,9 +64,10 @@
                                     <span class="text-muted pe-2">{{ __('Order Status') }}:</span>
                                     <span id="order-status-badge" class="badge
                                         {{ $order->order_status == 'pending' ? 'bg-gradient-warning' : '' }}
-                                        {{ $order->order_status == 'confirmed' ? 'bg-gradient-success' : '' }}
-                                        {{ $order->order_status == 'preparing' ? 'bg-gradient-info' : '' }}
-                                        {{ $order->order_status == 'picked_up' ? 'bg-gradient-primary' : '' }}
+                                        {{ $order->order_status == 'preparing' ? 'bg-gradient-secondary' : '' }}
+                                        {{ $order->order_status == 'packed' ? 'bg-gradient-info' : '' }}
+                                        {{ $order->order_status == 'ready_to_pickup' ? 'bg-gradient-primary' : '' }}
+                                        {{ $order->order_status == 'completed' ? 'bg-gradient-success' : '' }}
                                         {{ $order->order_status == 'cancelled' ? 'bg-gradient-danger' : '' }}">
                                         {{ str_replace('_', ' ', $order->order_status) }}
                                     </span>
@@ -221,11 +221,10 @@
                                 <label class="form-label">Change Order Status</label>
                                 <select class="form-select" id="orderStatus" onchange="changeOrderStatus(this.value)">
                                     <option value="pending" {{ @$order->order_status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="confirmed" {{ @$order->order_status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-                                    <option value="packaging" {{ @$order->order_status == 'packaging' ? 'selected' : '' }}>Packaging</option>
-                                    <option value="out_for_delivery" {{ @$order->order_status == 'out_for_delivery' ? 'selected' : '' }}>Out for delivery</option>
-                                    <option value="delivered" {{ @$order->order_status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                                    <option value="failed_to_deliver" {{ @$order->order_status == 'failed_to_deliver' ? 'selected' : '' }}>Failed to deliver</option>
+                                    <option value="preparing" {{ @$order->order_status == 'preparing' ? 'selected' : '' }}>Preparing</option>
+                                    <option value="packed" {{ @$order->order_status == 'packed' ? 'selected' : '' }}>Packed</option>
+                                    <option value="shipped" {{ @$order->order_status == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                                    <option value="completed" {{ @$order->order_status == 'completed' ? 'selected' : '' }}>Completed</option>
                                     <option value="cancelled" {{ @$order->order_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                 </select>
                             </div>
@@ -234,9 +233,10 @@
                                 <label class="form-label">Change Order Status</label>
                                 <select class="form-select" id="orderStatus" onchange="changeOrderStatus(this.value)">
                                     <option value="pending" {{ @$order->order_status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="confirmed" {{ @$order->order_status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
                                     <option value="preparing" {{ @$order->order_status == 'preparing' ? 'selected' : '' }}>Preparing</option>
-                                    <option value="picked_up" {{ @$order->order_status == 'picked_up' ? 'selected' : '' }}>Picked up</option>
+                                    <option value="packed" {{ @$order->order_status == 'packed' ? 'selected' : '' }}>Packed</option>
+                                    <option value="ready_to_pickup" {{ @$order->order_status == 'ready_to_pickup' ? 'selected' : '' }}>Ready to Pickup</option>
+                                    <option value="completed" {{ @$order->order_status == 'completed' ? 'selected' : '' }}>Completed</option>
                                     <option value="cancelled" {{ @$order->order_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                 </select>
                             </div>
@@ -284,7 +284,7 @@
 
                         @if ($order->order_type == 'delivery')
                             <div class="mb-4">
-                                <label class="form-label">Shipping Method ( No Shipping Method Selected )</label>
+                                <label class="form-label">Shipping Method</label>
                                 <div class="form-control">
                                     <span>{{ ucwords(str_replace('_', ' ', @$order->delivery_type)) }}</span>
                                 </div>
@@ -466,7 +466,7 @@
 
                         $('#order-status-badge')
                             .text(formattedStatus)
-                            .removeClass('bg-gradient-warning bg-gradient-success bg-gradient-info bg-gradient-primary bg-gradient-danger')
+                            .removeClass('bg-gradient-warning bg-gradient-secondary bg-gradient-success bg-gradient-info bg-gradient-primary bg-gradient-danger')
                             .addClass(getGradientBadgeClass(response.new_status));
 
                     } else {
@@ -485,29 +485,27 @@
             });
         }
 
-        function getBadgeClass(status) {
-            switch (status) {
-                case 'delivered': return 'bg-success';
-                case 'failed_to_deliver': return 'bg-danger';
-                case 'cancelled': return 'bg-danger';
-                case 'out_for_delivery': return 'bg-info';
-                case 'packaging': return 'bg-warning';
-                case 'confirmed': return 'bg-primary';
-                default: return 'bg-secondary';
-            }
-        }
+        // function getBadgeClass(status) {
+        //     switch (status) {
+        //         case 'delivered': return 'bg-success';
+        //         case 'failed_to_deliver': return 'bg-danger';
+        //         case 'cancelled': return 'bg-danger';
+        //         case 'out_for_delivery': return 'bg-info';
+        //         case 'packaging': return 'bg-warning';
+        //         case 'confirmed': return 'bg-primary';
+        //         default: return 'bg-secondary';
+        //     }
+        // }
 
         function getGradientBadgeClass(status) {
             switch (status) {
                 case 'pending': return 'bg-gradient-warning';
-                case 'confirmed': return 'bg-gradient-success';
-                case 'packaging': return 'bg-gradient-info';
-                case 'out_for_delivery': return 'bg-gradient-primary';
-                case 'delivered': return 'bg-gradient-success';
-                case 'failed_to_deliver': return 'bg-gradient-danger';
+                case 'preparing': return 'bg-gradient-secondary';
+                case 'packed': return 'bg-gradient-info';
+                case 'shipped': return 'bg-gradient-primary';
+                case 'ready_to_pickup': return 'bg-gradient-primary';
+                case 'completed': return 'bg-gradient-success';
                 case 'cancelled': return 'bg-gradient-danger';
-                case 'preparing': return 'bg-gradient-info';
-                case 'picked_up': return 'bg-gradient-primary';
                 default: return 'bg-gradient-secondary';
             }
         }
