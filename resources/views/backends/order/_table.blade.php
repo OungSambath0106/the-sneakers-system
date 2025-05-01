@@ -75,5 +75,27 @@
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4"></td>
+                <td>
+                    <span class="text-sm font-weight-bolder mb-0">
+                        Total: $ {{ number_format($orders->sum('delivery_fee'), 2) }}
+                    </span>
+                </td>
+                <td colspan="1"></td>
+                <td>
+                    <span class="text-sm font-weight-bolder mb-0">
+                        Total: $ {{ number_format($orders->sum('discount_amount'), 2) }}
+                    </span>
+                </td>
+                <td>
+                    <span class="text-sm font-weight-bolder mb-0">
+                        Total: $ {{ number_format($orders->sum('final_total'), 2) }}
+                    </span>
+                </td>
+                <td colspan="3"></td>
+            </tr>
+        </tfoot>
     </table>
 </div>

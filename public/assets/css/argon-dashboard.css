@@ -29464,6 +29464,9 @@ pre[class*="language-"] {
     background-color: #fff !important;
     color: rgb(5, 17, 57) !important;
 } */
+table.dataTable>tfoot>tr>th, table.dataTable>tfoot>tr>td {
+    border-top: 0.9px solid rgba(0, 0, 0, 0.2) !important;
+}
 .dark-version .select2-container--default .select2-selection--multiple {
     background: rgb(17, 28, 68) !important;
 }
