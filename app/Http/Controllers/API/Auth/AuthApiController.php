@@ -303,4 +303,20 @@ class AuthApiController extends Controller
             'is_google_login' => 1,
         ]);
     }
+
+    public function deleteAccount(Request $request)
+    {
+        $customer = $request->user();
+
+        // Revoke all tokens first
+        $customer->tokens()->delete();
+
+        // Soft delete the customer account
+        $customer->delete();
+
+        return response()->json([
+            'message' => 'Account deleted successfully',
+            'success' => true,
+        ], 200);
+    }
 }
