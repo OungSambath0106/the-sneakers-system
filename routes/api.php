@@ -63,6 +63,7 @@ Route::middleware(['auth:customers'])->group(function () {
     Route::get('customer-profile', [ApiController::class, 'customerProfile']);
     Route::post('update-profile', [ApiController::class, 'updateCustomerProfile']);
     Route::post('logout', [AuthApiController::class, 'logoutCustomer']);
+    Route::delete('delete-account', [AuthApiController::class, 'deleteAccount']);
 });
 
 Route::post('/register-with-phone',[AuthApiController::class,'registerPhoneOTP']);
