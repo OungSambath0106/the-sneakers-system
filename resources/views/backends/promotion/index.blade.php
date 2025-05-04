@@ -121,7 +121,7 @@
             let icon = document.getElementById('resetIcon');
             icon.classList.add('fa-spin');
 
-            window.location.href = "{{ route('admin.customer.index') }}";
+            window.location.href = "{{ route('admin.promotion.index') }}";
         });
     </script>
     <script>

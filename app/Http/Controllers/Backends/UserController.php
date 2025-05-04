@@ -270,7 +270,7 @@ class UserController extends Controller
 
     public function showProfile()
     {
-        if (!auth()->user()->can('user.view')) {
+        if (!auth()->user()->can('profile.view')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -278,7 +278,7 @@ class UserController extends Controller
     }
     public function updateProfile(Request $request)
     {
-        if (!auth()->user()->can('user.edit')) {
+        if (!auth()->user()->can('profile.update')) {
             abort(403, 'Unauthorized action.');
         }
 

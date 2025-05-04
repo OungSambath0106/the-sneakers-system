@@ -122,11 +122,17 @@
                     <h6 class="text-white mb-0 welcome-text text-end">{{ __('Hello') }}, <span
                             class="font-weight-bolder text-white mb-0 text-capitalize pl-2"
                             style="color: #fff !important;"> {{ Auth::user()->first_name }} {{ Auth::user()->last_name }} </span></h6>
-                    <a href="{{ route('admin.show_info', auth()->user()->id) }}">
+                    @if (auth()->user()->can('profile.update'))
+                        <a href="{{ route('admin.show_info', auth()->user()->id) }}">
+                            <img style="border:2.7px solid white;" src="
+                                @if (auth()->user()->image && file_exists(public_path('uploads/users/' . auth()->user()->image))) {{ asset('uploads/users/' . auth()->user()->image) }}
+                                @else {{ asset('uploads/default-profile.png') }} @endif" class="avatar avatar-sm rounded-circle" alt="User Image">
+                        </a>
+                    @else
                         <img style="border:2.7px solid white;" src="
                             @if (auth()->user()->image && file_exists(public_path('uploads/users/' . auth()->user()->image))) {{ asset('uploads/users/' . auth()->user()->image) }}
                             @else {{ asset('uploads/default-profile.png') }} @endif" class="avatar avatar-sm rounded-circle" alt="User Image">
-                    </a>
+                    @endif
                 </li>
             </ul>
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">

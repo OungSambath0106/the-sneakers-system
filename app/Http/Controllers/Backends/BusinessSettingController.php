@@ -291,6 +291,10 @@ class BusinessSettingController extends Controller
                 }
 
                 $setting_shop_image->shop_image = $imageName;
+                // if ($setting_shop_image) {
+                //     $setting_shop_image->shop_image = $imageName;
+                //     $setting_shop_image->save();
+                // }
             }
 
             if ($request->hasFile('web_header_logo')) {

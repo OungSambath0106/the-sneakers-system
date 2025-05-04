@@ -130,7 +130,7 @@
                                                 @enderror
                                             </div>
                                             <div class="form-group col-md-6">
-                                                <label class="required_label">{{__('Telegram Number')}}</label>
+                                                <label>{{__('Telegram Number')}}</label>
                                                 <input type="text" class="form-control @error('telegram') is-invalid @enderror" value="{{ old('telegram', $user->telegram) }}"
                                                     name="telegram" placeholder="{{__('+855 12 345 678')}}" >
                                                 @error('telegram')

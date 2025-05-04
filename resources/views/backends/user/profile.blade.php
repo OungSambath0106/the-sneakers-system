@@ -43,7 +43,7 @@
                                                 @enderror
                                             </div>
                                             <div class="form-group col-md-6">
-                                                <label class="required_label">{{__('Telegram Number')}}</label>
+                                                <label>{{__('Telegram Number')}}</label>
                                                 <input type="text" class="form-control @error('telegram') is-invalid @enderror" value="{{ old('telegram', auth()->user()->telegram) }}"
                                                     name="telegram" placeholder="{{__('+855 12 345 678')}}" >
                                                 @error('telegram')
@@ -105,12 +105,14 @@
                                             {{__('Back')}}
                                         </a>
                                     </div>
-                                    <div class="col text-end">
-                                        <button type="submit" class="btn bg-gradient-primary btn-sm submit float-right mb-0">
-                                            <i class="fas fa-save pe-1"></i>
-                                            {{__('Update')}}
-                                        </button>
-                                    </div>
+                                    @if (auth()->user()->can('profile.update'))
+                                        <div class="col text-end">
+                                            <button type="submit" class="btn bg-gradient-primary btn-sm submit float-right mb-0">
+                                                <i class="fas fa-save pe-1"></i>
+                                                {{__('Update')}}
+                                            </button>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

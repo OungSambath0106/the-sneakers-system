@@ -273,18 +273,33 @@
                                         @endif
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <h6 class="mb-1 text-dark text-sm"> <a href="{{ route('admin.product.index') }}">
-                                                {{ $pro_sale->name }} </a> </h6>
+                                        @if (auth()->user()->can('product.view'))
+                                            <h6 class="mb-1 text-dark text-sm"> 
+                                                <a href="{{ route('admin.product.index') }}"> </a>
+                                                    {{ $pro_sale->name }} 
+                                                </a> 
+                                            </h6>
+                                        @else
+                                            <h6 class="mb-1 text-dark text-sm"> 
+                                                {{ $pro_sale->name }} 
+                                            </h6>
+                                        @endif
                                         <span class="text-xs">{{ $pro_sale->total_qty }} {{ __('in stock') }}, <span
                                                 class="font-weight-bold">{{ $pro_sale->count_product_sale }}
                                                 {{ __('sold') }}</span></span>
                                     </div>
                                 </div>
                                 <div class="d-flex">
-                                    <a href="{{ route('admin.product.index') }}"
-                                        class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
-                                        <i class="ni ni-bold-right" aria-hidden="true"></i>
-                                    </a>
+                                    @if (auth()->user()->can('product.view'))
+                                        <a href="{{ route('admin.product.index') }}"
+                                            class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
+                                            <i class="ni ni-bold-right" aria-hidden="true"></i>
+                                        </a>
+                                    @else
+                                        <span class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
+                                            <i class="ni ni-bold-right" aria-hidden="true"></i>
+                                        </span>
+                                    @endif
                                 </div>
                             </li>
                         </ul>
@@ -354,9 +369,17 @@
                                         @endif
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <h6 class="mb-1 text-dark text-sm"> <a
-                                                href="{{ route('admin.customer.edit', $customer->id) }}">
-                                                {{ $customer->name }} </a> </h6>
+                                        @if (auth()->user()->can('customer.view'))
+                                            <h6 class="mb-1 text-dark text-sm"> 
+                                                <a href="{{ route('admin.customer.edit', $customer->id) }}">
+                                                    {{ $customer->name }} 
+                                                </a> 
+                                            </h6>
+                                        @else
+                                            <h6 class="mb-1 text-dark text-sm"> 
+                                                {{ $customer->name }} 
+                                            </h6>
+                                        @endif
                                         @if ($customer->email == null)
                                             <span class="text-xs">{{ $customer->phone }}</span>
                                         @else
@@ -366,10 +389,16 @@
                                 </div>
                                 <div class="d-flex">
                                     <div class="d-flex">
-                                        <a href="{{ route('admin.customer.index') }}"
-                                            class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
-                                            <i class="ni ni-bold-right" aria-hidden="true"></i>
-                                        </a>
+                                        @if (auth()->user()->can('customer.view'))
+                                            <a href="{{ route('admin.customer.index') }}"
+                                                class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
+                                                <i class="ni ni-bold-right" aria-hidden="true"></i>
+                                            </a>
+                                        @else
+                                            <span class="btn btn-link btn-icon-only btn-rounded btn-sm text-dark icon-move-right my-auto">
+                                                <i class="ni ni-bold-right" aria-hidden="true"></i>
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
                             </li>
@@ -402,7 +431,15 @@
                                         <td>
                                             <div class="py-1">
                                                 <div class="d-flex flex-column">
-                                                    <a href="{{ route('admin.order.show', $transaction->id) }}" class="mb-1 text-dark font-weight-bold text-sm">{{ $transaction->created_at->format('F, d, Y') }}</a>
+                                                    @if (auth()->user()->can('sale_report.view'))
+                                                        <a href="{{ route('admin.order.show', $transaction->id) }}" class="mb-1 text-dark font-weight-bold text-sm">
+                                                            {{ $transaction->created_at->format('F, d, Y') }}
+                                                        </a>
+                                                    @else
+                                                        <span class="mb-1 text-dark font-weight-bold text-sm">
+                                                            {{ $transaction->created_at->format('F, d, Y') }}
+                                                        </span>
+                                                    @endif
                                                     <span class="text-xs">#{{ $transaction->invoice_ref }}</span>
                                                 </div>
                                             </div>

@@ -105,6 +105,34 @@
 
                                 <div>
                                     <div class="d-flex">
+                                        <label for="" class="mr-2 mb-3">{{ __('User Profile') }}</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group d-flex align-items-center mb-0 gap-2">
+                                                <label for="view_profile" class="switch pt-0">
+                                                    <input type="checkbox" class="status" id="view_profile" name="permissions[]" value="profile.view">
+                                                    {!! $slider !!}
+                                                </label>
+                                                <label class="ml-2 m-0" for="view_profile">{{ __('View Profile') }}</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group d-flex align-items-center mb-0 gap-2">
+                                                <label for="profile_update" class="switch pt-0">
+                                                    <input type="checkbox" id="profile_update" name="permissions[]"
+                                                        value="profile.update">
+                                                    {!! $slider !!}
+                                                </label>
+                                                <label class="ml-2 m-0" for="profile_update">{{ __('Update profile') }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="horizontal dark">
+                                </div>
+
+                                <div>
+                                    <div class="d-flex">
                                         <label for="" class="mr-2 mb-3">{{ __('Customer Setup') }}</label>
                                     </div>
                                     <div class="row">
