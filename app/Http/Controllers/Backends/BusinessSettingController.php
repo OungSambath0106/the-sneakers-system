@@ -33,6 +33,10 @@ class BusinessSettingController extends Controller
         $data['company_name']              = @$setting->where('type', 'company_name')->first()->value;
         $data['phone']                     = @$setting->where('type', 'phone')->first()->value;
         $data['email']                     = @$setting->where('type', 'email')->first()->value;
+        $data['latitude']                  = @$setting->where('type', 'latitude')->first()->value;
+        $data['longitude']                 = @$setting->where('type', 'longitude')->first()->value;
+        $data['open']                      = @$setting->where('type', 'open')->first()->value;
+        $data['close']                     = @$setting->where('type', 'close')->first()->value;
         $data['company_address']           = @$setting->where('type', 'company_address')->first()->value;
         $data['copy_right_text']           = @$setting->where('type', 'copy_right_text')->first()->value;
         $data['timezone']                  = @$setting->where('type', 'timezone')->first()->value;
@@ -70,7 +74,6 @@ class BusinessSettingController extends Controller
         $data['getInTouch']     = @$setting->where('type', 'getInTouch')->first()->value??'';
         $data['aboutUs_des']    = @$setting->where('type', 'aboutUs_des')->first()->value??'';
         $data['about_us_description']   = @$setting->where('type', 'about_us_description')->first()->value??'';
-        $data['slider_title']           = @$setting->where('type', 'slider_title')->first()->value??'';
         $data['slider_description']     = @$setting->where('type', 'slider_description')->first()->value??'';
 
         $data['contacts']  = [];
@@ -91,6 +94,7 @@ class BusinessSettingController extends Controller
             $data['payments'] = $payment->value;
         }
 
+        $data['shop_image'] = @$setting->where('type', 'shop_image')->first()->value;
         $data['web_header_logo'] = @$setting->where('type', 'web_header_logo')->first()->value;
         $data['web_banner_logo'] = @$setting->where('type', 'web_banner_logo')->first()->value;
         $data['fav_icon'] = @$setting->where('type', 'fav_icon')->first()->value;
@@ -113,6 +117,7 @@ class BusinessSettingController extends Controller
 
     public function update (Request $request)
     {
+        // dd($request->all());
         if (!auth()->user()->can('setting.edit')) {
             abort(403, 'Unauthorized action.');
         }
@@ -123,8 +128,10 @@ class BusinessSettingController extends Controller
 
         try {
             DB::beginTransaction();
+            $setting_shop_image = BusinessSetting::where('type', 'shop_image')->first();
             $setting_web_header_logo = BusinessSetting::where('type', 'web_header_logo')->first();
             $setting_fav_icon = BusinessSetting::where('type', 'fav_icon')->first();
+            $old_shop_image_path = optional($setting_shop_image)->value;
             $old_web_header_logo_path = $setting_web_header_logo['value'];
             $old_fav_icon_path = $setting_fav_icon['value'];
 
@@ -178,7 +185,7 @@ class BusinessSettingController extends Controller
                         );
                         continue;
                     }
-                    if (in_array($input_name, ['company_name', 'company_address', 'copy_right_text', 'company_short_description', 'company_description','contact_description','getInTouch','extra_service_description','about_us_description','booking_policy','slider_title','slider_description','history_of_chaufea','foundation','company_sub_title'])) {
+                    if (in_array($input_name, ['company_name', 'company_address', 'copy_right_text'])) {
 
                         BusinessSetting::updateOrCreate(
                             [
@@ -273,6 +280,17 @@ class BusinessSettingController extends Controller
                 if (file_exists(public_path('uploads/temp/' . $image4_names))) {
                     $image = File::move(public_path('uploads/temp/' . $image4_names), public_path('uploads/business_settings/'. $image4_names));
                 }
+            }
+
+            if ($request->hasFile('shop_image')) {
+                $shop_image = $request->file('shop_image');
+                $imageName = Carbon::now()->toDateString() . "-" . uniqid() . "." . $shop_image->getClientOriginalExtension();
+
+                if ($old_shop_image_path && File::exists(public_path('uploads/business_settings/' . $old_shop_image_path))) {
+                    File::delete(public_path('uploads/business_settings/' . $old_shop_image_path));
+                }
+
+                $setting_shop_image->shop_image = $imageName;
             }
 
             if ($request->hasFile('web_header_logo')) {

@@ -5,7 +5,7 @@
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('SL') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">{{ __('Image') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Customer Name') }}</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Gender') }}</th>
+                {{-- <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Gender') }}</th> --}}
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Provider') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Phone') }}</th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-2">{{ __('Email') }}</th>
@@ -41,9 +41,9 @@
                     <td data-order="{{ strtolower(@$customer->name) }}">
                         <p class="text-sm font-weight-bold mb-0 "> {{ @$customer->name ?? 'N/A' }} </p>
                     </td>
-                    <td data-order="{{ strtolower(@$customer->gender) }}">
+                    {{-- <td data-order="{{ strtolower(@$customer->gender) }}">
                         <p class="text-sm font-weight-bold mb-0 "> {{ ucfirst(@$customer->gender ?? 'N/A') }} </p>
-                    </td>
+                    </td> --}}
                     <td data-order="{{ strtolower(@$customer->provider) }}">
                         <p class="text-sm font-weight-bold mb-0 "> {{ ucfirst(@$customer->provider ?? 'N/A') }} </p>
                     </td>

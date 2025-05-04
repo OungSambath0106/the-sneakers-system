@@ -104,16 +104,40 @@ class ApiController extends Controller
         foreach ($configs as $config) {
             $data[$config->type] = $config->value;
 
+            // Handle 'language' and 'pnc_language' configuration
             if (in_array($config->type, ['language', 'pnc_language'])) {
                 $data[$config->type] = json_decode($config->value, true);
             }
 
-            if (in_array($config->type, ['web_header_logo', 'web_banner_logo', 'fav_icon'])) {
+            // Handle image file configurations like 'web_header_logo', 'web_banner_logo', 'fav_icon'
+            if (in_array($config->type, ['web_header_logo', 'web_banner_logo', 'fav_icon', 'shop_image'])) {
                 if ($config->value && file_exists('uploads/business_settings/' . $config->value)) {
                     $data[$config->type] = asset('uploads/business_settings/' . $config->value);
                 } else {
                     $data[$config->type] = asset('uploads/image/default.png');
+                    
                 }
+            }
+
+            // Handle social_media configuration
+            if ($config->type == 'social_media' && $config->value) {
+                $socialMediaData = json_decode($config->value, true);
+
+                foreach ($socialMediaData as &$social) {
+                    if (isset($social['icon'])) {
+                        $iconPath = 'uploads/social_media/' . $social['icon'];
+                        if (file_exists($iconPath)) {
+                            // Add the full URL to the icon field
+                            $social['icon'] = url($iconPath);
+                        } else {
+                            // Default icon URL if the file does not exist
+                            $social['icon'] = url('uploads/image/default.png');
+                        }
+                    }
+                }
+
+                // Assign the modified social media data to the response without re-encoding it
+                $data[$config->type] = $socialMediaData;
             }
         }
 
@@ -153,7 +177,7 @@ class ApiController extends Controller
             
             if ($firstProductInfo) {
                 $product->price = $firstProductInfo['product_price'] ?? null;
-                $product->price = $firstProductInfo['product_qty'] ?? null;
+                // $product->price = $firstProductInfo['product_qty'] ?? null;
                 $product->product_info = [$firstProductInfo];
             } else {
                 $product->price = null;

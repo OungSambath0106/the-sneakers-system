@@ -160,6 +160,15 @@
                 return;
             }
 
+            // detect “Image” and “Status” columns
+            let ignoredExportCols = [];
+            $('#bookingTable thead th').each(function(i) {
+                const txt = $(this).text().trim().toLowerCase();
+                if (txt === 'image' || txt === 'images' || txt === 'status' || txt === 'action') {
+                    ignoredExportCols.push(i);
+                }
+            });
+
             setTimeout(function() {
                 // Clear old search filters (in case table was destroyed/rebuilt)
                 $.fn.dataTable.ext.search.length = 0;
@@ -249,7 +258,10 @@
                             extend: 'csv',
                             text: '<i class="fas fa-file-csv"></i> Export to CSV',
                             exportOptions: {
-                                columns: ':visible:not(:last-child)',
+                                columns: function(idx, data, node) {
+                                    // only include if not in our ignored list
+                                    return ignoredExportCols.indexOf(idx) === -1;
+                                },
                                 modifier: {
                                     page: 'current'
                                 }
@@ -259,7 +271,10 @@
                             extend: 'excel',
                             text: '<i class="fas fa-file-excel"></i> Export to Excel',
                             exportOptions: {
-                                columns: ':visible:not(:last-child)',
+                                columns: function(idx, data, node) {
+                                    // only include if not in our ignored list
+                                    return ignoredExportCols.indexOf(idx) === -1;
+                                },
                                 modifier: {
                                     page: 'current'
                                 }
@@ -268,21 +283,63 @@
                         {
                             extend: 'pdf',
                             text: '<i class="fas fa-file-pdf"></i> Export to PDF',
+                            orientation: 'landscape',
+                            pageSize: 'A4',
+                            autoWidth: false,  // Set to false for more control over table layout
                             exportOptions: {
-                                columns: ':visible:not(:last-child)',
-                                modifier: {
-                                    page: 'current'
+                                columns: function(idx, data, node) {
+                                    return ignoredExportCols.indexOf(idx) === -1;
+                                },
+                                modifier: { page: 'current' }
+                            },
+                            customize: function(doc) {
+                                // Ensure that doc.content and doc.content[1].table exist before proceeding
+                                if (doc.content && doc.content[1] && doc.content[1].table) {
+                                    // Dynamically set the table column widths to fit the content
+                                    let columnCount = doc.content[1].table.body[0].length;
+
+                                    // Apply * to all columns to make them fill the available space
+                                    doc.content[1].table.widths = Array(columnCount).fill('*');
+
+                                    // Optionally, apply 'auto' width to the "Created date" column (if it's the 5th column)
+                                    doc.content[1].table.widths[4] = 'auto';
+
+                                    // Ensure the header rows are set to a valid value (default is 1)
+                                    if (doc.content[1].table.headerRows) {
+                                        doc.content[1].table.headerRows = 1;  // Ensure that only the first row is the header
+                                    }
+
+                                    // Apply padding and other styles to the table
+                                    doc.content[1].table.styles = {
+                                        cellPadding: [5, 10, 5, 10]  // Adjust padding: [top, right, bottom, left]
+                                    };
+
+                                    // Set page margins for the PDF document
+                                    doc.pageMargins = [20, 20, 20, 20];  // Left, top, right, bottom margins
+                                } else {
+                                    console.error("Table structure not found in the PDF document content.");
                                 }
                             }
                         },
                         {
                             extend: 'print',
                             text: '<i class="fas fa-print"></i> Print',
+                            customize: function(win) {
+                                $(win.document.body)
+                                .css('font-size', '20px');
+                                $(win.document.body).find('h1')
+                                .css({
+                                    'text-align': 'center',
+                                    'font-size': '20px',
+                                    'font-weight': 'bold',
+                                    'margin-block': '20px'
+                                });
+                            },
                             exportOptions: {
-                                columns: ':visible:not(:last-child)',
-                                modifier: {
-                                    page: 'current'
-                                }
+                                columns: function(idx, data, node) {
+                                    return ignoredExportCols.indexOf(idx) === -1;
+                                },
+                                modifier: { page: 'current' }
                             }
                         },
                         {

@@ -15,8 +15,8 @@ class GlobalFunction
     public static function sendOTP($to,$otp){
 
         // $plasGate   = PlasGate::first();
-        $privateKey = '7A7cVizKODVWJob0qt__Eqxkf2mp6OoQC0MuFhB92JAADJ5nsrwADBRY-iqpME9YZsFBNnwmMGHW_aTV9de_4Q';
-        $secretKey  = '$5$rounds=535000$3wyGNEuZZTIS0ub9$oMkMpc1YFkz7VJFyMqsHQzk.Zn6c6m4ULsYturE5E98';
+        $privateKey = '158hVRl98g2xeqrJ2HEidgITLW8CtqpaON84wsDpMtf73m25JdpAZveIG8NZfVg0BKWsMTPtVHtp-PS87ejUbw';
+        $secretKey  = '$5$rounds=535000$P4EXlgSFMNrwNdv1$SA2EmcMiA7tQoOnkFwNxgnfSAUxC9D3uwCFiM.QYOfB';
         $sender     = 'PlasGateUAT';
         $url = "https://cloudapi.plasgate.com/rest/send?private_key=$privateKey";
 

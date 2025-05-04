@@ -112,6 +112,54 @@
                                                                                     </div>
                                                                                 </div>
                                                                             @endif
+                                                                            @if ($lang['code'] == 'en')
+                                                                                <div class="col-12 col-sm-6 col-md-4">
+                                                                                    <div class="form-group">
+                                                                                        <label
+                                                                                            for="">{{ __('Latitude') }}</label>
+                                                                                        <input type="text" name="latitude"
+                                                                                            id="latitude"
+                                                                                            class="form-control"
+                                                                                            value="{{ $latitude }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif
+                                                                            @if ($lang['code'] == 'en')
+                                                                                <div class="col-12 col-sm-6 col-md-4">
+                                                                                    <div class="form-group">
+                                                                                        <label
+                                                                                        for="">{{ __('Longitude') }}</label>
+                                                                                    <input type="text" name="longitude"
+                                                                                        id="longitude"
+                                                                                        class="form-control"
+                                                                                        value="{{ $longitude }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif
+                                                                            @if ($lang['code'] == 'en')
+                                                                                <div class="col-12 col-sm-6 col-md-4">
+                                                                                    <div class="form-group">
+                                                                                        <label
+                                                                                            for="">{{ __('Opening Time') }}</label>
+                                                                                        <input type="text" name="open"
+                                                                                            id="open"
+                                                                                            class="form-control"
+                                                                                            value="{{ $open }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif
+                                                                            @if ($lang['code'] == 'en')
+                                                                                <div class="col-12 col-sm-6 col-md-4">
+                                                                                    <div class="form-group">
+                                                                                        <label
+                                                                                            for="">{{ __('Closing Time') }}</label>
+                                                                                        <input type="text" name="close"
+                                                                                            id="close"
+                                                                                            class="form-control"
+                                                                                            value="{{ $close }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif
                                                                             <div class="col-12 col-sm-6 col-md-4">
                                                                                 <div class="form-group">
                                                                                     <label
@@ -123,7 +171,7 @@
                                                                                         value="{{ $translate[$lang['code']]['copy_right_text'] ?? $copy_right_text }}">
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                                                                            <div class="col-12 col-sm-6 col-md-4">
                                                                                 <div class="form-group">
                                                                                     <label
                                                                                         for="company_address">{{ __('Company Address') }}</label>
@@ -132,12 +180,10 @@
                                                                                         id="company_address"
                                                                                         class="form-control"
                                                                                         value="{{ $translate[$lang['code']]['company_address'] ?? $company_address }}">
-
                                                                                 </div>
                                                                             </div>
                                                                             @if ($lang['code'] == 'en')
-                                                                                <div
-                                                                                    class="col-12 col-sm-12 col-md-6 col-lg-6">
+                                                                                <div class="col-12 col-sm-6 col-md-4">
                                                                                     <div class="form-group">
                                                                                         <label
                                                                                             for="copy_right_text">{{ __('Link Google Map') }}</label>
@@ -166,75 +212,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="card mb-3" hidden>
-                                            <div class="card-header pb-0">
-                                                <h4 class="card-title">{{ __('Home Slider') }}</h4>
-                                            </div>
-                                            <div class="card-body pt-1">
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        @include('backends.setting.partials._lang_tab', [
-                                                            'tab_id' => 'home_slider',
-                                                        ])
-                                                        <div class="tab-content" id="custom-content-below-tabContent">
-                                                            @foreach (json_decode($language, true) as $key => $lang)
-                                                                @if ($lang['status'] == 1)
-                                                                    <?php
-                                                                    $translate = [];
-                                                                    foreach ($settings as $setting) {
-                                                                        if (count($setting['translations'])) {
-                                                                            // dd($setting['translations']);
-
-                                                                            foreach ($setting['translations'] as $t) {
-                                                                                // dd($t);
-                                                                                if ($t->locale == $lang['code'] && $t->key == 'slider_title') {
-                                                                                    $translate[$lang['code']]['slider_title'] = $t->value;
-                                                                                }
-                                                                                if ($t->locale == $lang['code'] && $t->key == 'slider_description') {
-                                                                                    $translate[$lang['code']]['slider_description'] = $t->value;
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                    ?>
-
-                                                                    <div class="tab-pane fade {{ $lang['code'] == $default_lang ? 'show active' : '' }} mt-3"
-                                                                        id="home_slider_lang_{{ $lang['code'] }}"
-                                                                        role="tabpanel"
-                                                                        aria-labelledby="lang_{{ $lang['code'] }}-tab">
-                                                                        <input type="hidden" name="lang[]"
-                                                                            value="{{ $lang['code'] }}">
-                                                                        <div class="row">
-                                                                            <div class="col-12 col-sm-12 col-md-12">
-                                                                                <div class="form-group">
-                                                                                    <label
-                                                                                        for="slider_title_{{ $lang['code'] }}">{{ __('Title') }}({{ strtoupper($lang['code']) }})</label>
-                                                                                    <input type="text"
-                                                                                        name="slider_title[]"
-                                                                                        id="slider_title{{ $lang['code'] }}"
-                                                                                        class="form-control"
-                                                                                        value="{{ $translate[$lang['code']]['slider_title'] ?? $slider_title }}">
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <div class="col-12 col-sm-12 col-md-12">
-                                                                                <div class="form-group">
-                                                                                    <label
-                                                                                        for="slider_description_{{ $lang['code'] }}">{{ __('Slider Description') }}({{ strtoupper($lang['code']) }})</label>
-                                                                                    <textarea name="slider_description[]" id="slider_description_{{ $lang['code'] }}"
-                                                                                        class="form-control home_slider_summernote" rows="7">{{ $translate[$lang['code']]['slider_description'] ?? $slider_description }}</textarea>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                @endif
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card mb-3">
+                                        {{-- <div class="card mb-3">
                                             <div class="card-header pb-0">
                                                 <h4 class="card-title">{{ __('Contact') }}</h4>
                                             </div>
@@ -264,7 +242,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="card mb-3">
                                             <div class="card-header pb-0">
@@ -298,7 +276,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="card mb-3">
+                                        {{-- <div class="card mb-3">
                                             <div class="card-header pb-0">
                                                 <h4 class="card-title">{{ __('Payment') }}</h4>
                                             </div>
@@ -327,10 +305,10 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="card mb-3">
                                             <div class="card-header pb-0">
-                                                <h4 class="card-title">{{ __('Website Logo setup') }}</h4>
+                                                <h4 class="card-title">{{ __('App Logo setup') }}</h4>
                                             </div>
                                             <div class="card-body">
                                                 {{-- <div class="row">
@@ -358,10 +336,26 @@
                                                     </div>
                                                 </div> --}}
                                                 <div class="row">
-                                                    <div class="col-6">
+                                                    <div class="col-12 col-sm-6 col-md-4">
+                                                        <div class="form-group col-md-12 px-0">
+                                                            <label for="shop_image">
+                                                                {{ __('Shop Image') }}
+                                                                <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
+                                                            </label>
+                                                            <input type="hidden" name="shop_image" value="{{ @$shop_image }}" id="photo-trigger">
+                                                            <input type="file" id="shop_image" class="dropify custom-file-input" name="shop_image"
+                                                                @if($shop_image)data-default-file="{{ asset('uploads/business_settings/' . @$shop_image) }}"@endif
+                                                                accept="image/png, image/jpeg, image/gif, image/webp">
+                                                            <div class="progress mt-2" style="height: 10px; display: none;">
+                                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                                                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-sm-6 col-md-4">
                                                         <div class="form-group col-md-12 px-0">
                                                             <label for="web_header_logo">
-                                                                {{ __('Website logo') }}
+                                                                {{ __('App logo') }}
                                                                 <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
                                                             </label>
                                                             <input type="hidden" name="web_header_logo" value="{{ @$web_header_logo }}" id="photo-trigger">
@@ -374,7 +368,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-12 col-sm-6 col-md-4">
                                                         <div class="form-group col-md-12 px-0">
                                                             <label for="fav_icon">
                                                                 {{ __('Fav icon') }}

@@ -24,9 +24,15 @@
                     <td data-order="{{ strtolower(@$item->invoice_ref) }}">
                         <p class="text-sm font-weight-bold mb-0"> {{ $item->invoice_ref }} </p>
                     </td>
-                    <td data-order="{{ strtolower(@$item->customer->name) }}">
-                        <p class="text-sm font-weight-bold mb-0"> {{ @$item->customer->name }} </p>
-                    </td>
+                    @if ($item->deletedCustomer && $item->deletedCustomer->deleted_at != null)
+                        <td data-order="{{ strtolower(@$item->deletedCustomer->name) }}">
+                            <p class="text-sm font-weight-bold mb-0 text-danger"> {{ __('Deleted Account') }} </p>
+                        </td>
+                    @else
+                        <td data-order="{{ strtolower(@$item->customer->name) }}">
+                            <p class="text-sm font-weight-bold mb-0"> {{ @$item->customer->name }} </p>
+                        </td>
+                    @endif
                     <td>
                         <p class="text-sm font-weight-bold mb-0 text-uppercase"> {{ ucwords(str_replace('_', ' ', $item->order_type)) }} </p>
                     </td>
@@ -54,18 +60,28 @@
                             @endif
                         </p>
                     </td>
-                    <td class="align-middle">
-                        <a href="{{ route('admin.order.show', $item->id) }}" class="btn-edit" title="View" data-bs-toggle="tooltip" data-bs-placement="top">
-                            <span class="badge bg-gradient-primary p-2">
-                                <i class="fa-solid fa-eye"></i>
+                    @if ($item->deletedCustomer && $item->deletedCustomer->deleted_at != null)
+                        <td class="align-middle text-center">
+                            <span class="text-center">
+                                    --
                             </span>
-                        </a>
-                        <a href="{{ route('admin.order.invoice.pdf', $item->id) }}" class="btn-link" title="PDF" data-bs-toggle="tooltip" data-bs-placement="top" target="_blank">
-                            <span class="badge bg-gradient-danger p-2">
-                                <i class="fas fa-file-pdf"></i>
-                            </span>
-                        </a>
-                    </td>
+                        </td>
+                    @else
+                        <td class="align-middle text-center">
+                            <a href="{{ route('admin.order.show', $item->id) }}" class="btn-edit" title="View"
+                                data-bs-toggle="tooltip" data-bs-placement="top">
+                                <span class="badge bg-gradient-primary p-2">
+                                    <i class="fa-solid fa-eye"></i>
+                                </span>
+                            </a>
+                            <a href="{{ route('admin.order.invoice.pdf', $item->id) }}" class="btn-link" title="PDF"
+                                data-bs-toggle="tooltip" data-bs-placement="top" target="_blank">
+                                <span class="badge bg-gradient-danger p-2">
+                                    <i class="fas fa-file-pdf"></i>
+                                </span>
+                            </a>
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <tr>
