@@ -25,7 +25,7 @@ class OrderController extends Controller
 
         $products = Product::all();
         $customers = Customer::all();
-        $query = Order::with('customer', 'details.brand', 'details.product');
+        $query = Order::with('customer', 'details.brand', 'details.product', 'deletedCustomer');
 
         // Date range filter
         if ($request->filled('date_from') && $request->filled('date_to')) {

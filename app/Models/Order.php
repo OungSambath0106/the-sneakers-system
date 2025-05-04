@@ -37,6 +37,11 @@ class Order extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function deletedCustomer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id')->withTrashed();
+    }
+
     public function statusHistories()
     {
         return $this->hasMany(OrderStatusHistory::class)
