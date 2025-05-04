@@ -290,7 +290,10 @@ class BusinessSettingController extends Controller
                     File::delete(public_path('uploads/business_settings/' . $old_shop_image_path));
                 }
 
-                $setting_shop_image->shop_image = $imageName;
+                if ($setting_shop_image) {
+                    $setting_shop_image->value = $imageName;
+                    $setting_shop_image->save();
+                }
             }
 
             if ($request->hasFile('web_header_logo')) {

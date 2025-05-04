@@ -115,7 +115,6 @@ class ApiController extends Controller
                     $data[$config->type] = asset('uploads/business_settings/' . $config->value);
                 } else {
                     $data[$config->type] = asset('uploads/image/default.png');
-                    
                 }
             }
 
