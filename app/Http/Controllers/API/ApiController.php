@@ -221,17 +221,37 @@ class ApiController extends Controller
 
         $products = $query->paginate(10);
 
+        // $products->getCollection()->transform(function ($product) {
+        //     $firstProductInfo = $product->product_info[0] ?? null;
+
+        //     if ($firstProductInfo) {
+        //         $product->price = $firstProductInfo['product_price'] ?? null;
+        //         $product->product_info = [$firstProductInfo];
+        //     } else {
+        //         $product->price = null;
+        //         $product->product_info = [];
+        //     }
+
+        //     if ($product->productgallery && is_array($product->productgallery->images)) {
+        //         $firstImage = $product->productgallery->images[0] ?? null;
+        //         $product->image = $firstImage
+        //             ? asset('uploads/products/' . $firstImage)
+        //             : null;
+        //     } else {
+        //         $product->image = null;
+        //     }
+
+        //     unset($product->productgallery);
+
+        //     return $product;
+        // });
+        
         $products->getCollection()->transform(function ($product) {
-            $firstProductInfo = $product->product_info[0] ?? null;
-
-            if ($firstProductInfo) {
-                $product->price = $firstProductInfo['product_price'] ?? null;
-                $product->product_info = [$firstProductInfo];
-            } else {
-                $product->price = null;
-                $product->product_info = [];
-            }
-
+            
+            $productInfoList = $product->product_info;
+        
+            $product->price = isset($productInfoList[0]) ? $productInfoList[0]['product_price'] ?? null : null;
+       
             if ($product->productgallery && is_array($product->productgallery->images)) {
                 $firstImage = $product->productgallery->images[0] ?? null;
                 $product->image = $firstImage
@@ -240,12 +260,12 @@ class ApiController extends Controller
             } else {
                 $product->image = null;
             }
-
+        
             unset($product->productgallery);
-
+        
             return $product;
         });
-
+        
         if ($products->isEmpty()) {
             return response()->json(['message' => 'No records found'], 404);
         }

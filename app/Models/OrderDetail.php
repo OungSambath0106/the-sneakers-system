@@ -33,7 +33,7 @@ class OrderDetail extends Model
      */
     public function brand()
     {
-        return $this->belongsTo(Brand::class, 'brand_id');
+        return $this->belongsTo(Brand::class, 'brand_id')->withTrashed();
     }
 
     /**
@@ -41,6 +41,6 @@ class OrderDetail extends Model
      */
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class, 'product_id')->withTrashed();
     }
 }

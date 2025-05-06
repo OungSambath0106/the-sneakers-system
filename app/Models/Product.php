@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\App;
 
 class Product extends Model
 {
-    use HasFactory;
-
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = ['id'];
 
@@ -38,12 +36,12 @@ class Product extends Model
 
     public function createdBy()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
     public function brand()
     {
-        return $this->belongsTo(Brand::class, 'brand_id');
+        return $this->belongsTo(Brand::class, 'brand_id')->withTrashed();
     }
 
     public function productgallery()

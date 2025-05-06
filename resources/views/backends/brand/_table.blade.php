@@ -32,7 +32,11 @@
                         <p class="mb-0 text-sm font-weight-bold">{{ $brand->name }}</p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0">{{ $brand->createdBy->name }}</p>
+                        @if ($brand->createdBy && $brand->createdBy->deleted_at)
+                            <p class="text-sm font-weight-bold mb-0 text-danger"> {{ @$brand->createdBy->first_name }} {{ @$brand->createdBy->last_name }} {{ __('( Deleted )') }} </p>
+                        @else
+                            <p class="text-sm font-weight-bold mb-0"> {{ @$brand->createdBy->first_name }} {{ @$brand->createdBy->last_name }} </p>
+                        @endif
                     </td>
                     <td class="align-middle text-center text-sm" style="justify-items: center;">
                         <label for="status_{{ $brand->id }}" class="switch">

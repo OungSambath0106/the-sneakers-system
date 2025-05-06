@@ -33,6 +33,7 @@ class BusinessSettingController extends Controller
         $data['company_name']              = @$setting->where('type', 'company_name')->first()->value;
         $data['phone']                     = @$setting->where('type', 'phone')->first()->value;
         $data['email']                     = @$setting->where('type', 'email')->first()->value;
+        $data['delivery_fee']              = @$setting->where('type', 'delivery_fee')->first()->value;
         $data['latitude']                  = @$setting->where('type', 'latitude')->first()->value;
         $data['longitude']                 = @$setting->where('type', 'longitude')->first()->value;
         $data['open']                      = @$setting->where('type', 'open')->first()->value;

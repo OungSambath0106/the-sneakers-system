@@ -1,5 +1,5 @@
 <div class="table-wrapper p-0">
-    <table id="bookingTable" class="table align-items-center table-responsive mb-0">
+    <table id="bookingTable" data-page="order" class="table align-items-center table-responsive mb-0">
         <thead>
             <tr>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder ps-2 opacity-7">{{ __('SL') }}</th>
@@ -26,7 +26,8 @@
                     </td>
                     @if ($item->deletedCustomer && $item->deletedCustomer->deleted_at != null)
                         <td data-order="{{ strtolower(@$item->deletedCustomer->name) }}">
-                            <p class="text-sm font-weight-bold mb-0 text-danger"> {{ __('Deleted Account') }} </p>
+                            {{-- <p class="text-sm font-weight-bold mb-0 text-danger"> {{ __('Deleted Account') }} </p> --}}
+                            <p class="text-sm font-weight-bold mb-0 text-danger"> {{ @$item->deletedCustomer->name }} {{ __('( Deleted )') }} </p>
                         </td>
                     @else
                         <td data-order="{{ strtolower(@$item->customer->name) }}">
@@ -60,28 +61,20 @@
                             @endif
                         </p>
                     </td>
-                    @if ($item->deletedCustomer && $item->deletedCustomer->deleted_at != null)
-                        <td class="align-middle text-center">
-                            <span class="text-center">
-                                    --
+                    <td class="align-middle text-center">
+                        <a href="{{ route('admin.order.show', $item->id) }}" class="btn-edit" title="View"
+                            data-bs-toggle="tooltip" data-bs-placement="top">
+                            <span class="badge bg-gradient-primary p-2">
+                                <i class="fa-solid fa-eye"></i>
                             </span>
-                        </td>
-                    @else
-                        <td class="align-middle text-center">
-                            <a href="{{ route('admin.order.show', $item->id) }}" class="btn-edit" title="View"
-                                data-bs-toggle="tooltip" data-bs-placement="top">
-                                <span class="badge bg-gradient-primary p-2">
-                                    <i class="fa-solid fa-eye"></i>
-                                </span>
-                            </a>
-                            <a href="{{ route('admin.order.invoice.pdf', $item->id) }}" class="btn-link" title="PDF"
-                                data-bs-toggle="tooltip" data-bs-placement="top" target="_blank">
-                                <span class="badge bg-gradient-danger p-2">
-                                    <i class="fas fa-file-pdf"></i>
-                                </span>
-                            </a>
-                        </td>
-                    @endif
+                        </a>
+                        <a href="{{ route('admin.order.invoice.pdf', $item->id) }}" class="btn-link" title="PDF"
+                            data-bs-toggle="tooltip" data-bs-placement="top" target="_blank">
+                            <span class="badge bg-gradient-danger p-2">
+                                <i class="fas fa-file-pdf"></i>
+                            </span>
+                        </a>
+                    </td>
                 </tr>
             @empty
                 <tr>
@@ -95,20 +88,14 @@
             <tr>
                 <td colspan="4"></td>
                 <td>
-                    <span class="text-sm font-weight-bolder mb-0">
-                        Total: $ {{ number_format($orders->sum('delivery_fee'), 2) }}
-                    </span>
+                    <span class="text-sm font-weight-bolder mb-0" id="delivery-fee-summary"> {{ __('Total Delivery Fee') }}: $ 0.00 </span>
                 </td>
                 <td colspan="1"></td>
                 <td>
-                    <span class="text-sm font-weight-bolder mb-0">
-                        Total: $ {{ number_format($orders->sum('discount_amount'), 2) }}
-                    </span>
+                    <span class="text-sm font-weight-bolder mb-0" id="discount-amount-summary"> {{ __('Total Discount') }}: $ 0.00</span>
                 </td>
                 <td>
-                    <span class="text-sm font-weight-bolder mb-0">
-                        Total: $ {{ number_format($orders->sum('final_total'), 2) }}
-                    </span>
+                    <span class="text-sm font-weight-bolder mb-0" id="final-total-summary"> {{ __('Total Amount') }}: $ 0.00</span>
                 </td>
                 <td colspan="3"></td>
             </tr>

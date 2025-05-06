@@ -255,19 +255,6 @@
                     searchDelay: 100,
                     dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
                     buttons: [{
-                            extend: 'csv',
-                            text: '<i class="fas fa-file-csv"></i> Export to CSV',
-                            exportOptions: {
-                                columns: function(idx, data, node) {
-                                    // only include if not in our ignored list
-                                    return ignoredExportCols.indexOf(idx) === -1;
-                                },
-                                modifier: {
-                                    page: 'current'
-                                }
-                            }
-                        },
-                        {
                             extend: 'excel',
                             text: '<i class="fas fa-file-excel"></i> Export to Excel',
                             exportOptions: {
@@ -379,7 +366,37 @@
                             sortDescending: " 🠗"
                         }
                     },
-                    pagingType: "full_numbers"
+                    pageLength: 10,
+                    lengthMenu: [
+                        [5, 10, 25, 50, 100], // Correct option name for defining the page length options
+                        [5, 10, 25, 50, 100]  // Display text for each option (optional, can be omitted if same as values)
+                    ],
+                    pagingType: "full_numbers",
+                    drawCallback: function () {
+                        let api = this.api();
+                        let deliveryTotal = 0;
+                        let discountTotal = 0;
+                        let finalTotal = 0;
+
+                        // Loop through each visible row on the current page
+                        api.rows({ page: 'current' }).every(function () {
+                            let row = $(this.node());
+
+                            // Parse values from the correct columns
+                            let deliveryText = row.find('td:eq(4)').text().replace(/[^0-9.-]+/g, '');
+                            let discountText = row.find('td:eq(6)').text().replace(/[^0-9.-]+/g, '');
+                            let finalText = row.find('td:eq(7)').text().replace(/[^0-9.-]+/g, '');
+
+                            deliveryTotal += parseFloat(deliveryText) || 0;
+                            discountTotal += parseFloat(discountText) || 0;
+                            finalTotal += parseFloat(finalText) || 0;
+                        });
+
+                        // ✅ Update the spans by ID instead of using eq()
+                        $('#delivery-fee-summary').text(`{{ __('Total Delivery Fee') }}: $ ${deliveryTotal.toFixed(2)}`);
+                        $('#discount-amount-summary').text(`{{ __('Total Discount') }}: $ ${discountTotal.toFixed(2)}`);
+                        $('#final-total-summary').text(`{{ __('Total Amount') }}: $ ${finalTotal.toFixed(2)}`);
+                    }
                 });
 
                 $('#bookingTable_filter input').off('keyup').on('keyup', function() {

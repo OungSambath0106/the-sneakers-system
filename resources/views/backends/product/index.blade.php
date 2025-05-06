@@ -42,21 +42,39 @@
                             </h5>
                         </div>
                         <div class="card-body pt-1">
-                            <div class="d-flex col-lg-12 col-md-12 col-sm-12">
-                                <div class="col-lg-6 col-md-6 col-sm-12 col-12 filter tab-content" id="custom-content-below-tabContent">
-                                    <label for="brand_id">{{ __('Brand') }}</label>
-                                    <select name="brand_id" id="brand_id" class="form-control select2">
-                                        <option value="" class="form-control"
-                                            {{ !request()->filled('brands') ? 'selected' : '' }}>
-                                            {{ __('All Brand') }}
-                                        </option>
-                                        @foreach ($brands as $brand)
-                                            <option value="{{ $brand->id }}" class="form-control"
-                                                {{ $brand->id == request('brand_id') ? 'selected' : '' }}>
-                                                {{ $brand->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                            <div class="col-md-12">
+                                <div class="tab-content" id="custom-content-below-tabContent">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                                            <label for="brand_id">{{ __('Brand') }}</label>
+                                            <select name="brand_id" id="brand_id" class="form-control select2">
+                                                <option value="" class="form-control"
+                                                    {{ !request()->filled('brands') ? 'selected' : '' }}>
+                                                    {{ __('All Brand') }}
+                                                </option>
+                                                @foreach ($brands as $brand)
+                                                    <option value="{{ $brand->id }}" class="form-control"
+                                                        {{ $brand->id == request('brand_id') ? 'selected' : '' }}>
+                                                        {{ $brand->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                                            <label for="product_stock">{{ __('Product Stock') }}</label>
+                                            <select name="product_stock" id="product_stock" class="form-control select2">
+                                                <option value="" {{ request('product_stock') === null ? 'selected' : '' }}>
+                                                    {{ __('All Stock Status') }}
+                                                </option>
+                                                <option value="in" {{ request('product_stock') == 'in' ? 'selected' : '' }}>
+                                                    {{ __('In Stock') }}
+                                                </option>
+                                                <option value="out" {{ request('product_stock') == 'out' ? 'selected' : '' }}>
+                                                    {{ __('Out of Stock') }}
+                                                </option>
+                                            </select>
+                                        </div>                                                                                
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -161,6 +179,11 @@
                             icon: 'success',
                             title: response.msg
                         });
+                    } else if (response.warning == 1) {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: response.msg
+                        });
                     } else {
                         Toast.fire({
                             icon: 'error',
@@ -204,6 +227,40 @@
                 error: function(xhr, status, error) {
                     console.error(xhr.responseText);
                 }
+            });
+        });
+
+        $(document).ready(function() {
+            $('#brand_id, #product_stock').select2();
+
+            $(document).on('change', '#brand_id, #product_stock', function(e) {
+                e.preventDefault();
+
+                var brand_id = $('#brand_id').val();
+                var product_stock = $('#product_stock').val();
+
+                if ($.fn.DataTable.isDataTable('#bookingTable')) {
+                    $('#bookingTable').DataTable().destroy();
+                }
+
+                $.ajax({
+                    type: "GET",
+                    url: '{{ route('admin.product.index') }}',
+                    data: {
+                        brand_id: brand_id,
+                        product_stock: product_stock
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.view) {
+                            $('.table-wrapper').html(response.view);
+                            initDataTable();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                    }
+                });
             });
         });
     </script>

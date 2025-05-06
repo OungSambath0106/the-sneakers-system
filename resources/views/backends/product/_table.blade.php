@@ -43,7 +43,11 @@
                         <p class="text-sm font-weight-bold mb-0"> {{ $product->name ?? 'Null' }} </p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif">{{ $product->brand->name ?? 'Null' }}</p>
+                        @if ($product->brand && $product->brand->deleted_at)
+                            <p class="text-sm font-weight-bold mb-0 text-danger @if ($product->total_qty == 0) text-danger @endif"> {{ @$product->brand->name }} {{ __('( Deleted )') }} </p>
+                        @else
+                            <p class="text-sm font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif"> {{ @$product->brand->name }} </p>
+                        @endif
                     </td>
                     <td>
                         <p class="text-sm text-center font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif">{{ $product->count_product_sale ?? '0' }}</p>
@@ -52,7 +56,11 @@
                         <p class="text-sm text-center font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif">{{ $product->total_qty == 0 ? 'Out of Stock' : $product->total_qty }}</p>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif">{{ $product->createdBy->name ?? 'Null' }}</p>
+                        @if ($product->createdBy && $product->createdBy->deleted_at)
+                            <p class="text-sm font-weight-bold mb-0 text-danger @if ($product->total_qty == 0) text-danger @endif"> {{ @$product->createdBy->first_name }} {{ @$product->createdBy->last_name }} {{ __('( Deleted )') }} </p>
+                        @else
+                            <p class="text-sm font-weight-bold mb-0 @if ($product->total_qty == 0) text-danger @endif">{{ @$product->createdBy->first_name }} {{ @$product->createdBy->last_name }}</p>
+                        @endif
                     </td>
                     <td class="align-middle text-center text-sm" style="justify-items: center;">
                         <label for="status_{{ $product->id }}" class="switch">

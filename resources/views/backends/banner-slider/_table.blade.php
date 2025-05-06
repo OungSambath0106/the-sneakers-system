@@ -5,7 +5,7 @@
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('SL') }} </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-3"> {{ __('Image') }} </th>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 px-3"> {{ __('Name') }} </th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2"> {{ __('Created By') }} </th>
+                {{-- <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2"> {{ __('Created By') }} </th> --}}
                 <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('Status') }} </th>
                 <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7"> {{ __('Action') }} </th>
             </tr>
@@ -31,9 +31,13 @@
                     <td data-order="{{ strtolower($banner->name) }}">
                         <p class="text-sm font-weight-bold mb-0">{{ $banner->name }}</p>
                     </td>
-                    <td>
-                        <p class="text-sm font-weight-bold mb-0">{{ $banner->createdBy->name }}</p>
-                    </td>
+                    {{-- <td>
+                        @if ($banner->createdBy && $banner->createdBy->deleted_at)
+                            <p class="text-sm font-weight-bold mb-0 text-danger"> {{ @$banner->createdBy->first_name }} {{ @$banner->createdBy->last_name }} {{ __('( Deleted )') }} </p>
+                        @else
+                            <p class="text-sm font-weight-bold mb-0"> {{ @$banner->createdBy->first_name }} {{ @$banner->createdBy->last_name }} </p>
+                        @endif
+                    </td> --}}
                     <td class="align-middle text-center text-sm" style="justify-items: center;">
                         <label for="status_{{ $banner->id }}" class="switch">
                             <input type="checkbox" class="status"

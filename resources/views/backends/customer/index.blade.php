@@ -88,13 +88,13 @@
                     <div class="card mb-4">
                         <div class="card-header d-flex justify-content-between pb-0">
                             <h5 class="pb-1">{{ __('Customers Table') }}</h5>
-                            @if (auth()->user()->can('customer.create'))
+                            {{-- @if (auth()->user()->can('customer.create'))
                                 <a class="btn bg-gradient-primary add-new-button-right-side btn-xs"
                                     href="{{ route('admin.customer.create') }}">
                                     <i class="fas fa-plus-circle"></i>
                                     {{ __('Add New') }}
                                 </a>
-                            @endif
+                            @endif --}}
                         </div>
                         <div class="card-body px-3 pt-0 pb-2">
                             <div class="dataTableButtons-container d-flex mx-0 align-items-center pb-2">
@@ -192,6 +192,11 @@
                         modal.modal('hide');
                         Toast.fire({
                             icon: 'success',
+                            title: response.msg
+                        });
+                    } else if (response.warning == 1) {
+                        Toast.fire({
+                            icon: 'warning',
                             title: response.msg
                         });
                     } else {

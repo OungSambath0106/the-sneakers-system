@@ -25,7 +25,7 @@ class CustomerController extends Controller
         }
         $customers = Customer::when($request->start_date && $request->end_date, function ($query) use ($request) {
             $query->whereDate('created_at', '>=', $request->start_date)
-                ->whereDate('created_at', '<=', $request->end_date);
+            ->whereDate('created_at', '<=', $request->end_date);
             })
             ->latest('id')
             ->get();
@@ -156,9 +156,9 @@ class CustomerController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'phone' => 'required',
-            'gender' => 'required',
-            'email' => 'required|email|unique:customers,email,' . $id,
+            'phone' => 'nullable',
+            'gender' => 'nullable',
+            'email' => 'nullable|email|unique:customers,email,' . $id,
             'password' => 'nullable|min:8',
         ]);
 
@@ -231,6 +231,15 @@ class CustomerController extends Controller
             abort(403, 'Unauthorized action.');
         }
         try {
+            // Check if the product is used in any order_details
+            $orderCount = DB::table('orders')->where('customer_id', $id)->count();
+            if ($orderCount > 0) {
+                return response()->json([
+                    'warning' => 1,
+                    'msg' => __('Cannot delete Customer is in an order.')
+                ]);
+            }
+
             DB::beginTransaction();
             $customer = Customer::findOrFail($id);
             if ($customer->image) {

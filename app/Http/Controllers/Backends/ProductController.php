@@ -33,24 +33,51 @@ class ProductController extends Controller
                     ->latest('id')
                     ->get();
 
-        $product_instock = $products->map(function ($product) {
+        // $product_instock = $products->map(function ($product) {
+        //     $productInfo = $product->product_info;
+        //     if (is_array($productInfo)) {
+        //         $totalQty = array_sum(array_column($productInfo, 'product_qty'));
+        //         $product->total_qty = $totalQty;
+        //     }
+        //     return $product;
+        // });
+
+        // Compute total_qty and optionally filter by stock
+        $filteredProducts = $products->map(function ($product) {
             $productInfo = $product->product_info;
+
+            $totalQty = 0;
             if (is_array($productInfo)) {
-                $totalQty = array_sum(array_column($productInfo, 'product_qty'));
-                $product->total_qty = $totalQty;
+                foreach ($productInfo as $info) {
+                    $totalQty += isset($info['product_qty']) ? (int)$info['product_qty'] : 0;
+                }
             }
+
+            $product->total_qty = $totalQty;
             return $product;
         });
 
-        $brands = Brand::all();
-        if ($request->ajax()) {
-            $view = view('backends.product._table', compact('products', 'brands', 'product_instock'))->render();
-            return response()->json([
-                'view' => $view
-            ]);
+        // Apply product_stock filter
+        if ($request->product_stock === 'in') {
+            $filteredProducts = $filteredProducts->filter(fn($p) => $p->total_qty > 0);
+        } elseif ($request->product_stock === 'out') {
+            $filteredProducts = $filteredProducts->filter(fn($p) => $p->total_qty == 0);
         }
 
-        return view('backends.product.index', compact('products', 'brands', 'product_instock'));
+        $brands = Brand::all();
+        if ($request->ajax()) {
+            $view = view('backends.product._table', [
+                'products' => $filteredProducts,
+                'brands' => $brands
+            ])->render();
+    
+            return response()->json(['view' => $view]);
+        }
+    
+        return view('backends.product.index', [
+            'products' => $filteredProducts,
+            'brands' => $brands
+        ]);
     }
 
     /**
@@ -318,6 +345,15 @@ class ProductController extends Controller
         }
 
         try {
+            // Check if the product is used in any order_details
+            $orderCount = DB::table('order_details')->where('product_id', $id)->count();
+            if ($orderCount > 0) {
+                return response()->json([
+                    'warning' => 1,
+                    'msg' => __('Cannot delete Product is in an order.')
+                ]);
+            }
+
             DB::beginTransaction();
 
             $product = Product::findOrFail($id);
@@ -334,15 +370,17 @@ class ProductController extends Controller
                 }
                 $image->delete();
             }
+
             $product->delete();
 
             $products = Product::latest('id')->get();
             $view = view('backends.product._table', compact('products'))->render();
 
             DB::commit();
+
             $output = [
                 'success' => 1,
-                'view'  => $view,
+                'view' => $view,
                 'msg' => __('Deleted successfully')
             ];
         } catch (Exception $e) {

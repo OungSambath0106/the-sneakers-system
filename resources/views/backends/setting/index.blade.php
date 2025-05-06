@@ -20,7 +20,10 @@
             background: #3d95d0 !important;
             box-shadow: inset 0 1px 1px rgba(84, 116, 152, 0.5) !important;
         }
-        .btn_add_contact, .btn_add_social_media, .btn_add_payment {
+
+        .btn_add_contact,
+        .btn_add_social_media,
+        .btn_add_payment {
             width: 40px !important;
             height: 40px !important;
             border-radius: 50% !important;
@@ -62,7 +65,7 @@
                                                                     foreach ($settings as $setting) {
                                                                         if (count($setting['translations'])) {
                                                                             // dd($setting['translations']);
-
+                                                                    
                                                                             foreach ($setting['translations'] as $t) {
                                                                                 // dd($t);
                                                                                 if ($t->locale == $lang['code'] && $t->key == 'company_name') {
@@ -104,42 +107,6 @@
                                                                                 <div class="col-12 col-sm-6 col-md-4">
                                                                                     <div class="form-group">
                                                                                         <label
-                                                                                            for="">{{ __('Email') }}</label>
-                                                                                        <input type="text" name="email"
-                                                                                            id="email"
-                                                                                            class="form-control"
-                                                                                            value="{{ $email }}">
-                                                                                    </div>
-                                                                                </div>
-                                                                            @endif
-                                                                            @if ($lang['code'] == 'en')
-                                                                                <div class="col-12 col-sm-6 col-md-4">
-                                                                                    <div class="form-group">
-                                                                                        <label
-                                                                                            for="">{{ __('Latitude') }}</label>
-                                                                                        <input type="text" name="latitude"
-                                                                                            id="latitude"
-                                                                                            class="form-control"
-                                                                                            value="{{ $latitude }}">
-                                                                                    </div>
-                                                                                </div>
-                                                                            @endif
-                                                                            @if ($lang['code'] == 'en')
-                                                                                <div class="col-12 col-sm-6 col-md-4">
-                                                                                    <div class="form-group">
-                                                                                        <label
-                                                                                        for="">{{ __('Longitude') }}</label>
-                                                                                    <input type="text" name="longitude"
-                                                                                        id="longitude"
-                                                                                        class="form-control"
-                                                                                        value="{{ $longitude }}">
-                                                                                    </div>
-                                                                                </div>
-                                                                            @endif
-                                                                            @if ($lang['code'] == 'en')
-                                                                                <div class="col-12 col-sm-6 col-md-4">
-                                                                                    <div class="form-group">
-                                                                                        <label
                                                                                             for="">{{ __('Opening Time') }}</label>
                                                                                         <input type="text" name="open"
                                                                                             id="open"
@@ -157,6 +124,63 @@
                                                                                             id="close"
                                                                                             class="form-control"
                                                                                             value="{{ $close }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif
+                                                                            @if ($lang['code'] == 'en')
+                                                                                <div class="col-12 col-sm-6 col-md-4">
+                                                                                    <div class="form-group">
+                                                                                        <label
+                                                                                            for="">{{ __('Latitude') }}</label>
+                                                                                        <input type="text"
+                                                                                            name="latitude" id="latitude"
+                                                                                            class="form-control"
+                                                                                            value="{{ $latitude }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif
+                                                                            @if ($lang['code'] == 'en')
+                                                                                <div class="col-12 col-sm-6 col-md-4">
+                                                                                    <div class="form-group">
+                                                                                        <label
+                                                                                            for="">{{ __('Longitude') }}</label>
+                                                                                        <input type="text"
+                                                                                            name="longitude" id="longitude"
+                                                                                            class="form-control"
+                                                                                            value="{{ $longitude }}">
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif
+                                                                            @if ($lang['code'] == 'en')
+                                                                                <div class="col-12 col-sm-6 col-md-4">
+                                                                                    <div class="form-group">
+                                                                                        <label
+                                                                                            for="">{{ __('Delivery Fee') }}</label>
+                                                                                        <div class="input-group">
+                                                                                            <div
+                                                                                                class="input-group-prepend">
+                                                                                                <span
+                                                                                                    class="input-group-text"
+                                                                                                    style="border-top-right-radius: 0; border-bottom-right-radius: 0;">$</span>
+                                                                                            </div>
+                                                                                            <input type="text"
+                                                                                                name="delivery_fee"
+                                                                                                id="delivery_fee"
+                                                                                                class="form-control"
+                                                                                                value="{{ $delivery_fee }}">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endif
+                                                                            @if ($lang['code'] == 'en')
+                                                                                <div class="col-12 col-sm-6 col-md-4">
+                                                                                    <div class="form-group">
+                                                                                        <label
+                                                                                            for="">{{ __('Email') }}</label>
+                                                                                        <input type="text" name="email"
+                                                                                            id="email"
+                                                                                            class="form-control"
+                                                                                            value="{{ $email }}">
                                                                                     </div>
                                                                                 </div>
                                                                             @endif
@@ -182,7 +206,7 @@
                                                                                         value="{{ $translate[$lang['code']]['company_address'] ?? $company_address }}">
                                                                                 </div>
                                                                             </div>
-                                                                            @if ($lang['code'] == 'en')
+                                                                            {{-- @if ($lang['code'] == 'en')
                                                                                 <div class="col-12 col-sm-6 col-md-4">
                                                                                     <div class="form-group">
                                                                                         <label
@@ -194,7 +218,7 @@
                                                                                             value="{{ $link_google_map }}">
                                                                                     </div>
                                                                                 </div>
-                                                                            @endif
+                                                                            @endif --}}
                                                                             {{-- <div class="col-12 col-sm-12 col-md-12">
                                                                                 <div class="form-group">
                                                                                     <label
@@ -264,7 +288,9 @@
                                                                 <th>{{ __('Status') }}</th>
                                                                 <th>
                                                                     <button type="button"
-                                                                        class="btn bg-gradient-success btn-sm btn_add_social_media" title="Add Social Media" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                                        class="btn bg-gradient-success btn-sm btn_add_social_media"
+                                                                        title="Add Social Media" data-bs-toggle="tooltip"
+                                                                        data-bs-placement="top">
                                                                         <i class="fa fa-plus-circle"></i>
                                                                     </button>
                                                                 </th>
@@ -340,15 +366,21 @@
                                                         <div class="form-group col-md-12 px-0">
                                                             <label for="shop_image">
                                                                 {{ __('Shop Image') }}
-                                                                <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
+                                                                <span
+                                                                    class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
                                                             </label>
-                                                            <input type="hidden" name="shop_image" value="{{ @$shop_image }}" id="photo-trigger">
-                                                            <input type="file" id="shop_image" class="dropify custom-file-input" name="shop_image"
-                                                                @if($shop_image)data-default-file="{{ asset('uploads/business_settings/' . @$shop_image) }}"@endif
+                                                            <input type="hidden" name="shop_image"
+                                                                value="{{ @$shop_image }}" id="photo-trigger">
+                                                            <input type="file" id="shop_image"
+                                                                class="dropify custom-file-input" name="shop_image"
+                                                                @if ($shop_image) data-default-file="{{ asset('uploads/business_settings/' . @$shop_image) }}" @endif
                                                                 accept="image/png, image/jpeg, image/gif, image/webp">
-                                                            <div class="progress mt-2" style="height: 10px; display: none;">
-                                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                                                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
+                                                            <div class="progress mt-2"
+                                                                style="height: 10px; display: none;">
+                                                                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                                                    role="progressbar" aria-valuenow="0"
+                                                                    aria-valuemin="0" aria-valuemax="100"
+                                                                    style="width: 0%">0%</div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -356,15 +388,21 @@
                                                         <div class="form-group col-md-12 px-0">
                                                             <label for="web_header_logo">
                                                                 {{ __('App logo') }}
-                                                                <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
+                                                                <span
+                                                                    class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
                                                             </label>
-                                                            <input type="hidden" name="web_header_logo" value="{{ @$web_header_logo }}" id="photo-trigger">
-                                                            <input type="file" id="web_header_logo" class="dropify custom-file-input" name="web_header_logo"
-                                                                @if($web_header_logo)data-default-file="{{ asset('uploads/business_settings/' . @$web_header_logo) }}"@endif
+                                                            <input type="hidden" name="web_header_logo"
+                                                                value="{{ @$web_header_logo }}" id="photo-trigger">
+                                                            <input type="file" id="web_header_logo"
+                                                                class="dropify custom-file-input" name="web_header_logo"
+                                                                @if ($web_header_logo) data-default-file="{{ asset('uploads/business_settings/' . @$web_header_logo) }}" @endif
                                                                 accept="image/png, image/jpeg, image/gif, image/webp">
-                                                            <div class="progress mt-2" style="height: 10px; display: none;">
-                                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                                                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
+                                                            <div class="progress mt-2"
+                                                                style="height: 10px; display: none;">
+                                                                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                                                    role="progressbar" aria-valuenow="0"
+                                                                    aria-valuemin="0" aria-valuemax="100"
+                                                                    style="width: 0%">0%</div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -372,15 +410,21 @@
                                                         <div class="form-group col-md-12 px-0">
                                                             <label for="fav_icon">
                                                                 {{ __('Fav icon') }}
-                                                                <span class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
+                                                                <span
+                                                                    class="text-info text-xs">{{ __('Recommend size 512 x 512 px') }}</span>
                                                             </label>
-                                                            <input type="hidden" name="fav_icon" value="{{ @$fav_icon }}" id="photo-trigger">
-                                                            <input type="file" id="fav_icon" class="dropify custom-file-input" name="fav_icon"
-                                                                @if($fav_icon)data-default-file="{{ asset('uploads/business_settings/' . @$fav_icon) }}"@endif
+                                                            <input type="hidden" name="fav_icon"
+                                                                value="{{ @$fav_icon }}" id="photo-trigger">
+                                                            <input type="file" id="fav_icon"
+                                                                class="dropify custom-file-input" name="fav_icon"
+                                                                @if ($fav_icon) data-default-file="{{ asset('uploads/business_settings/' . @$fav_icon) }}" @endif
                                                                 accept="image/png, image/jpeg, image/gif, image/webp">
-                                                            <div class="progress mt-2" style="height: 10px; display: none;">
-                                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                                                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
+                                                            <div class="progress mt-2"
+                                                                style="height: 10px; display: none;">
+                                                                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                                                    role="progressbar" aria-valuenow="0"
+                                                                    aria-valuemin="0" aria-valuemax="100"
+                                                                    style="width: 0%">0%</div>
                                                             </div>
                                                         </div>
                                                     </div>

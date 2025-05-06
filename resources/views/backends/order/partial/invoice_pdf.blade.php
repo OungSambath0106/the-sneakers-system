@@ -10,7 +10,7 @@
         $data['email'] = @$setting->where('type', 'email')->first()->value ?? '';
     @endphp
     <link rel="icon" type="image/x-icon" href="
-        @if ($data['fav_icon'] && file_exists('uploads/business_settings/' . $data['fav_icon']))
+        @if ($data['fav_icon'] && file_exists(public_path('uploads/business_settings/' . $data['fav_icon'])))
             {{ asset('uploads/business_settings/' . $data['fav_icon']) }}
         @else
             {{ asset('uploads/image/default.png') }}
@@ -416,8 +416,22 @@
         <div class="customer-details">
             <div class="customer-info">
                 <div class="section-title">Customer Details</div>
-                <div><strong>Name:</strong> {{ $order->customer->name }}</div>
-                <div><strong>Contact:</strong> {{ $order->customer->phone ?? '' }}</div>
+                <div>
+                    <strong>Name:</strong> 
+                    @if ($order->customer && $order->customer->deleted_at)
+                        {{ @$order->customer->name }} <span style="color: red;">{{ __('( Deleted )') }}</span>
+                    @else
+                        {{ @$order->customer->name }} 
+                    @endif
+                </div>
+                <div>
+                    <strong>Contact:</strong> 
+                    @if ($order->customer->email)
+                        {{ $order->customer->email ?? '' }}
+                    @else
+                        {{ $order->customer->phone ?? '' }}
+                    @endif
+                </div>
             </div>
         </div>
 
@@ -436,7 +450,11 @@
                         <td>
                             <div class="product-row">
                                 <div class="product-info">
-                                    <div>{{ $item->product->name }}</div>
+                                    @if ($item->product && $item->product->deleted_at)
+                                        {{ @$item->product->name }} <span style="color: red;">{{ __('( Deleted )') }}</span>
+                                    @else
+                                        {{ @$item->product->name }} 
+                                    @endif
                                     <div>Qty: {{ $item->product_qty }}</div>
                                     <div>Size: {{ $item->product_size }}</div>
                                     <div>Unit price: ${{ number_format($item->product_price, 2) }}</div>

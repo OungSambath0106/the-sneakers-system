@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\helpers\AppHelper;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 
 class Brand extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $guarded = [];
 
     public function getNameAttribute($name)
@@ -28,7 +29,7 @@ class Brand extends Model
 
     public function createdBy()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by')->withTrashed();
     }
 
     public function translations()

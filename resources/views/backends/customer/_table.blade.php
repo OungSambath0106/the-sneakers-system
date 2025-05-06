@@ -39,7 +39,7 @@
                         data-toggle="modal" data-target="#imageModal" onclick="showImageModal(this)">
                     </td>
                     <td data-order="{{ strtolower(@$customer->name) }}">
-                        <p class="text-sm font-weight-bold mb-0 "> {{ @$customer->name ?? 'N/A' }} </p>
+                        <p class="text-sm font-weight-bold mb-0"> {{ $customer->name }} </p>
                     </td>
                     {{-- <td data-order="{{ strtolower(@$customer->gender) }}">
                         <p class="text-sm font-weight-bold mb-0 "> {{ ucfirst(@$customer->gender ?? 'N/A') }} </p>

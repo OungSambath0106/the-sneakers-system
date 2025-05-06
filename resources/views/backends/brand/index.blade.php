@@ -130,6 +130,11 @@
                             icon: 'success',
                             title: response.msg
                         });
+                    } else if (response.warning == 1) {
+                        Toast.fire({
+                            icon: 'warning',
+                            title: response.msg
+                        });
                     } else {
                         Toast.fire({
                             icon: 'error',

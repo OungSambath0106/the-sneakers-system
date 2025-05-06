@@ -139,7 +139,11 @@
                                                             alt="Product Image" class="avatar avatar-sm me-3">
                                                     @endif
                                                     <div>
-                                                        <p class="mb-0 fw-bold"> {{ $item->product->name }} </p>
+                                                        @if ($item->product && $item->product->deleted_at)
+                                                            {{ @$item->product->name }} <span class="text-danger">{{ __('( Deleted )') }}</span>
+                                                        @else
+                                                            {{ @$item->product->name }} 
+                                                        @endif
                                                         <p class="mb-0"> Qty: {{ $item->product_qty }} </p>
                                                         <p class="mb-0"> Size: {{ $item->product_size }}</p>
                                                         <p class="mb-0 text-muted">Unit price:
@@ -302,10 +306,16 @@
                             </div>
 
                             <div class="d-flex mb-2">
-                                <img src="{{ asset('uploads/customers/' . $order->customer->image) ?? asset('uploads/man.png') }}"
+                                <img src="{{ !empty($order->customer->image) && file_exists(public_path('uploads/customers/' . $order->customer->image)) ? asset('uploads/customers/' . $order->customer->image) : asset('uploads/man.png') }}"
                                     alt="Customer" class="avatar avatar-lg rounded-circle me-3" style="object-fit: cover;">
                                 <div>
-                                    <h6 class="mb-1">{{ @$order->customer->name }}</h6>
+                                    <h6 class="mb-1">
+                                        @if ($order->customer && $order->customer->deleted_at)
+                                            {{ @$order->customer->name }} <span class="text-danger">{{ __('( Deleted )') }}</span>
+                                        @else
+                                            {{ @$order->customer->name }} 
+                                        @endif
+                                    </h6>
                                     <p class="mb-1 text-muted">
                                         {{ App\Models\Order::where('customer_id', @$order->customer->id)->count() }} Orders
                                     </p>

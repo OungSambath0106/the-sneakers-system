@@ -206,6 +206,23 @@ class BrandController extends Controller
         }
 
         try {
+            // Check if the brand is used in any order_details
+            $orderCount = DB::table('order_details')->where('brand_id', $id)->count();
+            if ($orderCount > 0) {
+                return response()->json([
+                    'warning' => 1,
+                    'msg' => __('Cannot delete Brand is in an order.')
+                ]);
+            }
+            // Check if the brand is used in any products
+            $productCount = DB::table('products')->where('brand_id', $id)->count();
+            if ($productCount > 0) {
+                return response()->json([
+                    'warning' => 1,
+                    'msg' => __('Cannot delete Brand is in a product.')
+                ]);
+            }
+
             DB::beginTransaction();
             $brand = Brand::findOrFail($id);
 
