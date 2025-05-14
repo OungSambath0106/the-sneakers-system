@@ -213,10 +213,10 @@
                                             </div>
 
                                             <div class="form-group col-md-6">
-                                                <label class="required_lable">{{ __('Start Date') }}</label>
+                                                <label class="required_label">{{ __('Start Date') }}</label>
                                                 <div class="input-group input-group-alternative">
                                                     <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
-                                                    <input type="date" class="form-control flatpickr @error('start_date') is-invalid @enderror"
+                                                    <input type="date" id="start_date" class="form-control flatpickr @error('start_date') is-invalid @enderror"
                                                         value="{{ old('start_date', $promotion->start_date) }}" name="start_date" placeholder="Select Start Date">
                                                 </div>
                                                 @error('start_date')
@@ -225,11 +225,12 @@
                                                     </span>
                                                 @enderror
                                             </div>
+                                            
                                             <div class="form-group col-md-6">
-                                                <label class="required_lable">{{ __('End Date') }}</label>
+                                                <label class="required_label">{{ __('End Date') }}</label>
                                                 <div class="input-group input-group-alternative">
                                                     <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
-                                                    <input type="date" class="form-control flatpickr @error('end_date') is-invalid @enderror"
+                                                    <input type="date" id="end_date" class="form-control flatpickr @error('end_date') is-invalid @enderror"
                                                         value="{{ old('end_date', $promotion->end_date) }}" name="end_date" placeholder="Select End Date">
                                                 </div>
                                                 @error('end_date')
@@ -238,6 +239,7 @@
                                                     </span>
                                                 @enderror
                                             </div>
+
                                             <div class="form-group col-md-12">
                                                 <div class="form-group">
                                                     <label for="exampleInputFile">{{ __('Banner') }} <span class="text-info text-xs"> {{ __('Recommended upload a maximum of 5 images.') }} </span> </label>
@@ -265,6 +267,38 @@
 @endsection
 
 @push('js')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+
+            // Get initial values
+            const initialStartDate = startDateInput.value;
+
+            // Initialize endDate Flatpickr
+            const endDatePicker = flatpickr(endDateInput, {
+                dateFormat: "Y-m-d",
+                minDate: initialStartDate || null, // Set minDate if start_date exists
+            });
+
+            // Initialize startDate Flatpickr and handle changes
+            flatpickr(startDateInput, {
+                dateFormat: "Y-m-d",
+                defaultDate: initialStartDate || null,
+                onChange: function (selectedDates, dateStr, instance) {
+                    if (selectedDates.length > 0) {
+                        const selectedDate = selectedDates[0];
+                        endDatePicker.set('minDate', selectedDate);
+
+                        // Clear end date if it's earlier than selected start date
+                        if (endDateInput.value && new Date(endDateInput.value) < selectedDate) {
+                            endDateInput.value = '';
+                        }
+                    }
+                }
+            });
+        });
+    </script>
     <script>
         class ImageUploader {
             constructor(maxWidthOrHeight, csrfToken, uploadUrl) {

@@ -198,37 +198,38 @@
         initializeStatusInput("{{ route('admin.product.update_status') }}");
     </script>
     <script>
-        $(document).ready(function() {
-            $('#brand_id').select2();
-        });
+        // $(document).ready(function() {
+        //     $('#brand_id').select2();
+        //     $('#brand_id').select2();
+        // });
 
-        $(document).on('change', '#brand_id', function(e) {
-            e.preventDefault();
+        // $(document).on('change', '#brand_id', function(e) {
+        //     e.preventDefault();
 
-            var brand_id = $('#brand_id').val();
+        //     var brand_id = $('#brand_id').val();
 
-            if ($.fn.DataTable.isDataTable('#bookingTable')) {
-                $('#bookingTable').DataTable().destroy();
-            }
+        //     if ($.fn.DataTable.isDataTable('#bookingTable')) {
+        //         $('#bookingTable').DataTable().destroy();
+        //     }
 
-            $.ajax({
-                type: "GET",
-                url: '{{ route('admin.product.index') }}',
-                data: {
-                    'brand_id': brand_id
-                },
-                dataType: "json",
-                success: function(response) {
-                    if (response.view) {
-                        $('.table-wrapper').html(response.view);
-                        initDataTable();
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
-            });
-        });
+        //     $.ajax({
+        //         type: "GET",
+        //         url: '{{ route('admin.product.index') }}',
+        //         data: {
+        //             'brand_id': brand_id
+        //         },
+        //         dataType: "json",
+        //         success: function(response) {
+        //             if (response.view) {
+        //                 $('.table-wrapper').html(response.view);
+        //                 initDataTable();
+        //             }
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error(xhr.responseText);
+        //         }
+        //     });
+        // });
 
         $(document).ready(function() {
             $('#brand_id, #product_stock').select2();

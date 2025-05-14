@@ -153,6 +153,14 @@ class AuthApiController extends Controller
                 return response()->json(['message' => 'Invalid credentials'], 401);
             }
 
+            // Check if customer is suspended
+            if ($customer->status != 1) {
+                return response()->json([
+                    'message' => 'This Customer has been suspended',
+                    'success' => false,
+                ], 403);
+            }
+
             $customer->tokens->each(function ($token) {
                 $token->delete();
             });
@@ -268,7 +276,6 @@ class AuthApiController extends Controller
 
     public function googleLogin(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             'email' => 'required|email',
             'displayName' => 'required|string',
@@ -277,10 +284,9 @@ class AuthApiController extends Controller
         ]);
 
         $customer = Customer::where('google_uid', $request->uid)
-                    ->select('id','name','email','phone','image','is_verify','google_uid')
                     ->where('provider', 'google')
+                    ->select('id', 'name', 'email', 'phone', 'image', 'is_verify', 'google_uid', 'status') // Include status
                     ->first();
-                    // ->makeHidden('image');
 
         if (!$customer) {
             $customer = Customer::updateOrCreate([
@@ -292,6 +298,14 @@ class AuthApiController extends Controller
                 'is_verify'   => 1,
                 'image'       => $request->photoURL,
             ]);
+        }
+
+        // Check if customer is suspended
+        if ($customer->status != 1) {
+            return response()->json([
+                'message' => 'This Customer has been suspended',
+                'success' => false,
+            ], 403);
         }
 
         $customer->tokens()->delete();

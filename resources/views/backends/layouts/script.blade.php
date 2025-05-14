@@ -254,6 +254,7 @@
                     scrollX: true,
                     searchDelay: 100,
                     dom: '<"d-flex justify-content-between align-items-center"lfB>rtip',
+                    footer: true,
                     buttons: [{
                             extend: 'excel',
                             text: '<i class="fas fa-file-excel"></i> Export to Excel',
@@ -270,6 +271,7 @@
                         {
                             extend: 'pdf',
                             text: '<i class="fas fa-file-pdf"></i> Export to PDF',
+                            footer: true,
                             orientation: 'landscape',
                             pageSize: 'A4',
                             autoWidth: false,  // Set to false for more control over table layout
@@ -311,6 +313,7 @@
                         {
                             extend: 'print',
                             text: '<i class="fas fa-print"></i> Print',
+                            footer: true,
                             customize: function(win) {
                                 $(win.document.body)
                                 .css('font-size', '20px');
@@ -328,11 +331,11 @@
                                 },
                                 modifier: { page: 'current' }
                             }
-                        },
-                        {
-                            extend: 'colvis',
-                            text: '<i class="fas fa-columns"></i> Column Visibility'
                         }
+                        // {
+                        //     extend: 'colvis',
+                        //     text: '<i class="fas fa-columns"></i> Column Visibility'
+                        // }
                     ],
                     columnDefs: [{
                             targets: actionColumnIndex,
